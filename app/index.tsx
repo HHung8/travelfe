@@ -1,10 +1,12 @@
-import { Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "@/src/context/AuthContext";
+import { Redirect } from "expo-router";
 
 export default function Index() {
-  return (
-    <SafeAreaView>
-        <Text>Subcribe to RoadsideCoder</Text>
-    </SafeAreaView>
-  );
+  const {user, loading} = useAuth();
+  if(loading) return null;
+  if(user) {
+    return <Redirect href="/(root)/home" />;
+  }
+  return <Redirect href="/login" />;
 }
+
