@@ -1,6 +1,14 @@
+import DestinationCard from "@/src/components/home/DestinationCard";
+import Header from "@/src/components/home/Header";
+import SearchBar from "@/src/components/home/SearchBar";
+import SectionHeader from "@/src/components/home/SectionHeader";
+import TourCard from "@/src/components/home/TourCard";
 import { useAuth } from "@/src/context/AuthContext";
+import { destinations, popularTours } from "@/src/data/home";
 import { useRouter } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { FlatList, ScrollView, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 
 export default function HomeScreen() {
   const {user,logout} = useAuth();
@@ -11,16 +19,52 @@ export default function HomeScreen() {
   router.replace("/login");
   }
 
-  return (
-    <View className="bg-[#18274A] px-6 pt-6 pb-8 rounded-b-[30px]">
-      <TouchableOpacity
-        onPress={handleLogout}
-        className="bg-red-500 px-6 py-4 rounded-xl mt-10"
+ return (
+    <SafeAreaView className="flex-1 bg-[#121212]">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 120,
+        }}
       >
-        <Text className="text-white font-bold">
-          Logout
-        </Text>
-      </TouchableOpacity>
-    </View>
+        {/* Header */}
+        <Header />
+
+        {/* Search */}
+        <SearchBar />
+
+        {/* Featured Destinations */}
+        <View className="px-6 mt-6">
+          <SectionHeader title="Điểm đến nổi bật" />
+
+          <FlatList
+            horizontal
+            data={destinations}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <DestinationCard item={item} />
+            )}
+            showsHorizontalScrollIndicator={false}
+            ItemSeparatorComponent={() => <View style={{ width: 16 }} />}
+          />
+        </View>
+
+        {/* Popular Tours */}
+        <View className="px-6 mt-8">
+          <SectionHeader title="Tour phổ biến" />
+
+          <FlatList
+            data={popularTours}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TourCard item={item} />
+            )}
+            scrollEnabled={false}
+            ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+          />
+        </View>
+
+      </ScrollView>
+    </SafeAreaView>
   );
 }

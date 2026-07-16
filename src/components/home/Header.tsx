@@ -4,7 +4,7 @@ import { Text, TouchableOpacity, View } from 'react-native'
 
 const Header = () => {
   return (
-    <View className="bg-[#18274A] px-6 pt-6 pb-8 rounded-b-[30px]" >
+    <View className="px-6 pt-6 pb-8 rounded-b-[30px]" >
         <View className="flex-row justify-between items-center">
             <View>
                 <Text className="text-gray-300 text-base">Xin chào, Hưng 👋</Text>
