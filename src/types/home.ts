@@ -12,4 +12,14 @@ export interface Tour {
   rating: number;
   price: number;
   emoji: string;
+  location?: string;
+  reviewCount?: number;
+  maxGuests?: number;
+  difficulty?: "Dễ" | "Trung bình" | "Khó";
+  description?: string;
+  color?: string;
+  nearbyAttractions?: {
+    name: string;
+    distance: string;
+  }[];
 }

@@ -13,7 +13,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function HomeScreen() {
   const {user,logout} = useAuth();
   const router = useRouter();
-
   const handleLogout = async () => { 
   await logout();
   router.replace("/login");
@@ -29,14 +28,11 @@ export default function HomeScreen() {
       >
         {/* Header */}
         <Header />
-
         {/* Search */}
         <SearchBar />
-
         {/* Featured Destinations */}
         <View className="px-6 mt-6">
           <SectionHeader title="Điểm đến nổi bật" />
-
           <FlatList
             horizontal
             data={destinations}
@@ -51,19 +47,22 @@ export default function HomeScreen() {
 
         {/* Popular Tours */}
         <View className="px-6 mt-8">
-          <SectionHeader title="Tour phổ biến" />
-
-          <FlatList
-            data={popularTours}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <TourCard item={item} />
-            )}
-            scrollEnabled={false}
-            ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-          />
+            <SectionHeader title="Tour phổ biến" />
+            <FlatList
+              data={popularTours}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TourCard
+                  item={item}
+                  onPress={() =>
+                    router.push({ pathname: "/tour-detail", params: { tourId: item.id } })
+                  }
+                />
+              )}
+              scrollEnabled={false}
+              ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+            />
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
