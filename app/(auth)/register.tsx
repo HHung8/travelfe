@@ -1,3 +1,4 @@
+import { useAuth } from "@/src/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -6,8 +7,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const RegisterScreen = () => {
   const router = useRouter();
+  const {register} = useAuth();
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,21 +19,26 @@ const RegisterScreen = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleRegister = async () => {
-    if (!fullName || !email || !password || !confirmPassword) {
-      alert("Please fill in all fields.");
-      return;
+    if (!fullName || !email || !phone || !password || !confirmPassword) {
+        alert("Please fill in all fields");
+        return;
     }
-    if (password !== confirmPassword) {
+    if(password !== confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-    setLoading(false);
-    alert("Registration successful!");
-    router.replace("/(auth)/login");
-  }
-
+    try {
+      await register(fullName, email, password, phone);
+      alert("Registration successful!");
+      router.replace("/(root)/home");
+    } catch(err:any) {
+      alert(err.message || "Đăng ký thất bại.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   return (
     <SafeAreaView className="flex-1 bg-[#121212]">
       <ScrollView
@@ -50,17 +59,9 @@ const RegisterScreen = () => {
           {/* Register Card */}
           <View className="rounded-3xl p-6">
             {/* Full Name */}
-            <Text className="text-white text-lg font-semibold mb-2">
-              Full Name
-            </Text>
-
+            <Text className="text-white text-lg font-semibold mb-2">Full Name</Text>
             <View className="bg-[#2B2B2B] rounded-xl flex-row items-center px-4 mb-4">
-              <Ionicons
-                name="person-outline"
-                size={20}
-                color="#9CA3AF"
-              />
-
+              <Ionicons name="person-outline" size={20} color="#9CA3AF" />
               <TextInput
                 className="flex-1 py-4 px-3 text-white"
                 placeholder="Enter your full name"
@@ -71,17 +72,9 @@ const RegisterScreen = () => {
             </View>
 
             {/* Email */}
-            <Text className="text-white text-lg font-semibold mb-2">
-              Email
-            </Text>
-
+            <Text className="text-white text-lg font-semibold mb-2"> Email </Text>
             <View className="bg-[#2B2B2B] rounded-xl flex-row items-center px-4 mb-4">
-              <Ionicons
-                name="mail-outline"
-                size={20}
-                color="#9CA3AF"
-              />
-
+              <Ionicons name="mail-outline" size={20} color="#9CA3AF" />
               <TextInput
                 className="flex-1 py-4 px-3 text-white"
                 placeholder="Enter your email"
@@ -93,18 +86,24 @@ const RegisterScreen = () => {
               />
             </View>
 
-            {/* Password */}
-            <Text className="text-white text-lg font-semibold mb-2">
-              Password
-            </Text>
-
+            {/* Phone */}
+            <Text className="text-white text-lg font-semibold mb-2">Phone</Text>
             <View className="bg-[#2B2B2B] rounded-xl flex-row items-center px-4 mb-4">
-              <Ionicons
-                name="lock-closed-outline"
-                size={20}
-                color="#9CA3AF"
+              <Ionicons name="call-outline" size={20} color="#9CA3AF" />
+              <TextInput
+                className="flex-1 py-4 px-3 text-white"
+                placeholder="Enter your phone number"
+                placeholderTextColor="#888"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={setPhone}
               />
+            </View>
 
+            {/* Password */}
+            <Text className="text-white text-lg font-semibold mb-2">Password</Text>
+            <View className="bg-[#2B2B2B] rounded-xl flex-row items-center px-4 mb-4">
+              <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
               <TextInput
                 className="flex-1 py-4 px-3 text-white"
                 placeholder="Enter your password"
@@ -113,10 +112,7 @@ const RegisterScreen = () => {
                 value={password}
                 onChangeText={setPassword}
               />
-
-              <TouchableOpacity
-                onPress={() => setShowPassword(!showPassword)}
-              >
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <Ionicons
                   name={showPassword ? "eye-off-outline" : "eye-outline"}
                   size={22}
@@ -126,17 +122,9 @@ const RegisterScreen = () => {
             </View>
 
             {/* Confirm Password */}
-            <Text className="text-white text-lg font-semibold mb-2">
-              Confirm Password
-            </Text>
-
+            <Text className="text-white text-lg font-semibold mb-2"> Confirm Password </Text>
             <View className="bg-[#2B2B2B] rounded-xl flex-row items-center px-4">
-              <Ionicons
-                name="lock-closed-outline"
-                size={20}
-                color="#9CA3AF"
-              />
-
+              <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF"/>
               <TextInput
                 className="flex-1 py-4 px-3 text-white"
                 placeholder="Confirm your password"
@@ -147,16 +135,10 @@ const RegisterScreen = () => {
               />
 
               <TouchableOpacity
-                onPress={() =>
-                  setShowConfirmPassword(!showConfirmPassword)
-                }
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 <Ionicons
-                  name={
-                    showConfirmPassword
-                      ? "eye-off-outline"
-                      : "eye-outline"
-                  }
+                  name={showConfirmPassword ? "eye-off-outline" : "eye-outline"}
                   size={22}
                   color="#9CA3AF"
                 />
@@ -171,9 +153,7 @@ const RegisterScreen = () => {
               {loading ? (
                 <ActivityIndicator color="white" />
               ) : (
-                <Text className="text-white font-bold text-lg">
-                  Create Account
-                </Text>
+                <Text className="text-white font-bold text-lg"> Create Account </Text>
               )}
             </TouchableOpacity>
             <View className="flex-row justify-center mt-8">

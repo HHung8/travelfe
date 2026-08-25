@@ -21,7 +21,6 @@ export default function HotelPaymentScreen() {
   );
   const roomCount = Number(rooms) || 1;
   const nights = Math.max(1, Math.round((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000));
-
   const [method, setMethod] = useState<PaymentMethod>("card");
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
@@ -54,9 +53,7 @@ export default function HotelPaymentScreen() {
         </TouchableOpacity>
         <Text className="text-white text-lg font-semibold ml-2">Thanh toán</Text>
       </View>
-
       <StepIndicator currentStep={3} />
-
       <ScrollView contentContainerStyle={{ paddingBottom: 140 }} className="px-6">
         <View className="flex-row bg-neutral-900 rounded-2xl p-3 items-center gap-3">
           <View className="w-14 h-14 rounded-xl items-center justify-center" style={{ backgroundColor: hotel.color }}>

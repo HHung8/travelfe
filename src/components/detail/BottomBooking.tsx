@@ -4,9 +4,10 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 type Props = {
     price: number;
+    tourId: string;
 }
 
-const BottomBooking = ({ price }: Props) => {
+const BottomBooking = ({ price, tourId }: Props) => {
     const router = useRouter();
     return (
         <View className="absolute bottom-0 left-0 right-0 bg-[#1A1A1A] px-6 py-5 border-t border-neutral-700">
@@ -23,9 +24,9 @@ const BottomBooking = ({ price }: Props) => {
                     </Text>
                 </View>
 
-                <TouchableOpacity 
+                <TouchableOpacity
                     className="bg-violet-600 px-8 py-4 rounded-2xl"
-                    onPress={() => router.push("/booking-form")}
+                    onPress={() => router.push({ pathname: "/booking-form", params: { tourId } })}
                 >
                     <Text className="text-white font-bold text-lg">Đặt ngay</Text>
                 </TouchableOpacity>

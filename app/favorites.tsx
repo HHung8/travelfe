@@ -1,10 +1,10 @@
-import { popularTours } from "@/src/data/home";
+// import { popularTours } from "@/src/data/home";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const favoriteTours = [popularTours[0], popularTours[popularTours.length - 1]];
+// const favoriteTours = [popularTours[0], popularTours[popularTours.length - 1]];
 
 
 export default function FavoritesScreen() {
@@ -17,7 +17,7 @@ export default function FavoritesScreen() {
                 </TouchableOpacity>
                 <Text className="text-white text-lg font-semibold ml-2">Danh sách yêu thích</Text>
             </View>
-            <ScrollView contentContainerStyle={{padding: 24}} showsVerticalScrollIndicator={false}>
+            {/* <ScrollView contentContainerStyle={{padding: 24}} showsVerticalScrollIndicator={false}>
                 {favoriteTours.length === 0 ? (
                     <View className="items-center justify-center mt-20">
                         <Ionicons name="heart-outline" size={48} color="#525252" />
@@ -46,7 +46,7 @@ export default function FavoritesScreen() {
                         </TouchableOpacity>
                     ))
                 )}
-            </ScrollView>
+            </ScrollView> */}
         </SafeAreaView>
     )
 }

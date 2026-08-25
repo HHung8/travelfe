@@ -8,7 +8,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function AccountSettingsScreen() {
     const router = useRouter();
     const {user} = useAuth();
-    
     const [name, setName] = useState(user?.name ?? "");
     const [email, setEmail] = useState(user?.email ?? "");
     const [pushEnabled, setPushEnabled] = useState(true);
