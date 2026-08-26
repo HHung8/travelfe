@@ -6,14 +6,13 @@ export interface ExploreCategory {
   type: "all" | ExploreType;
 }
 
-export interface ExploreItem {
+export type ExploreItem = {
   id: string;
   type: ExploreType;
   title: string;
-  location: string;
-  price: string; 
-  rating: number;
-  emoji: string;
-  color: string;
-  description?: string;
-}
+  subtitle: string;         // địa danh / category
+  thumbnailUrl: string | null;
+  price: number | null;
+  rating: number | null;
+  reviewCount: number;
+};

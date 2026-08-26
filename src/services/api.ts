@@ -1,6 +1,23 @@
+import Constants from "expo-constants";
 import { Platform } from "react-native";
 import { AuthData } from "../types/auth";
-const BASE_URL = Platform.OS === "android" ? "http://10.0.2.2:5167/api" : "http://localhost:5167/api";
+
+function resolveBaseUrl() : string {
+  const PORT = 5167;
+  const hostUri = Constants.expoConfig?.hostUri ?? 
+  (Constants.manifest2 as any)?.extra?.expoGo?.debuggerHost;
+  const debuggerHost = hostUri?.split(":")[0];
+  if(debuggerHost) {
+    return `http://${debuggerHost}:${PORT}/api`
+  }
+  if(Platform.OS === "android") {
+    return `http://10.0.2.2:${PORT}/api`;
+  }
+  return `http://localhost:${PORT}/api`;
+}
+
+const BASE_URL = resolveBaseUrl();
+
 
 type ApiResponse<T> = {
     success: boolean;

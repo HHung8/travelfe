@@ -1,6 +1,5 @@
-import { Ionicons } from '@expo/vector-icons'
 import React from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Text, View } from 'react-native'
 
 const Header = () => {
   return (
@@ -10,13 +9,13 @@ const Header = () => {
                 <Text className="text-gray-300 text-base">Xin chào, Hưng 👋</Text>
                 <Text className="text-white text-3xl font-bold mt-2">Bạn muốn đi đâu hôm nay?</Text>
             </View>
-            <TouchableOpacity className="bg-white/10 rounded-full p-3">
+            {/* <TouchableOpacity className="bg-white/10 rounded-full p-3">
                 <Ionicons
                     name="notifications-outline"
                     color="white"
                     size={22}
                 />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     </View>
   )

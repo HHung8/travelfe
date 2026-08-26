@@ -10,4 +10,6 @@ export type AttractionSimple = {
   openingHours: string | null;
   entryFee: number | null;
   website: string | null;
+  destinationId?:string;
+  destinationName?:string
 };
