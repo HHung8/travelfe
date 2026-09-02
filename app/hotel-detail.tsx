@@ -20,9 +20,9 @@ const HotelDetailScreen = () => {
          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 130}}>
             <View
                 className="relative items-center justify-center"
-                style={{ height: 240, backgroundColor: hotel.color }}
+                style={{ height: 240, backgroundColor: hotel?.color }}
             >
-                <Text style={{fontSize: 72}} >{hotel.emoji}</Text>
+                <Text style={{fontSize: 72}} >{hotel?.emoji}</Text>
                 <View className='absolute top-4 left-4 right-4 flex-row justify-between'>
                     <TouchableOpacity onPress={() => router.back()} className="w-10 h-10 rounded-full bg-black/40 items-center justify-center">
                     <Ionicons name="chevron-back" size={22} color="#fff" />
