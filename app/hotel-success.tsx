@@ -1,21 +1,36 @@
-import { exploreData } from "@/src/data/explore";
+import { useAuth } from "@/src/context/AuthContext";
+import { getHotelById } from "@/src/services/hotelService";
+import { HotelDetail } from "@/src/types/hotel";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMemo } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const fmt = (iso: string) => { const d = new Date(iso); return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`; };
 
 export default function HotelSuccessScreen() {
   const router = useRouter();
-  const { hotelId, checkIn, checkOut, rooms, total, bookingCode } = useLocalSearchParams<{
-    hotelId: string; checkIn: string; checkOut: string; rooms: string; total: string; bookingCode: string;
+  const {accessToken} = useAuth();  
+   const { hotelId, roomType, checkIn, checkOut, rooms, total, bookingCode } = useLocalSearchParams<{
+    hotelId: string; roomType: string; checkIn: string; checkOut: string; rooms: string; total: string; bookingCode: string;
   }>();
-  const hotel = useMemo(
-    () => exploreData.find((i) => i.id === hotelId && i.type === "hotel") ?? exploreData.find((i) => i.type === "hotel")!,
-    [hotelId]
-  );
+
+  const [hotel, setHotel] = useState<HotelDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if(!hotelId) return;
+     getHotelById(accessToken, hotelId).then(setHotel).finally(() => setLoading(false));
+  }, [accessToken, hotelId]);
+
+  if(loading) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#121212] items-center justify-center">
+        <ActivityIndicator color="#fff" size="large" />
+      </SafeAreaView>
+    )
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-[#121212] px-6">
@@ -30,7 +45,8 @@ export default function HotelSuccessScreen() {
           <Text className="text-neutral-400 text-xs text-center mb-1">Mã đặt phòng</Text>
           <Text className="text-indigo-400 font-bold text-center text-base mb-4">{bookingCode}</Text>
           <View className="gap-2">
-            <View className="flex-row justify-between"><Text className="text-neutral-500">Khách sạn</Text><Text className="text-white">{hotel.title}</Text></View>
+            <View className="flex-row justify-between"><Text className="text-neutral-500">Khách sạn</Text><Text className="text-white">{hotel?.name ?? "-"}</Text></View>
+            <View className="flex-row justify-between"><Text className="text-neutral-500">Loại phòng</Text><Text className="text-white">{roomType}</Text></View>
             <View className="flex-row justify-between"><Text className="text-neutral-500">Nhận/trả phòng</Text><Text className="text-white">{fmt(checkIn)} - {fmt(checkOut)}</Text></View>
             <View className="flex-row justify-between"><Text className="text-neutral-500">Số phòng</Text><Text className="text-white">{rooms}</Text></View>
             <View className="flex-row justify-between"><Text className="text-neutral-500">Thanh toán</Text><Text className="text-green-400">${total} · Thành công</Text></View>

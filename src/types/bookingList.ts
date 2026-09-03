@@ -29,10 +29,11 @@ export interface HotelBookingItem {
 // Dạng chuẩn hoá dùng chung để hiển thị, bất kể nguồn là tour hay hotel
 export interface UnifiedBookingItem {
   id: string;
-  type: "tour" | "hotel";
-  refId: string; // tourId (tour) hoặc roomId (hotel)
+  type: "tour" | "hotel" | "attraction";
+  refId: string;
   title: string;
   dateLabel: string;
+  sortDate: string; // ISO gốc để sort, không dùng dateLabel đã format
   thumbnailUrl: string | null;
   totalPrice: number;
   status: string;

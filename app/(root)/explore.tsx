@@ -26,7 +26,7 @@ const explore = () => {
       setError(null);
       const [toursRes, hotelsRes, attractionsRes] = await Promise.all([
         getTours(accessToken, 1, 20),
-        getHotels(accessToken,1, 20),
+        getHotels(accessToken, 1, 20),
         getAttractions(accessToken, 1,20),
       ]);
       const merged: ExploreItem[] = [
