@@ -1,3 +1,4 @@
+import RoomCard from '@/src/components/detail/RoomCard';
 import { useAuth } from '@/src/context/AuthContext';
 import { getHotelById } from '@/src/services/hotelService';
 import { HotelDetail } from '@/src/types/hotel';
@@ -8,25 +9,25 @@ import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } fr
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const HotelDetailScreen = () => {
-  const {hotelId} = useLocalSearchParams<{hotelId: string}>();
+  const { hotelId } = useLocalSearchParams<{ hotelId: string }>();
   const router = useRouter();
-  const {accessToken} = useAuth();
-  const [isFavorite, setIsFavorite] = useState(false); 
+  const { accessToken } = useAuth();
+  const [isFavorite, setIsFavorite] = useState(false);
   const [hotel, setHotel] = useState<HotelDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);  
+  const [error, setError] = useState<string | null>(null);
 
   const loadHotel = useCallback(async () => {
-    if(!hotelId) return;
+    if (!hotelId) return;
     try {
-        setError(null);
-        setLoading(true);
-        const data = await getHotelById(accessToken, hotelId);
-        setHotel(data);
-    } catch (error:any) {
+      setError(null);
+      setLoading(true);
+      const data = await getHotelById(accessToken, hotelId);
+      setHotel(data);
+    } catch (error: any) {
       setError(error?.message ?? "Không thể tải dữ liệu khách sạn");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   }, [accessToken, hotelId]);
 
@@ -36,13 +37,13 @@ const HotelDetailScreen = () => {
 
   if (loading) {
     return (
-        <SafeAreaView className="flex-1 bg-[#121212] items-center justify-center">
-            <ActivityIndicator color="#fff" size="large" />
-        </SafeAreaView>
-    )
+      <SafeAreaView className="flex-1 bg-[#121212] items-center justify-center">
+        <ActivityIndicator color="#fff" size="large" />
+      </SafeAreaView>
+    );
   }
 
-   if (error || !hotel) {
+  if (error || !hotel) {
     return (
       <SafeAreaView className="flex-1 bg-[#121212] items-center justify-center px-6">
         <Text className="text-red-400 text-center mb-4">{error ?? "Không tìm thấy khách sạn"}</Text>
@@ -55,13 +56,10 @@ const HotelDetailScreen = () => {
 
   const amenityList = (hotel.amenities ?? "").split(",").map((a) => a.trim()).filter(Boolean);
   const rooms = hotel.rooms ?? [];
-  const fromPrice =
-    rooms.length > 0
-      ? Math.min(...rooms.map((r) => r.pricePerNight))
-      : hotel.minRoomPrice ?? 0;
+  const fromPrice = rooms.length > 0 ? Math.min(...rooms.map((r) => r.pricePerNight)) : hotel.minRoomPrice ?? 0;
 
   return (
-   <SafeAreaView className="flex-1 bg-[#121212]" edges={["top", "left", "right"]}>
+    <SafeAreaView className="flex-1 bg-[#121212]" edges={["top", "left", "right"]}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 130 }}>
         <View className="relative items-center justify-center" style={{ height: 240, backgroundColor: "#27272a" }}>
           {hotel.thumbnailUrl ? (
@@ -108,15 +106,9 @@ const HotelDetailScreen = () => {
           {rooms.length > 0 && (
             <>
               <Text className="text-white font-semibold text-lg mt-6 mb-2">Loại phòng</Text>
-              <View className="gap-2">
-                {hotel.rooms?.map((room) => (
-                  <View key={room.id} className="bg-neutral-900 rounded-2xl p-3 flex-row justify-between items-center">
-                    <View className="flex-1 pr-2">
-                      <Text className="text-white font-medium">{room.roomType}</Text>
-                      <Text className="text-neutral-500 text-xs mt-1">{room.capacity} khách</Text>
-                    </View>
-                    <Text className="text-violet-400 font-semibold">${room.pricePerNight}/đêm</Text>
-                  </View>
+              <View>
+                {rooms.map((room) => (
+                  <RoomCard key={room.id} room={room} token={accessToken} />
                 ))}
               </View>
             </>
@@ -138,6 +130,6 @@ const HotelDetailScreen = () => {
       </View>
     </SafeAreaView>
   );
-}
+};
 
-export default HotelDetailScreen
+export default HotelDetailScreen;

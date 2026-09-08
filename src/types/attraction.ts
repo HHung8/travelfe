@@ -13,3 +13,8 @@ export type AttractionSimple = {
   destinationId?:string;
   destinationName?:string
 };
+
+export interface AttractionDetail extends AttractionSimple {
+  destinationId: string;
+  destinationName: string;
+}
