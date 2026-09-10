@@ -1,3 +1,4 @@
+import { AttractionBookingResult, CreateAttractionBookingRequest } from "../types/attractionBooking";
 import { CreateTourBookingRequest, TourBookingResult } from "../types/booking";
 import { HotelBookingItem, TourBookingItem } from "../types/bookingList";
 import { getWithAuth, postWithAuth } from "./api";
@@ -38,4 +39,25 @@ export async function cancelTourBooking(token: string | null, id:string):Promise
 
 export async function cancelHotelBooking(token: string | null, id:string):Promise<void> {
   await postWithAuth(`/bookings/hotel/${id}/cancel`, token, {});
+}
+
+// --- Attraction --- 
+export async function createAttractionBooking(token: string | null, payload: CreateAttractionBookingRequest): Promise<AttractionBookingResult> {
+  const res = await postWithAuth<AttractionBookingResult>("/bookings/attractions", token, payload as unknown as Record<string, unknown>);
+  if (!res.data) throw new Error("Không tạo được booking");
+  return res.data;
+}
+
+export async function getAttractionBookings(token: string | null): Promise<AttractionBookingResult[]> {
+  const res = await getWithAuth<AttractionBookingResult[]>("/bookings/attractions", token);
+  return res.data ?? [];
+}
+
+export async function getAttractionBookingById(token: string | null, id: string): Promise<AttractionBookingResult | null> {
+  const res = await getWithAuth<AttractionBookingResult>(`/bookings/attractions/${id}`, token);
+  return res.data;
+}
+
+export async function cancelAttractionBooking(token: string | null, id: string): Promise<void> {
+  await postWithAuth(`/bookings/attractions/${id}/cancel`, token, {});
 }

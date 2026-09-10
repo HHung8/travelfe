@@ -1,4 +1,4 @@
-import { AttractionSchedule } from "../types/attractionSchedule";
+import { AttractionSchedule } from "../types/attractionSchedule.ts";
 import { getWithAuth } from "./api";
 
 export async function getSchedulesByAttraction(token: string | null, attractionId: string): Promise<AttractionSchedule[]> {

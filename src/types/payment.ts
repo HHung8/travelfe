@@ -1,4 +1,4 @@
-export type BookingType  = "tour" | "hotel";
+export type BookingType  = "tour" | "hotel" | "attraction";
 
 export interface CreatePaymentRequest {
   bookingType: BookingType;
