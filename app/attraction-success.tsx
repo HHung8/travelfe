@@ -68,5 +68,6 @@ export default function AttractionSuccessScreen() {
         </TouchableOpacity>
       </View>
     </SafeAreaView>
+    
   );
 }

@@ -81,6 +81,37 @@ export async function getWithAuth<T>(
   return parseResponse<T>(res);
 }
 
+export async function putWithAuth<T>(
+  path:string,
+  token: string | null,
+  body: Record<string, unknown>
+): Promise<ApiResponse<T>> {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: "PUT",
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(body),
+  });
+  return parseResponse<T>(res);
+}
+
+export async function deleteWithAuth<T = unknown>(
+  path: string,
+  token: string | null
+): Promise<ApiResponse<T>> {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: "DELETE",
+    headers: {
+      Accept: "*/*",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return parseResponse<T>(res);
+}
+
 export async function postWithAuth<T, B extends object = Record<string, unknown>>(
   path: string,
   token: string | null,
