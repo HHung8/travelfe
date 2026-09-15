@@ -15,6 +15,7 @@ export interface HotelBookingItem {
   id: string;
   bookingCode: string;
   roomId: string;
+  hotelId: string;
   roomType: string;
   hotelName: string;
   thumbnailUrl: string | null;

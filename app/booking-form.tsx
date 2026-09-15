@@ -67,7 +67,6 @@ export default function BookingFormScreen() {
   const selectedSchedule = schedules.find((s) => s.id === selectedScheduleId) ?? null;
   const unitPrice = selectedSchedule?.overridePrice ?? tour.discountPrice ?? tour.price;
   const maxGuests = selectedSchedule?.availableSlots ?? tour.maxCapacity;
-
   const subtotal = unitPrice * guests;
   const serviceFee = Math.round(subtotal * 0.05);
   const tax = Math.round(subtotal * 0.1);

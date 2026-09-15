@@ -1,14 +1,8 @@
 import StatusBanner from '@/src/components/booking/StatusBanner';
 import SafeImage from '@/src/components/detail/SafeImage';
 import { useAuth } from '@/src/context/AuthContext';
-import {
-    cancelHotelBooking,
-    cancelTourBooking,
-    getHotelBookingById,
-    getTourBookingById,
-} from '@/src/services/bookingService';
+import { cancelHotelBooking, cancelTourBooking, getHotelBookingById, getTourBookingById } from '@/src/services/bookingService';
 import { HotelBookingItem, TourBookingItem } from '@/src/types/bookingList';
-// import { BookingType } from '@/src/types/payment';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -20,22 +14,18 @@ const fmtDate = (iso: string) => {
     const d = new Date(iso);
     return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
 }
-
 type BookingType = "tour" | "hotel";
-
 const InfoRow = ({ label, value }: { label: string, value: string }) => (
     <View className="flex-row justify-between py-2">
         <Text className="text-neutral-500">{label}</Text>
         <Text className="text-white font-medium">{value}</Text>
     </View>
 )
-
 const BookingDetailScreen = () => {
     const { type, bookingId } = useLocalSearchParams<{ type: BookingType, bookingId: string }>();
     const router = useRouter();
     const { accessToken } = useAuth();
     const SUPPORT_PHONE = "19001234";
-
     const [tourBooking, setTourBooking] = useState<TourBookingItem | null>(null);
     const [hotelBooking, setHotelBooking] = useState<HotelBookingItem | null>(null);
     const [loading, setLoading] = useState(true);
@@ -107,10 +97,10 @@ const BookingDetailScreen = () => {
     };
 
     const handleContactSupport = async () => {
-       const url = `tel:${SUPPORT_PHONE}`;
-       try {
+        const url = `tel:${SUPPORT_PHONE}`;
+        try {
             const canOpen = await Linking.canOpenURL(url);
-            if(canOpen) {
+            if (canOpen) {
                 await Linking.openURL(url);
             } else {
                 Alert.alert(
@@ -118,13 +108,13 @@ const BookingDetailScreen = () => {
                     `Vui lòng liên hệ hotline: ${SUPPORT_PHONE}`
                 )
             }
-       } catch (error) {
+        } catch (error) {
             console.log("error opening phone dialer", error);
             Alert.alert(
                 "Không thể gọi điện",
                 `Vui lòng liên hệ hotline: ${SUPPORT_PHONE}`
             )
-       }
+        }
     }
 
     const handleCancelBooking = () => {
@@ -273,11 +263,30 @@ const BookingDetailScreen = () => {
                             <Text className="text-black font-semibold text-base">Thanh toán ngay</Text>
                         </TouchableOpacity>
                     )}
-                    {isCompleted && (
-                        <TouchableOpacity className="h-14 rounded-2xl bg-white items-center justify-center">
+                    {/* {isCompleted && (
+                        <TouchableOpacity 
+                            onPress={() => router.push({pathname:"/review-form", params:{
+                                targetType: type,
+                                targetId: type === "tour" ? (booking as TourBookingItem).tourId : (booking as HotelBookingItem).roomId,
+                                targetTitle: title,
+                            }})}
+                            className="h-14 rounded-2xl bg-white items-center justify-center">
                             <Text className="text-black font-semibold text-base">Đánh giá tour</Text>
                         </TouchableOpacity>
-                    )}
+                    )} */}
+                    <TouchableOpacity
+                        onPress={() => router.push({
+                            pathname: "/review-form", params: {
+                                targetType: type,
+                                targetId: type === "tour" ? (booking as TourBookingItem).tourId : (booking as HotelBookingItem).hotelId,
+                                targetTitle: title,
+                            }
+                        })}
+                        className="h-14 rounded-2xl bg-white items-center justify-center"
+                    >
+                        <Text className="text-black font-semibold text-base">Đánh giá tour</Text>
+                    </TouchableOpacity>
+
                     {(isPending || isConfirmed) && (
                         <TouchableOpacity
                             onPress={handleCancelBooking}

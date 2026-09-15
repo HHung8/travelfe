@@ -1,6 +1,6 @@
 import { PagedResult } from "../types/destination";
-import { CreateReviewRequest, MyReviewItem, ReviewDto } from "../types/review";
-import { getWithAuth, postWithAuth } from "./api";
+import { CreateReviewRequest, MyReviewItem, ReviewDto, UpdateReviewRequest } from "../types/review";
+import { deleteWithAuth, getWithAuth, postWithAuth, putWithAuth } from "./api";
 
 export async function getMyReviews(token: string | null): Promise<MyReviewItem[]> {
     const res = await getWithAuth<PagedResult<MyReviewItem>>("/reviews/mine", token);
@@ -15,7 +15,7 @@ export async function createReview(token: string | null, payload: CreateReviewRe
 
 
 export async function updateReview(token: string | null, id: string, payload: UpdateReviewRequest): Promise<ReviewDto> {
-    const res = await putWithAuth<ReviewDto>(`/reviews/${id}`, token, payload);
+    const res = await putWithAuth<ReviewDto>(`/reviews/${id}`, token, payload as unknown as Record<string, unknown>);
     if (!res.data) throw new Error("Không cập nhật được đánh giá");
     return res.data;
 }

@@ -29,7 +29,7 @@ export async function getTourBookingById(token: string | null, id:string):Promis
 }
 
 export async function getHotelBookingById(token: string | null, id:string):Promise<HotelBookingItem | null> {
-  const res = await getWithAuth<HotelBookingItem>(`/bookings/hotel/${id}`, token);
+  const res = await getWithAuth<HotelBookingItem>(`/bookings/hotels/${id}`, token);
   return res.data;
 }
 

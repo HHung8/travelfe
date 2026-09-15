@@ -16,7 +16,6 @@ const fmtDate = (iso: string) => {
 export default function ReviewsScreen() {
     const router = useRouter();
     const { accessToken } = useAuth();
-
     const [reviews, setReviews] = useState<MyReviewItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -24,7 +23,7 @@ export default function ReviewsScreen() {
 
     const loadReviews = useCallback(async (isRefresh = false) => {
         if (isRefresh) setRefreshing(true);
-        else setLoading(true);
+        else setLoading(true);  
         try {
             const data = await getMyReviews(accessToken);
             setReviews(data);
@@ -66,7 +65,6 @@ export default function ReviewsScreen() {
             </SafeAreaView>
         )
     }
-
 
     return (
         <SafeAreaView className="flex-1 bg-[#121212]">
