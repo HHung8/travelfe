@@ -1,8 +1,8 @@
 import StatusBanner from '@/src/components/booking/StatusBanner';
 import SafeImage from '@/src/components/detail/SafeImage';
 import { useAuth } from '@/src/context/AuthContext';
-import { cancelHotelBooking, cancelTourBooking, getHotelBookingById, getTourBookingById } from '@/src/services/bookingService';
-import { HotelBookingItem, TourBookingItem } from '@/src/types/bookingList';
+import { cancelAttractionBooking, cancelHotelBooking, cancelTourBooking, getAttractionBookingById, getHotelBookingById, getTourBookingById } from '@/src/services/bookingService';
+import { AttractionBookingItem, HotelBookingItem, TourBookingItem } from '@/src/types/bookingList';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -14,7 +14,8 @@ const fmtDate = (iso: string) => {
     const d = new Date(iso);
     return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
 }
-type BookingType = "tour" | "hotel";
+type BookingType = "tour" | "hotel" | "attraction";
+
 const InfoRow = ({ label, value }: { label: string, value: string }) => (
     <View className="flex-row justify-between py-2">
         <Text className="text-neutral-500">{label}</Text>
@@ -28,6 +29,7 @@ const BookingDetailScreen = () => {
     const SUPPORT_PHONE = "19001234";
     const [tourBooking, setTourBooking] = useState<TourBookingItem | null>(null);
     const [hotelBooking, setHotelBooking] = useState<HotelBookingItem | null>(null);
+    const [attractionBooking, setAttractionBooking] = useState<AttractionBookingItem | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [cancelling, setCancelling] = useState(false);
@@ -44,9 +46,14 @@ const BookingDetailScreen = () => {
             if (type === "tour") {
                 const data = await getTourBookingById(accessToken, bookingId);
                 setTourBooking(data);
-            } else {
+            } else if(type === "hotel") {
                 const data = await getHotelBookingById(accessToken, bookingId);
                 setHotelBooking(data)
+            } else if(type === "attraction") {
+                const data = await getAttractionBookingById(accessToken, bookingId);
+                setAttractionBooking(data);
+            } else {
+                setError(`Loại booking không hợp lệ: ${type}`);
             }
         } catch (error: any) {
             setError(error?.message || "Không tải được thông tin đặt chỗ")
@@ -63,7 +70,7 @@ const BookingDetailScreen = () => {
         );
     }
 
-    const booking = type === "tour" ? tourBooking : hotelBooking;
+    const booking = type === "tour" ? tourBooking : type === "hotel" ? hotelBooking : attractionBooking;
     if (error || !booking) {
         return (
             <SafeAreaView className="flex-1 bg-[#121212] items-center justify-center px-6">
@@ -72,7 +79,11 @@ const BookingDetailScreen = () => {
         );
     }
 
-    const title = type === "tour" ? (booking as TourBookingItem).tourTitle : (booking as HotelBookingItem).hotelName;
+    const title = 
+        type === "tour" ? (booking as TourBookingItem).tourTitle : 
+        type === "hotel" ? (booking as HotelBookingItem).hotelName : 
+        (booking as AttractionBookingItem).attractionName;
+
     const thumbnailUrl = booking.thumbnailUrl;
     const status = booking.status;
     const isPending = status === "pending";
@@ -88,7 +99,6 @@ const BookingDetailScreen = () => {
                 existingBookingId: booking.id,
                 bookingType: type,
                 amount: String(booking.totalPrice),
-                // thông tin hiển thị lại ở màn payment
                 tourId: type === "tour" ? (booking as TourBookingItem).tourId : undefined,
                 title,
                 thumbnailUrl: thumbnailUrl ?? "",
@@ -131,28 +141,18 @@ const BookingDetailScreen = () => {
                         try {
                             if (type === "tour") {
                                 await cancelTourBooking(accessToken, booking.id);
-                            } else {
+                            } else if (type === "hotel") {
                                 await cancelHotelBooking(accessToken, booking.id);
+                            } else {
+                                await cancelAttractionBooking(accessToken, booking.id);
                             }
                             Alert.alert(
                                 "Huỷ đặt chỗ thành công",
                                 "Đặt chỗ của bạn đã được huỷ.",
-                                [
-                                    {
-                                        text: "OK",
-                                        onPress: () => {
-                                            // Quay về trang danh sách booking, thay vì trang chủ,
-                                            // và dùng replace để không back lại được trang detail cũ
-                                            router.replace("/(root)/booking"); // TODO: sửa lại đúng path route booking list của bạn
-                                        },
-                                    },
-                                ]
+                                [{text: "OK", onPress: () => {router.replace("/(root)/booking")}}]
                             );
                         } catch (error: any) {
-                            Alert.alert(
-                                "Huỷ thất bại",
-                                error?.message || "Không thể huỷ đặt chỗ, vui lòng thử lại."
-                            );
+                            Alert.alert("Huỷ thất bại",error?.message || "Không thể huỷ đặt chỗ, vui lòng thử lại.");
                         } finally {
                             setCancelling(false);
                         }
@@ -203,11 +203,16 @@ const BookingDetailScreen = () => {
                             <InfoRow label="Ngày khởi hành" value={fmtDate((booking as TourBookingItem).travelDate)} />
                             <InfoRow label="Số khách" value={`${booking.numGuests} người`} />
                         </>
-                    ) : (
+                    ) : type === "hotel" ?  (
                         <>
                             <InfoRow label="Loại phòng" value={(booking as HotelBookingItem).roomType} />
                             <InfoRow label="Nhận phòng" value={fmtDate((booking as HotelBookingItem).checkIn)} />
                             <InfoRow label="Trả phòng" value={fmtDate((booking as HotelBookingItem).checkOut)} />
+                            <InfoRow label="Số khách" value={`${booking.numGuests} người`} />
+                        </>
+                    ) : (
+                        <>
+                            <InfoRow label="Ngày tham quan" value={fmtDate((booking as AttractionBookingItem).visitDate)} />
                             <InfoRow label="Số khách" value={`${booking.numGuests} người`} />
                         </>
                     )}
@@ -278,13 +283,16 @@ const BookingDetailScreen = () => {
                         onPress={() => router.push({
                             pathname: "/review-form", params: {
                                 targetType: type,
-                                targetId: type === "tour" ? (booking as TourBookingItem).tourId : (booking as HotelBookingItem).hotelId,
+                                targetId: 
+                                    type === "tour" ? (booking as TourBookingItem).tourId : 
+                                    type === "hotel" ? (booking as HotelBookingItem).hotelId :
+                                    (booking as AttractionBookingItem).attractionId,
                                 targetTitle: title,
                             }
                         })}
                         className="h-14 rounded-2xl bg-white items-center justify-center"
                     >
-                        <Text className="text-black font-semibold text-base">Đánh giá tour</Text>
+                        <Text className="text-black font-semibold text-base">Đánh giá</Text>
                     </TouchableOpacity>
 
                     {(isPending || isConfirmed) && (

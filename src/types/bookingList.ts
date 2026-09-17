@@ -12,31 +12,44 @@ export interface TourBookingItem {
 }
 
 export interface HotelBookingItem {
-  id: string;
-  bookingCode: string;
-  roomId: string;
-  hotelId: string;
-  roomType: string;
-  hotelName: string;
-  thumbnailUrl: string | null;
-  checkIn: string;
-  checkOut: string;
-  numGuests: number;
-  totalPrice: number;
-  status: string;
-  createdAt: string;
+    id: string;
+    bookingCode: string;
+    roomId: string;
+    hotelId: string;
+    roomType: string;
+    hotelName: string;
+    thumbnailUrl: string | null;
+    checkIn: string;
+    checkOut: string;
+    numGuests: number;
+    totalPrice: number;
+    status: string;
+    createdAt: string;
 }
 
-// Dạng chuẩn hoá dùng chung để hiển thị, bất kể nguồn là tour hay hotel
+export interface AttractionBookingItem {
+    id: string;
+    bookingCode: string;
+    attractionId: string;
+    attractionName: string;
+    thumbnailUrl: string | null;
+    numGuests: number;
+    visitDate: string;
+    totalPrice: number;
+    status: string;
+    createdAt: string;
+}
+
+// Dạng chuẩn hoá dùng chung để hiển thị, bất kể nguồn là tour, hotel hay attraction
 export interface UnifiedBookingItem {
-  id: string;
-  type: "tour" | "hotel" | "attraction";
-  refId: string;
-  title: string;
-  dateLabel: string;
-  sortDate: string; // ISO gốc để sort, không dùng dateLabel đã format
-  thumbnailUrl: string | null;
-  totalPrice: number;
-  status: string;
-  bookingCode: string;
+    id: string;
+    type: "tour" | "hotel" | "attraction";
+    refId: string;
+    title: string;
+    dateLabel: string;
+    sortDate: string; // ISO gốc để sort, không dùng dateLabel đã format
+    thumbnailUrl: string | null;
+    totalPrice: number;
+    status: string;
+    bookingCode: string;
 }

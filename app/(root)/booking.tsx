@@ -1,6 +1,6 @@
 import CategoryChip from '@/src/components/explore/CategoryChip'
 import { useAuth } from '@/src/context/AuthContext'
-import { getHotelBookings, getTourBookings } from '@/src/services/bookingService'
+import { getAttractionBookings, getHotelBookings, getTourBookings } from '@/src/services/bookingService'
 import { UnifiedBookingItem } from '@/src/types/bookingList'
 import { getStatusMeta } from '@/src/utils/bookingStatus'
 import { Ionicons } from '@expo/vector-icons'
@@ -15,7 +15,6 @@ const fmtDate = (iso: string) => {
 };
 
 type BookingTab = "tour" | "hotel" | "attraction";
-
 const TABS: { key: BookingTab; label: string }[] = [
     { key: "tour", label: "Tour" },
     { key: "hotel", label: "Khách sạn" },
@@ -99,12 +98,11 @@ const BookingScreen = () => {
         } else {
             setError(null);
         }
-
         try {
-            const [tourBookings, hotelBookings] = await Promise.all([
+            const [tourBookings, hotelBookings, attractionBookings] = await Promise.all([
                 getTourBookings(accessToken),
                 getHotelBookings(accessToken),
-                // TODO: nối getAttractionBookings(accessToken) khi có API, map tương tự bên dưới
+                getAttractionBookings(accessToken)
             ]);
 
             const tourItems: UnifiedBookingItem[] = tourBookings.map((b) => ({
@@ -133,7 +131,20 @@ const BookingScreen = () => {
                 bookingCode: b.bookingCode,
             }));
 
-            const all = [...tourItems, ...hotelItems].sort(
+            const attractionItems: UnifiedBookingItem[] = attractionBookings.map((b) => ({
+                id: b.id,
+                type: "attraction",
+                refId: b.attractionId,
+                title: b.attractionName,
+                dateLabel: `Ngày thăm quan: ${fmtDate(b.visitDate)}`,
+                sortDate: b.visitDate,
+                thumbnailUrl: b.thumbnailUrl,
+                totalPrice: b.totalPrice,
+                status: b.status,
+                bookingCode: b.bookingCode,
+            }))
+
+            const all = [...tourItems, ...hotelItems, ...attractionItems].sort(
                 (a, b) => new Date(b.sortDate).getTime() - new Date(a.sortDate).getTime()
             );
             setItems(all);

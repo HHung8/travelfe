@@ -2,7 +2,9 @@ import PaymentMethodSelector, { PaymentMethod } from "@/src/components/booking/P
 import PricingSummary from "@/src/components/booking/PriceSummary";
 import StepIndicator from "@/src/components/booking/StepIndicator";
 import { useAuth } from "@/src/context/AuthContext";
+import { createHotelBooking } from "@/src/services/bookingService";
 import { getHotelById } from "@/src/services/hotelService";
+import { createPayment } from "@/src/services/paymentService";
 import { HotelDetail } from "@/src/types/hotel";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -10,8 +12,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const fmt = (iso: string) => { const d = new Date(iso); return `${d.getDate()}/${d.getMonth() + 1}`; };
-const genBookingCode = () => `HTL-${Date.now().toString().slice(-8)}-${Math.floor(Math.random() * 9000 + 1000)}`;
+const fmt = (iso: string) => { const d = new Date(iso); return `${d.getDate()}/${d.getMonth() + 1}`;};
+const PAYMENT_METHOD_LABEL: Record<PaymentMethod, string> = {
+  card: "Số tài khoản",
+  apple_pay: "Apple Pay",
+  wallet: "Ví điện tử",
+}
 
 export default function HotelPaymentScreen() {
   const router = useRouter();
@@ -48,6 +54,7 @@ export default function HotelPaymentScreen() {
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
   const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState<string | null> (null);
 
   const price = room?.pricePerNight ?? 0;
   const subtotal = price * nights * roomCount;
@@ -76,27 +83,44 @@ export default function HotelPaymentScreen() {
   }
 
   const handlePay = async () => {
-    if (!canPay || paying) return;
+    if(!canPay || paying) return;
     setPaying(true);
-    // TODO: replace with a real call once a "create booking" endpoint exists, e.g.
-    // await createHotelBooking(accessToken, { hotelId, roomId, checkIn, checkOut, rooms: roomCount, ...cardInfo })
-    await new Promise((r) => setTimeout(r, 1200));
-    setPaying(false);
-    router.push({
-      pathname: "/hotel-success",
-      params: {
-        hotelId: hotel.id,
-        roomType: room.roomType,
-        checkIn, checkOut,
-        rooms: String(roomCount),
-        total: String(total),
-        bookingCode: genBookingCode(),
-      },
-    });
+    setPayError(null);
+
+    try {
+      const booking = await createHotelBooking(accessToken, {
+        roomId, checkIn, checkOut, numGuests: roomCount
+      });
+      const payment = await createPayment(accessToken, {
+        bookingType: "hotel",
+        bookingId: booking.id,
+        amount: booking.totalPrice,
+        method: PAYMENT_METHOD_LABEL[method],
+      });
+      router.push({
+        pathname: "/hotel-success",
+        params: {
+          hotelId: hotel.id,
+          bookingId: booking.id,
+          bookingCode: booking.bookingCode,
+          roomType: booking.roomType,
+          checkIn: booking.checkIn,
+          checkOut: booking.checkOut,
+          rooms: String(roomCount),
+          total: String(booking.totalPrice),
+          paymentStatus: payment.status,
+        },
+      });
+    } catch (err: any) {
+      setPayError(err?.message || "Đặt phòng/thanh toán thất bại, vui lòng thử lại.")
+    } finally {
+      setPaying(false);
+    }
+
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#121212]">
+   <SafeAreaView className="flex-1 bg-[#121212]">
       <View className="flex-row items-center px-4 pt-2">
         <TouchableOpacity onPress={() => router.back()} className="p-2">
           <Ionicons name="chevron-back" size={24} color="#fff" />
@@ -134,6 +158,8 @@ export default function HotelPaymentScreen() {
             cvv={cvv} onChangeCvv={setCvv}
           />
         </View>
+
+        {!!payError && <Text className="text-red-400 text-sm mt-4 text-center">{payError}</Text>}
       </ScrollView>
 
       <View className="absolute bottom-0 left-0 right-0 px-6 pb-6 pt-4 bg-[#121212] border-t border-neutral-900">
