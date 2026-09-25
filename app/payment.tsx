@@ -4,7 +4,7 @@ import StepIndicator from "@/src/components/booking/StepIndicator";
 import SafeImage from "@/src/components/detail/SafeImage";
 import { useAuth } from "@/src/context/AuthContext";
 import { createTourBooking } from "@/src/services/bookingService";
-import { createPayment } from "@/src/services/paymentService";
+import { confirmPayment, createPayment, failPayment } from "@/src/services/paymentService";
 import { getTourById } from "@/src/services/tourService";
 import { TourDetail } from "@/src/types/tour";
 import { Ionicons } from "@expo/vector-icons";
@@ -87,6 +87,9 @@ export default function PaymentScreen() {
     setPaying(true);
     setPayError(null);
 
+    let bookingId: string | null = null;
+    let paymentId: string | null = null;
+
     try {
       // Bước 1: tạo booking
       const booking = await createTourBooking(accessToken, {
@@ -96,13 +99,21 @@ export default function PaymentScreen() {
         travelDate,
         specialRequest: specialRequest || undefined,
       });
+      bookingId = booking.id;
 
-      // Bước 2: tạo thanh toán dựa trên bookingId vừa tạo
+      // Bước 2: tạo giao dịch thanh toán (status: pending)
       const payment = await createPayment(accessToken, {
         bookingType: "tour",
         bookingId: booking.id,
         amount: booking.totalPrice,
         method: PAYMENT_METHOD_LABEL[method],
+      });
+      paymentId = payment.id;
+
+      // Bước 3: giả lập xử lý thẻ xong -> confirm thanh toán ngay
+      // (Khi tích hợp cổng thật, bước này sẽ không nằm ở đây nữa mà do webhook cổng thanh toán gọi)
+      const confirmed = await confirmPayment(accessToken, payment.id, {
+        transactionRef: `SIM-${Date.now()}`,
       });
 
       router.push({
@@ -114,15 +125,26 @@ export default function PaymentScreen() {
           travelDate: booking.travelDate,
           guests: String(booking.numGuests),
           total: String(booking.totalPrice),
-          paymentStatus: payment.status,
+          paymentStatus: confirmed.status, // giờ sẽ là "success"
         },
       });
     } catch (err: any) {
+      // Nếu đã tạo payment nhưng confirm thất bại -> đánh dấu fail thay vì để treo pending
+      if (paymentId) {
+        try {
+          await failPayment(accessToken, paymentId, {
+            gatewayResponse: err?.message,
+          });
+        } catch {
+          // bỏ qua lỗi phụ, ưu tiên hiển thị lỗi chính cho user
+        }
+      }
       setPayError(err?.message || "Thanh toán thất bại, vui lòng thử lại.");
     } finally {
       setPaying(false);
     }
   };
+
 
   return (
     <SafeAreaView className="flex-1 bg-[#121212]">

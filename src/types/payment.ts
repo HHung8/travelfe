@@ -19,3 +19,12 @@ export interface PaymentResult {
   paidAt: string | null;
   createdAt: string;
 }
+
+export interface ConfirmPaymentRequest {
+  transactionRef: string;
+  gatewayResponse?: string;
+}
+
+export interface FailPaymentRequest {
+  gatewayResponse?: string;
+}
