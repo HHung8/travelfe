@@ -13,7 +13,6 @@ export async function createReview(token: string | null, payload: CreateReviewRe
     return res.data;
 }
 
-
 export async function updateReview(token: string | null, id: string, payload: UpdateReviewRequest): Promise<ReviewDto> {
     const res = await putWithAuth<ReviewDto>(`/reviews/${id}`, token, payload as unknown as Record<string, unknown>);
     if (!res.data) throw new Error("Không cập nhật được đánh giá");

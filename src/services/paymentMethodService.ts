@@ -13,7 +13,6 @@ export async function addPaymentMethod(token: string | null, payload: AddPayment
     return res.data;
 }
 
-
 export async function setDefaultPaymentMethod(token: string | null, id:string):Promise<void> {
     await putWithAuth(`/payment-methods/${id}/default`, token, {});
 }

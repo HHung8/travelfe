@@ -12,7 +12,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const fmt = (iso: string) => { const d = new Date(iso); return `${d.getDate()}/${d.getMonth() + 1}`;};
+const fmt = (iso: string) => { const d = new Date(iso); return `${d.getDate()}/${d.getMonth() + 1}`};
+
 const PAYMENT_METHOD_LABEL: Record<PaymentMethod, string> = {
   card: "Số tài khoản",
   apple_pay: "Apple Pay",
