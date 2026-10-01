@@ -8,12 +8,26 @@ import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const fmt = (iso: string) => { const d = new Date(iso); return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`; };
+const fmt = (iso: string) => {
+  const d = new Date(iso);
+  return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+};
+
+const PAYMENT_STATUS_META: Record<string, { label: string; dotColor: string; bgColor: string; textColor: string }> = {
+  pending: { label: "Chờ xác nhận thanh toán", dotColor: "bg-yellow-400", bgColor: "bg-yellow-500/15", textColor: "text-yellow-400" },
+  success: { label: "Thanh toán thành công", dotColor: "bg-green-400", bgColor: "bg-green-500/15", textColor: "text-green-400" },
+  failed: { label: "Thanh toán thất bại", dotColor: "bg-red-400", bgColor: "bg-red-500/15", textColor: "text-red-400" },
+  refunded: { label: "Đã hoàn tiền", dotColor: "bg-neutral-400", bgColor: "bg-neutral-500/15", textColor: "text-neutral-400" },
+};
+
+function getPaymentStatusMeta(status?: string) {
+  return PAYMENT_STATUS_META[status ?? "pending"] ?? PAYMENT_STATUS_META.pending;
+}
 
 export default function AttractionSuccessScreen() {
   const router = useRouter();
   const { accessToken } = useAuth();
-  const { placeId, bookingId, bookingCode, visitDate, guests, total } = useLocalSearchParams<{
+  const { placeId, bookingId, bookingCode, visitDate, guests, total, paymentStatus } = useLocalSearchParams<{
     placeId: string; bookingId: string; bookingCode: string; visitDate: string; guests: string; total: string; paymentStatus: string;
   }>();
 
@@ -37,7 +51,15 @@ export default function AttractionSuccessScreen() {
           <Ionicons name="checkmark" size={40} color="#22c55e" />
         </View>
         <Text className="text-white text-xl font-bold">Đặt vé thành công!</Text>
-        <Text className="text-neutral-400 text-sm mt-2 text-center">Giao dịch đang chờ xác nhận</Text>
+         {(() => {
+                  const statusMeta = getPaymentStatusMeta(paymentStatus);
+                  return (
+                    <View className={`flex-row items-center ${statusMeta.bgColor} px-4 py-1.5 rounded-full mt-3`}>
+                      <View className={`w-2 h-2 rounded-full ${statusMeta.dotColor} mr-2`} />
+                      <Text className={`${statusMeta.textColor} text-sm font-medium`}>{statusMeta.label}</Text>
+                    </View>
+                  );
+                })()}
 
         <View className="bg-white rounded-2xl p-4 mt-6">
           <QRCode value={qrValue} size={140} backgroundColor="white" color="black" />

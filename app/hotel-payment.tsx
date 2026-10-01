@@ -4,7 +4,7 @@ import StepIndicator from "@/src/components/booking/StepIndicator";
 import { useAuth } from "@/src/context/AuthContext";
 import { createHotelBooking } from "@/src/services/bookingService";
 import { getHotelById } from "@/src/services/hotelService";
-import { createPayment } from "@/src/services/paymentService";
+import { confirmPayment, createPayment, failPayment } from "@/src/services/paymentService";
 import { HotelDetail } from "@/src/types/hotel";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -13,12 +13,13 @@ import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "rea
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const fmt = (iso: string) => { const d = new Date(iso); return `${d.getDate()}/${d.getMonth() + 1}`};
-
 const PAYMENT_METHOD_LABEL: Record<PaymentMethod, string> = {
   card: "Số tài khoản",
   apple_pay: "Apple Pay",
   wallet: "Ví điện tử",
 }
+
+
 
 export default function HotelPaymentScreen() {
   const router = useRouter();
@@ -92,12 +93,27 @@ export default function HotelPaymentScreen() {
       const booking = await createHotelBooking(accessToken, {
         roomId, checkIn, checkOut, numGuests: roomCount
       });
+
       const payment = await createPayment(accessToken, {
         bookingType: "hotel",
         bookingId: booking.id,
         amount: booking.totalPrice,
         method: PAYMENT_METHOD_LABEL[method],
       });
+
+      let confirmed;
+      try {
+          confirmed = await confirmPayment(accessToken, payment.id, {
+            transactionRef: `TNX${Date.now()}`,
+            gatewayResponse: JSON.stringify({status: "success", method}),
+          });
+      } catch (error) {
+          await failPayment(accessToken, payment.id, {
+            gatewayResponse: JSON.stringify({status: "failed"}),
+          }).catch(() => {});
+          throw error;
+      }
+
       router.push({
         pathname: "/hotel-success",
         params: {
@@ -109,7 +125,7 @@ export default function HotelPaymentScreen() {
           checkOut: booking.checkOut,
           rooms: String(roomCount),
           total: String(booking.totalPrice),
-          paymentStatus: payment.status,
+          paymentStatus: confirmed.status,
         },
       });
     } catch (err: any) {
@@ -117,7 +133,6 @@ export default function HotelPaymentScreen() {
     } finally {
       setPaying(false);
     }
-
   };
 
   return (

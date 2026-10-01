@@ -25,4 +25,5 @@ export async function failPayment(
   id: string,
   payload: FailPaymentRequest
 ): Promise<void> {
-  await postWithAuth(`/payments/${id}/fail`, token, {...payload});
+  await postWithAuth(`/payments/${id}/fail`, token, { ...payload });
+}

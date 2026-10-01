@@ -12,15 +12,28 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ViewShot from "react-native-view-shot";
 
 
-const fmt = (iso: string) => { 
-  const d = new Date(iso); 
+const fmt = (iso: string) => {
+  const d = new Date(iso);
   return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`
 };
-const PUBLIC_BASE_URL = "https://your-public-domain.com/api"; 
+
+const PAYMENT_STATUS_META: Record<string, { label: string; dotColor: string; bgColor: string; textColor: string }> = {
+  pending: { label: "Chờ xác nhận thanh toán", dotColor: "bg-yellow-400", bgColor: "bg-yellow-500/15", textColor: "text-yellow-400" },
+  success: { label: "Thanh toán thành công", dotColor: "bg-green-400", bgColor: "bg-green-500/15", textColor: "text-green-400" },
+  failed: { label: "Thanh toán thất bại", dotColor: "bg-red-400", bgColor: "bg-red-500/15", textColor: "text-red-400" },
+  refunded: { label: "Đã hoàn tiền", dotColor: "bg-neutral-400", bgColor: "bg-neutral-500/15", textColor: "text-neutral-400" },
+};
+
+function getPaymentStatusMeta(status?: string) {
+  return PAYMENT_STATUS_META[status ?? "pending"] ?? PAYMENT_STATUS_META.pending;
+}
+
+const PUBLIC_BASE_URL = "https://your-public-domain.com/api";
+
 export default function SuccessScreen() {
   const router = useRouter();
   const { accessToken } = useAuth();
-  const { tourId, bookingId, bookingCode, travelDate, guests, total } = useLocalSearchParams<{
+  const { tourId, bookingId, bookingCode, travelDate, guests, total, paymentStatus } = useLocalSearchParams<{
     tourId: string; bookingId: string; bookingCode: string; travelDate: string; guests: string; total: string; paymentStatus: string;
   }>();
 
@@ -40,9 +53,9 @@ export default function SuccessScreen() {
   useEffect(() => {
     Animated.spring(scaleAnim, {
       toValue: 1,
-      friction: 4, 
-      tension: 60, 
-      useNativeDriver:true,
+      friction: 4,
+      tension: 60,
+      useNativeDriver: true,
     }).start();
   }, []);
 
@@ -70,27 +83,27 @@ export default function SuccessScreen() {
   const handleShareQr = async () => {
     try {
       const uri = await qrShotRef.current?.capture?.();
-      if(!uri) return;
+      if (!uri) return;
       const canShare = await Sharing.isAvailableAsync();
-      if(canShare) {
+      if (canShare) {
         await Sharing.shareAsync(uri);
       }
     } catch (error) {
       console.log("share QR error", error);
     }
   }
-  
+
 
   const handleSaveQr = async () => {
     try {
       setSaving(true);
-      const {status} = await MediaLibrary.requestPermissionsAsync();
-      if(status !== "granted") {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== "granted") {
         console.log("Chưa cấp quyền lưu ảnh");
         return;
       }
       const uri = await qrShotRef.current?.capture?.();
-      if(!uri) return;
+      if (!uri) return;
       await MediaLibrary.saveToLibraryAsync(uri);
     } catch (error) {
       console.log("save QR error", error);
@@ -108,19 +121,24 @@ export default function SuccessScreen() {
         showsVerticalScrollIndicator={false}
       >
 
-        <Animated.View 
-            style={{transform: [{scale: scaleAnim}]}}
-            className="w-28 h-28 rounded-full bg-green-500/15 items-center justify-center mb-8"
+        <Animated.View
+          style={{ transform: [{ scale: scaleAnim }] }}
+          className="w-28 h-28 rounded-full bg-green-500/15 items-center justify-center mb-8"
         >
           <Ionicons name="checkmark" size={56} color="#22c55e" />
         </Animated.View>
 
         <Text className="text-white text-3xl font-bold">Đặt tour thành công!</Text>
 
-        <View className="flex-row items-center bg-yellow-500/15 px-4 py-1.5 rounded-full mt-3">
-          <View className="w-2 h-2 rounded-full bg-yellow-400 mr-2" />
-          <Text className="text-yellow-400 text-sm font-medium">Chờ xác nhận thanh toán</Text>
-        </View>
+        {(() => {
+          const statusMeta = getPaymentStatusMeta(paymentStatus);
+          return (
+            <View className={`flex-row items-center ${statusMeta.bgColor} px-4 py-1.5 rounded-full mt-3`}>
+              <View className={`w-2 h-2 rounded-full ${statusMeta.dotColor} mr-2`} />
+              <Text className={`${statusMeta.textColor} text-sm font-medium`}>{statusMeta.label}</Text>
+            </View>
+          );
+        })()}
 
         {/* QR code */}
         <ViewShot ref={qrShotRef} options={{ format: "png", quality: 1 }}>
@@ -132,7 +150,7 @@ export default function SuccessScreen() {
           Xuất trình mã khi tham gia tour
         </Text>
 
-         {/* Nút chia sẻ / lưu QR */}
+        {/* Nút chia sẻ / lưu QR */}
         <View className="flex-row gap-3 mt-4">
           <TouchableOpacity
             onPress={handleShareQr}
@@ -156,9 +174,9 @@ export default function SuccessScreen() {
             )}
           </TouchableOpacity>
         </View>
-    
 
-       <View className="w-full bg-neutral-900 rounded-3xl p-6 mt-8">
+
+        <View className="w-full bg-neutral-900 rounded-3xl p-6 mt-8">
           <Text className="text-neutral-400 text-sm text-center mb-2">Mã booking</Text>
           <Text className="text-indigo-400 font-bold text-center text-xl mb-6">{bookingCode}</Text>
           <View className="gap-4">
@@ -184,9 +202,9 @@ export default function SuccessScreen() {
             </View>
           </View>
         </View>
-            
+
         {/* Thông tin hỗ trợ */}
-         <TouchableOpacity className="flex-row items-center mt-6">
+        <TouchableOpacity className="flex-row items-center mt-6">
           <Ionicons name="help-circle-outline" size={18} color="#737373" />
           <Text className="text-neutral-500 text-sm ml-1.5">Cần hỗ trợ? Liên hệ với chúng tôi</Text>
         </TouchableOpacity>
