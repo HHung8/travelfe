@@ -2,6 +2,7 @@ import { AttractionSimple } from "../types/attraction";
 import { ExploreType } from "../types/explore";
 import { Hotel } from "../types/hotel";
 import { Tour } from "../types/tour";
+import { resolveImageUrl } from "./image";
 
 export type ExploreItem = {
     id:string;
@@ -22,11 +23,11 @@ export type ExploreItem = {
 export function mapTour(item: Tour): ExploreItem {
     return {
         id: item.id,
-        type: "tour",   
+        type: "tour",
         title: item.title,
         subtitle: item.destinationName,
         location: item.destinationName,
-        thumbnailUrl: item.thumbnailUrl,
+        thumbnailUrl: resolveImageUrl(item.thumbnailUrl),
         price: item.discountPrice && item.discountPrice > 0 ? item.discountPrice : item.price,
         rating: item.averageRating,
         reviewCount: item.reviewCount,
@@ -34,18 +35,18 @@ export function mapTour(item: Tour): ExploreItem {
 }
 
 export function mapHotel(hotel: Hotel): ExploreItem {
-  return {
-    id: hotel.id,
-    type: "hotel",
-    title: hotel.name,
-    subtitle: hotel.destinationName,
-    location: hotel.destinationName,
-    description: hotel.description,
-    thumbnailUrl: hotel.thumbnailUrl,
-    price: hotel.minRoomPrice ?? null, // null = "chưa có giá" / "liên hệ", khác với 0
-    rating: hotel.averageRating,
-    reviewCount: hotel.reviewCount,
-  };
+    return {
+        id: hotel.id,
+        type: "hotel",
+        title: hotel.name,
+        subtitle: hotel.destinationName,
+        location: hotel.destinationName,
+        description: hotel.description,
+        thumbnailUrl: resolveImageUrl(hotel.thumbnailUrl),
+        price: hotel.minRoomPrice ?? null, // null = "chưa có giá" / "liên hệ", khác với 0
+        rating: hotel.averageRating,
+        reviewCount: hotel.reviewCount,
+    };
 }
 
 export function mapAttraction(item: AttractionSimple): ExploreItem {
@@ -54,7 +55,7 @@ export function mapAttraction(item: AttractionSimple): ExploreItem {
         type: "attraction",
         title: item.name,
         subtitle: item.destinationName ?? "",
-        thumbnailUrl: item.thumbnailUrl,
+        thumbnailUrl: resolveImageUrl(item.thumbnailUrl),
         price: item.entryFee ?? null,
         rating: null,
         reviewCount: 0,

@@ -2,11 +2,14 @@ import RoomCard from '@/src/components/detail/RoomCard';
 import { useAuth } from '@/src/context/AuthContext';
 import { getHotelById } from '@/src/services/hotelService';
 import { HotelDetail } from '@/src/types/hotel';
+import { resolveImageUrl } from '@/src/utils/image';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+
 
 const HotelDetailScreen = () => {
   const { hotelId } = useLocalSearchParams<{ hotelId: string }>();
@@ -16,6 +19,9 @@ const HotelDetailScreen = () => {
   const [hotel, setHotel] = useState<HotelDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const imageUri = resolveImageUrl(hotel?.thumbnailUrl);
+  console.log("thumbnailUrl:", hotel?.thumbnailUrl, "=> imageUri:", imageUri);
 
   const loadHotel = useCallback(async () => {
     if (!hotelId) return;
@@ -62,8 +68,13 @@ const HotelDetailScreen = () => {
     <SafeAreaView className="flex-1 bg-[#121212]" edges={["top", "left", "right"]}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 130 }}>
         <View className="relative items-center justify-center" style={{ height: 240, backgroundColor: "#27272a" }}>
-          {hotel.thumbnailUrl ? (
-            <Image source={{ uri: hotel.thumbnailUrl }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
+          {imageUri ? (
+            <Image
+              source={{ uri: imageUri }}
+              style={{ width: "100%", height: "100%" }}
+              resizeMode="cover"
+              onError={(e) => console.log("IMG ERR", imageUri, e.nativeEvent)}
+            />
           ) : (
             <Text style={{ fontSize: 72 }}>🏨</Text>
           )}
