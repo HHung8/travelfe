@@ -5,6 +5,7 @@ import TourDetailSkeleton from '@/src/components/detail/TourDetailSkeleton';
 import { useAuth } from '@/src/context/AuthContext';
 import { getTourById } from '@/src/services/tourService';
 import { TourDetail } from '@/src/types/tour';
+import { resolveImageUrl } from '@/src/utils/image';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -140,7 +141,7 @@ const TourDetailScreen = () => {
 
     const hasDiscount = tour.discountPrice != null && tour.discountPrice < tour.price;
     const finalPrice = hasDiscount ? tour.discountPrice! : tour.price;
-
+    console.log("tour image:", tour.thumbnailUrl, "=>", resolveImageUrl(tour.thumbnailUrl));
     return (
         <SafeAreaView className="flex-1 bg-[#121212]" edges={["left", "right"]}>
             <ScrollView
@@ -152,7 +153,7 @@ const TourDetailScreen = () => {
             >
                 <View className="relative">
                     <Hero
-                        image={tour.thumbnailUrl}
+                        image={resolveImageUrl(tour.thumbnailUrl)}
                         rating={tour.averageRating}
                         reviews={tour.reviewCount}
                         itemType="tour"
@@ -215,7 +216,7 @@ const TourDetailScreen = () => {
                                 keyExtractor={(uri, idx) => `${idx}-${uri}`}
                                 showsHorizontalScrollIndicator={false}
                                 renderItem={({ item }) => (
-                                    <SafeImage uri={item} className="w-32 h-32 rounded-2xl mr-3" resizeMode="cover" />
+                                    <SafeImage uri={resolveImageUrl(item) ?? ""} className="w-32 h-32 rounded-2xl mr-3" resizeMode="cover" />
                                 )}
                             />
                         </View>

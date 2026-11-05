@@ -3,6 +3,7 @@ import { useAuth } from '@/src/context/AuthContext'
 import { getAttractionBookings, getHotelBookings, getTourBookings } from '@/src/services/bookingService'
 import { UnifiedBookingItem } from '@/src/types/bookingList'
 import { getStatusMeta } from '@/src/utils/bookingStatus'
+import { resolveImageUrl } from '@/src/utils/image'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -53,7 +54,12 @@ function BookingCard({ item, onPress }: { item: CardData; onPress: () => void })
         >
             <View className="w-16 h-16 rounded-xl items-center justify-center bg-neutral-800 overflow-hidden">
                 {item.thumbnailUrl ? (
-                    <Image source={{ uri: item.thumbnailUrl }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
+                    <Image 
+                        source={{ uri: item.thumbnailUrl }} 
+                        style={{ width: "100%", height: "100%" }} 
+                        resizeMode="cover" 
+                        onError={(e) => console.log("BOOKING IMG ERR", item.thumbnailUrl, e.nativeEvent)} 
+                    />
                 ) : (
                     <Text style={{ fontSize: 28 }}>{typeEmoji[item.type]}</Text>
                 )}
@@ -112,7 +118,7 @@ const BookingScreen = () => {
                 title: b.tourTitle,
                 dateLabel: `Khởi hành: ${fmtDate(b.travelDate)}`,
                 sortDate: b.travelDate,
-                thumbnailUrl: b.thumbnailUrl,
+                thumbnailUrl: resolveImageUrl(b.thumbnailUrl),
                 totalPrice: b.totalPrice,
                 status: b.status,
                 bookingCode: b.bookingCode,
@@ -125,7 +131,7 @@ const BookingScreen = () => {
                 title: b.hotelName,
                 dateLabel: `${fmtDate(b.checkIn)} - ${fmtDate(b.checkOut)}`,
                 sortDate: b.checkIn,
-                thumbnailUrl: b.thumbnailUrl,
+                thumbnailUrl: resolveImageUrl(b.thumbnailUrl),
                 totalPrice: b.totalPrice,
                 status: b.status,
                 bookingCode: b.bookingCode,
@@ -138,7 +144,7 @@ const BookingScreen = () => {
                 title: b.attractionName,
                 dateLabel: `Ngày thăm quan: ${fmtDate(b.visitDate)}`,
                 sortDate: b.visitDate,
-                thumbnailUrl: b.thumbnailUrl,
+                thumbnailUrl: resolveImageUrl(b.thumbnailUrl),
                 totalPrice: b.totalPrice,
                 status: b.status,
                 bookingCode: b.bookingCode,

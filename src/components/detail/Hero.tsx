@@ -3,33 +3,34 @@ import { toggleWishList } from '@/src/services/wishlishService';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ImageBackground, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type WishlistItemType = "tour" | "hotel" | "destination";
 
 type HeroProps = {
-  image: string;
+  image?: string | null;
   rating?: number | null;
   reviews?: number | null;
-  itemType?: WishlistItemType
+  itemType?: WishlistItemType;
   itemId?: string;
-  initialWishlisted?:boolean
-}; 
+  initialWishlisted?: boolean;
+};
 
 const Hero = ({ image, rating, reviews, itemType, itemId, initialWishlisted = false }: HeroProps) => {
+   console.log("HERO render, image =", image);
   const router = useRouter();
   const { accessToken } = useAuth();
-  
+
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
   const [togglingWishlist, setTogglingWishlist] = useState(false);
   const canWishlist = !!itemType && !!itemId;
 
   const handleToggleWishlist = async () => {
-    if(!canWishlist || togglingWishlist) return;
+    if (!canWishlist || togglingWishlist) return;
     setTogglingWishlist(true);
     const prevState = isWishlisted;
     setIsWishlisted(!prevState);
-    
+
     try {
       const res = await toggleWishList(accessToken, itemType!, itemId!);
       setIsWishlisted(res.data?.isWishlisted ?? !prevState);
@@ -39,17 +40,32 @@ const Hero = ({ image, rating, reviews, itemType, itemId, initialWishlisted = fa
     } finally {
       setTogglingWishlist(false);
     }
-  }
-
+  };
 
   return (
-    <ImageBackground
-      source={{ uri: image }}
-      className="h-80 justify-between"
-      imageStyle={{ borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }}
+    <View
+      style={{
+        height: 320,
+        justifyContent: "space-between",
+        backgroundColor: "#27272a",
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+        overflow: "hidden",
+      }}
     >
+      {image ? (
+        <Image
+          source={{ uri: image }}
+          style={StyleSheet.absoluteFillObject}
+          resizeMode="cover"
+          onLoad={() => console.log("HERO IMG OK")}
+          onError={(e) => console.log("HERO IMG ERR", image, e.nativeEvent)}
+        />
+      ) : null}
+
       {/* Overlay */}
-      <View className="absolute inset-0 bg-black/25 rounded-b-[30px]" />
+      <View style={[StyleSheet.absoluteFillObject, { backgroundColor: "rgba(0,0,0,0.25)" }]} />
+
       {/* Top Buttons */}
       <View className="flex-row justify-between px-6 pt-14">
         <TouchableOpacity
@@ -65,11 +81,11 @@ const Hero = ({ image, rating, reviews, itemType, itemId, initialWishlisted = fa
             disabled={togglingWishlist}
             className="w-11 h-11 rounded-full bg-black/40 items-center justify-center"
           >
-              <Ionicons
-                name={isWishlisted ? "heart" : "heart-outline"}
-                size={24}
-                color={isWishlisted ? "#ef4444" : "white"}
-              />
+            <Ionicons
+              name={isWishlisted ? "heart" : "heart-outline"}
+              size={24}
+              color={isWishlisted ? "#ef4444" : "white"}
+            />
           </TouchableOpacity>
         )}
       </View>
@@ -77,16 +93,16 @@ const Hero = ({ image, rating, reviews, itemType, itemId, initialWishlisted = fa
       {/* Rating */}
       <View className="px-6 pb-6">
         <View className="self-start bg-white rounded-full px-4 py-2 flex-row items-center">
-          <Ionicons name="star" size={16}color="#FBBF24"/>
+          <Ionicons name="star" size={16} color="#FBBF24" />
           <Text className="ml-2 font-semibold text-gray-800">
-            {rating != null && reviews != null 
-             ? `${rating} (${reviews} đánh giá)`
-             : "Chưa có đánh giá"}
+            {rating != null && reviews != null
+              ? `${rating} (${reviews} đánh giá)`
+              : "Chưa có đánh giá"}
           </Text>
         </View>
       </View>
-    </ImageBackground>
+    </View>
   );
 };
 
-export default Hero
+export default Hero;
