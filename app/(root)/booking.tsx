@@ -110,6 +110,9 @@ const BookingScreen = () => {
                 getHotelBookings(accessToken),
                 getAttractionBookings(accessToken)
             ]);
+            console.log("tour bookings thumbs", tourBookings.map((b) => b.thumbnailUrl));
+            console.log("hotel bookings thumbs:", hotelBookings.map((b) => b.thumbnailUrl));
+            console.log("attractionBookings bookings thumbs:", attractionBookings.map((b) => b.thumbnailUrl));
 
             const tourItems: UnifiedBookingItem[] = tourBookings.map((b) => ({
                 id: b.id,
