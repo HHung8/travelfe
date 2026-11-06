@@ -1,11 +1,17 @@
 import { useAuth } from '@/src/context/AuthContext';
-import { toggleWishList } from '@/src/services/wishlishService';
+import {
+  getCachedWishlistStatus,
+  getDestinationWishlistStatus,
+  getTourWishlistStatus,
+  setCachedWishlistStatus,
+  toggleWishList,
+} from '@/src/services/wishlishService';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-type WishlistItemType = "tour" | "hotel" | "destination";
+type WishlistItemType = "tour" | "hotel" | "destination" | "attraction";
 
 type HeroProps = {
   image?: string | null;
@@ -21,22 +27,87 @@ const Hero = ({ image, rating, reviews, itemType, itemId, initialWishlisted = fa
   const router = useRouter();
   const { accessToken } = useAuth();
 
-  const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
+  const [isWishlisted, setIsWishlisted] = useState(() =>
+    itemType && itemId
+      ? getCachedWishlistStatus(accessToken, itemType, itemId) ?? initialWishlisted
+      : initialWishlisted
+  );
+  const [loadingWishlistStatus, setLoadingWishlistStatus] = useState(
+    (itemType === 'tour' || itemType === 'destination') &&
+      !!itemId &&
+      getCachedWishlistStatus(accessToken, itemType, itemId) === undefined
+  );
+  const [wishlistStatusError, setWishlistStatusError] = useState(false);
   const [togglingWishlist, setTogglingWishlist] = useState(false);
   const canWishlist = !!itemType && !!itemId;
 
+  useEffect(() => {
+    if (!canWishlist || !itemType || !itemId) return;
+
+    const cachedStatus = getCachedWishlistStatus(accessToken, itemType, itemId);
+    setIsWishlisted(cachedStatus ?? initialWishlisted);
+
+    if (cachedStatus !== undefined || (itemType !== 'tour' && itemType !== 'destination')) return;
+
+    let active = true;
+    setLoadingWishlistStatus(true);
+    setWishlistStatusError(false);
+    (itemType === 'tour'
+      ? getTourWishlistStatus(accessToken, itemId)
+      : getDestinationWishlistStatus(accessToken, itemId))
+      .then((status) => {
+        if (active) setIsWishlisted(status);
+      })
+      .catch((error: unknown) => {
+        console.error('Failed to load tour wishlist status', error);
+        if (active) {
+          setWishlistStatusError(true);
+          Alert.alert('Không thể tải wishlist', 'Vui lòng thử lại sau.');
+        }
+      })
+      .finally(() => {
+        if (active) setLoadingWishlistStatus(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [accessToken, canWishlist, initialWishlisted, itemId, itemType]);
+
   const handleToggleWishlist = async () => {
-    if (!canWishlist || togglingWishlist) return;
+    if (!canWishlist || !itemType || !itemId || togglingWishlist || loadingWishlistStatus) return;
+    if (wishlistStatusError && (itemType === 'tour' || itemType === 'destination')) {
+      setLoadingWishlistStatus(true);
+      setWishlistStatusError(false);
+      try {
+        const status =
+          itemType === 'tour'
+            ? await getTourWishlistStatus(accessToken, itemId)
+            : await getDestinationWishlistStatus(accessToken, itemId);
+        setIsWishlisted(status);
+      } catch (error) {
+        console.error('Failed to retry tour wishlist status', error);
+        setWishlistStatusError(true);
+        Alert.alert('Không thể tải wishlist', 'Vui lòng thử lại sau.');
+      } finally {
+        setLoadingWishlistStatus(false);
+      }
+      return;
+    }
+
     setTogglingWishlist(true);
     const prevState = isWishlisted;
     setIsWishlisted(!prevState);
 
     try {
-      const res = await toggleWishList(accessToken, itemType!, itemId!);
-      setIsWishlisted(res.data?.isWishlisted ?? !prevState);
+      await toggleWishList(accessToken, itemType, itemId);
+      const nextState = !prevState;
+      setIsWishlisted(nextState);
+      setCachedWishlistStatus(accessToken, itemType, itemId, nextState);
     } catch (error) {
       console.log("error toggle wishlist", error);
       setIsWishlisted(prevState);
+      Alert.alert('Không thể cập nhật wishlist', 'Vui lòng thử lại.');
     } finally {
       setTogglingWishlist(false);
     }
@@ -78,7 +149,11 @@ const Hero = ({ image, rating, reviews, itemType, itemId, initialWishlisted = fa
         {canWishlist && (
           <TouchableOpacity
             onPress={handleToggleWishlist}
-            disabled={togglingWishlist}
+            disabled={
+              togglingWishlist ||
+              loadingWishlistStatus ||
+              (wishlistStatusError && itemType !== 'tour' && itemType !== 'destination')
+            }
             className="w-11 h-11 rounded-full bg-black/40 items-center justify-center"
           >
             <Ionicons

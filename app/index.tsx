@@ -7,6 +7,5 @@ export default function Index() {
   if(user) {
     return <Redirect href="/(root)/home" />;
   }
-  return <Redirect href="/login" />;
+  return <Redirect href="/(auth)/login" />;
 }
-

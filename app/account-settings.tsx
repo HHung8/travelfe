@@ -82,7 +82,6 @@ export default function AccountSettingsScreen() {
                         try {
                             await deleteAccount(accessToken);
                             await logout();
-                            router.replace("/(auth)/login");
                         } catch (err: any) {
                             Alert.alert("Lỗi", err?.message || "Không xoá được tài khoản");
                         }

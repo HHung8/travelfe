@@ -1,12 +1,18 @@
 import RoomCard from '@/src/components/detail/RoomCard';
 import { useAuth } from '@/src/context/AuthContext';
 import { getHotelById } from '@/src/services/hotelService';
+import {
+  getCachedWishlistStatus,
+  getHotelWishlistStatus,
+  setCachedWishlistStatus,
+  toggleWishList,
+} from '@/src/services/wishlishService';
 import { HotelDetail } from '@/src/types/hotel';
 import { resolveImageUrl } from '@/src/utils/image';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -15,7 +21,14 @@ const HotelDetailScreen = () => {
   const { hotelId } = useLocalSearchParams<{ hotelId: string }>();
   const router = useRouter();
   const { accessToken } = useAuth();
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(
+    () => !!hotelId && (getCachedWishlistStatus(accessToken, 'hotel', hotelId) ?? false)
+  );
+  const [loadingFavoriteStatus, setLoadingFavoriteStatus] = useState(
+    () => !!hotelId && getCachedWishlistStatus(accessToken, 'hotel', hotelId) === undefined
+  );
+  const [favoriteStatusError, setFavoriteStatusError] = useState(false);
+  const [togglingFavorite, setTogglingFavorite] = useState(false);
   const [hotel, setHotel] = useState<HotelDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +53,74 @@ const HotelDetailScreen = () => {
   useEffect(() => {
     loadHotel();
   }, [loadHotel]);
+
+  useEffect(() => {
+    if (!hotelId) return;
+
+    const cachedStatus = getCachedWishlistStatus(accessToken, 'hotel', hotelId);
+    if (cachedStatus !== undefined) {
+      setIsFavorite(cachedStatus);
+      setLoadingFavoriteStatus(false);
+      return;
+    }
+
+    let active = true;
+    setLoadingFavoriteStatus(true);
+    setFavoriteStatusError(false);
+    getHotelWishlistStatus(accessToken, hotelId)
+      .then((status) => {
+        if (active) setIsFavorite(status);
+      })
+      .catch((error: unknown) => {
+        console.error('Failed to load hotel wishlist status', error);
+        if (active) {
+          setFavoriteStatusError(true);
+          Alert.alert('Không thể tải wishlist', 'Vui lòng thử lại sau.');
+        }
+      })
+      .finally(() => {
+        if (active) setLoadingFavoriteStatus(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [accessToken, hotelId]);
+
+  const handleToggleFavorite = async () => {
+    if (!hotel || togglingFavorite || loadingFavoriteStatus) return;
+    if (favoriteStatusError) {
+      setLoadingFavoriteStatus(true);
+      setFavoriteStatusError(false);
+      try {
+        const status = await getHotelWishlistStatus(accessToken, hotel.id);
+        setIsFavorite(status);
+      } catch (error) {
+        console.error('Failed to retry hotel wishlist status', error);
+        setFavoriteStatusError(true);
+        Alert.alert('Không thể tải wishlist', 'Vui lòng thử lại sau.');
+      } finally {
+        setLoadingFavoriteStatus(false);
+      }
+      return;
+    }
+
+    const previousStatus = isFavorite;
+    setIsFavorite(!previousStatus);
+    setTogglingFavorite(true);
+    try {
+      await toggleWishList(accessToken, 'hotel', hotel.id);
+      const nextStatus = !previousStatus;
+      setIsFavorite(nextStatus);
+      setCachedWishlistStatus(accessToken, 'hotel', hotel.id, nextStatus);
+    } catch (error) {
+      console.error('Failed to toggle hotel wishlist', error);
+      setIsFavorite(previousStatus);
+      Alert.alert('Không thể cập nhật wishlist', 'Vui lòng thử lại.');
+    } finally {
+      setTogglingFavorite(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -82,7 +163,11 @@ const HotelDetailScreen = () => {
             <TouchableOpacity onPress={() => router.back()} className="w-10 h-10 rounded-full bg-black/40 items-center justify-center">
               <Ionicons name="chevron-back" size={22} color="#fff" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setIsFavorite((f) => !f)} className="w-10 h-10 rounded-full bg-black/40 items-center justify-center">
+            <TouchableOpacity
+              onPress={handleToggleFavorite}
+              disabled={togglingFavorite || loadingFavoriteStatus}
+              className="w-10 h-10 rounded-full bg-black/40 items-center justify-center"
+            >
               <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={20} color={isFavorite ? "#ef4444" : "#fff"} />
             </TouchableOpacity>
           </View>

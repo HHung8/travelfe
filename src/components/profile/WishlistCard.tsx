@@ -15,27 +15,30 @@ const WishlistCard = ({ title, subtitle, thumbnailUrl, price, rating, onPress } 
     return (
         <TouchableOpacity
             onPress={onPress}
-            className="bg-[#303030] rounded-2xl p-3 mb-4 flex-row items-center"
+            activeOpacity={0.8}
+            className="mb-3 min-h-[92px] flex-row items-center rounded-2xl border border-white/5 bg-[#242424] p-3"
         >
-            <View className="w-16 h-16 rounded-xl overflow-hidden bg-neutral-700">
+            <View className="h-[68px] w-[68px] shrink-0 overflow-hidden rounded-xl bg-neutral-700">
                 <SafeImage uri={thumbnailUrl} className="w-full h-full" resizeMode="cover" />
             </View>
 
-            <View className="flex-1 ml-3">
-                <Text className="text-white font-bold text-base" numberOfLines={1}>{title}</Text>
-                <Text className="text-neutral-400 text-xs mt-1" numberOfLines={1}>{subtitle}</Text>
-                <View className="flex-row items-center mt-1">
+            <View className="ml-3 min-w-0 flex-1 justify-center">
+                <Text className="text-base font-bold leading-5 text-white" numberOfLines={2}>{title}</Text>
+                {!!subtitle && (
+                    <Text className="mt-1 text-xs text-neutral-400" numberOfLines={1}>{subtitle}</Text>
+                )}
+                <View className="mt-1.5 flex-row items-center">
                     {rating != null && (
                         <>
                             <Ionicons name="star" size={12} color="#facc15" />
-                            <Text className="text-neutral-400 text-xs ml-1 mr-2">{rating}</Text>
+                            <Text className="ml-1 mr-2 text-xs text-neutral-400">{rating.toFixed(1)}</Text>
                         </>
                     )}
-                    <Text className="text-violet-500 font-bold text-sm">{price}</Text>
+                    <Text className="shrink text-sm font-bold text-violet-400" numberOfLines={1}>{price}</Text>
                 </View>
             </View>
 
-            <Ionicons name="heart" size={20} color="#ef4444" />
+            <Ionicons name="heart" size={20} color="#ef4444" style={{ marginLeft: 8 }} />
         </TouchableOpacity>
     )
 }

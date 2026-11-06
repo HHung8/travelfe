@@ -1,6 +1,7 @@
 import * as SecureStore from "expo-secure-store";
-import { createContext, useContext, useEffect, useState } from "react";
-import { loginApi, registerApi } from "../services/api";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { loginApi, registerApi, setUnauthorizedHandler } from "../services/api";
+import { clearWishlistCache } from "../services/wishlishService";
 import { AuthData, AuthUser } from "../types/auth";
 
 type AuthContextType = {
@@ -48,10 +49,33 @@ export function AuthProvider({children}:{children: React.ReactNode}) {
       restoreSession();
     },[])
 
+    const logout = useCallback(async () => {
+      clearWishlistCache();
+      setAccessToken(null);
+      setRefreshToken(null);
+      setUser(null);
+      await Promise.all([
+        SecureStore.deleteItemAsync("accessToken"),
+        SecureStore.deleteItemAsync("refreshToken"),
+        SecureStore.deleteItemAsync("user"),
+      ]);
+    }, []);
+
+    useEffect(() => {
+      setUnauthorizedHandler(() => {
+        void logout().catch((error) => {
+          console.error("Failed to clear expired session", error);
+        });
+      });
+
+      return () => setUnauthorizedHandler(null);
+    }, [logout]);
+
     async function login(email:string, password:string) {
       const res = await loginApi(email,password);
       if(!res.data) throw new Error("Không nhận được dữ liệu đăng nhập");
       await persistAuthData(res.data);
+      clearWishlistCache();
       setAccessToken(res.data.accessToken);
       setRefreshToken(res.data.refreshToken);
       setUser(res.data.user);
@@ -61,19 +85,11 @@ export function AuthProvider({children}:{children: React.ReactNode}) {
       const res = await registerApi(fullName, email, password, phone);
       if(!res.data) throw new Error("Không nhập được dữ liệu đăng ký.");
       await persistAuthData(res.data);
+      clearWishlistCache();
       setAccessToken(res.data.accessToken);
       setRefreshToken(res.data.refreshToken);
       setUser(res.data.user);
     }
-
-    async function logout() {
-      await SecureStore.deleteItemAsync("accessToken");
-      await SecureStore.deleteItemAsync("refreshToken");
-      await SecureStore.deleteItemAsync("user");
-      setAccessToken(null);
-      setRefreshToken(null);
-      setUser(null);
-    } 
 
     async function updateUser(paratial: Partial<AuthUser>) {
         setUser((prev) => {

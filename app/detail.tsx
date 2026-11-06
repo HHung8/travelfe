@@ -12,6 +12,7 @@ import { AttractionSimple } from '@/src/types/attraction'
 import { DestinationDetail } from '@/src/types/detinationdetail'
 import { TourSimple } from '@/src/types/tour'
 import { getDistanceKm } from '@/src/utils/distance'
+import { resolveImageUrl } from '@/src/utils/image'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, FlatList, ScrollView, Text, View } from 'react-native'
@@ -104,7 +105,7 @@ const DetailScreen = () => {
         <SafeAreaView className="flex-1 bg-[#121212]" edges={["left", "right"]}>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 130 }}>
                 <Hero
-                    image={destination.thumbnailUrl || FALLBACK_IMAGE}
+                    image={resolveImageUrl(destination.thumbnailUrl) ?? FALLBACK_IMAGE}
                     itemType="destination"
                     itemId={destination.id}
                 />

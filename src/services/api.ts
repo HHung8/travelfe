@@ -26,13 +26,27 @@ type ApiResponse<T> = {
     errors: unknown;
 };
 
+type UnauthorizedHandler = () => void;
+let unauthorizedHandler: UnauthorizedHandler | null = null;
+
+export function setUnauthorizedHandler(handler: UnauthorizedHandler | null) {
+  unauthorizedHandler = handler;
+}
+
 function friendlyErrorMessage(raw: string, status: number): string {
     if(status === 401) return "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại";
     if(status >= 500) return "Hệ thống đang gặp sự cố, vui lòng thử lại sau.";
     return raw.length > 200 ? "Có lỗi xảy ra, vui lòng thử lại." : raw; 
 }
 
-async function parseResponse<T>(res: Response): Promise<ApiResponse<T>> {
+async function parseResponse<T>(
+  res: Response,
+  handleUnauthorized = true
+): Promise<ApiResponse<T>> {
+    if (res.status === 401 && handleUnauthorized) {
+        unauthorizedHandler?.();
+    }
+
     const rawText = await res.text();
     let json: ApiResponse<T> | null = null;
     try {
@@ -55,7 +69,7 @@ async function request<T>(path: string, body: Record<string, unknown>): Promise<
     headers: { Accept: "*/*", "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  return parseResponse<T>(res);
+  return parseResponse<T>(res, false);
 }
 
 export async function getWithAuth<T>(
@@ -75,6 +89,8 @@ export async function getWithAuth<T>(
     method: "GET",
     headers: {
       Accept: "*/*",
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });

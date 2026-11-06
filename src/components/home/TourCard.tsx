@@ -1,5 +1,6 @@
 
 import { Tour } from '@/src/types/tour';
+import { resolveImageUrl } from '@/src/utils/image';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
@@ -12,6 +13,7 @@ const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1500835556837-99ac94a9
 
 const TourCard = ({ item, onPress }: Props) => {
   const hasDiscount = item.discountPrice != null && item.discountPrice > 0;
+  const imageUri = resolveImageUrl(item.thumbnailUrl) ?? FALLBACK_IMAGE;
 
   return (
     <TouchableOpacity
@@ -19,7 +21,7 @@ const TourCard = ({ item, onPress }: Props) => {
       className="bg-[#303030] rounded-2xl p-4 mb-4 flex-row items-center"
     >
       <Image 
-        source={{uri: item.thumbnailUrl || FALLBACK_IMAGE}}
+        source={{uri: imageUri}}
         className="w-16 h-16 rounded-xl"
         resizeMode="cover"
       />

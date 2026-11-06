@@ -14,20 +14,20 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 const explore = () => {
   const router = useRouter();
-  const {accessToken} = useAuth();
-  const [activeType, setActiveType] = useState<"all" | ExploreType>("all");
+  const { accessToken } = useAuth();
+  const [activeType, setActiveType] = useState<ExploreType>("tour");
   const [exploreData, setExploreData] = useState<ExploreItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  const loadExplore = useCallback( async () => {
+
+  const loadExplore = useCallback(async () => {
     try {
       setError(null);
       const [toursRes, hotelsRes, attractionsRes] = await Promise.all([
         getTours(accessToken, 1, 20),
         getHotels(accessToken, 1, 20),
-        getAttractions(accessToken, 1,20),
+        getAttractions(accessToken, 1, 20),
       ]);
       const merged: ExploreItem[] = [
         ...(toursRes.data?.items ?? []).map(mapTour),
@@ -35,11 +35,11 @@ const explore = () => {
         ...(attractionsRes.data?.items ?? []).map(mapAttraction),
       ];
       setExploreData(merged);
-    } catch (error:any) {
-        setError(error?.message ?? "Không thể tải dữ liệu khám phá");
+    } catch (error: any) {
+      setError(error?.message ?? "Không thể tải dữ liệu khám phá");
     } finally {
-        setLoading(false);
-        setRefreshing(false);
+      setLoading(false);
+      setRefreshing(false);
     }
   }, [accessToken])
 
@@ -51,66 +51,66 @@ const explore = () => {
     setRefreshing(true);
     loadExplore();
   };
-  
+
   const filteredData = useMemo(
-    () => (activeType === "all" ? exploreData : exploreData.filter((item) => item.type === activeType)),
+    () => exploreData.filter((item) => item.type === activeType),
     [activeType, exploreData]
   );
 
   const handlePressItem = (item: ExploreItem) => {
-    switch(item.type) {
+    switch (item.type) {
       case "tour":
-        router.push({pathname:"/tour-detail", params: {tourId: item.id}});
+        router.push({ pathname: "/tour-detail", params: { tourId: item.id } });
         break;
       case "hotel":
-        router.push({pathname:"/hotel-detail", params: {hotelId: item.id}});
+        router.push({ pathname: "/hotel-detail", params: { hotelId: item.id } });
         break;
       case "attraction":
-        router.push({pathname:"/attraction-detail", params: {placeId: item.id}});
+        router.push({ pathname: "/attraction-detail", params: { placeId: item.id } });
         break;
-      }
+    }
   }
 
-  if(loading) {
+  if (loading) {
     return (
       <SafeAreaView className='flex-1 bg-[#121212] items-center justify-center'>
-          <ActivityIndicator color="#fff" size="large" />
+        <ActivityIndicator color="#fff" size="large" />
       </SafeAreaView>
     )
   }
 
   return (
     <SafeAreaView className="flex-1 bg-[#121212]">
-      <ScrollView 
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#fff" />}  
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#fff" />}
       >
         <View className="px-6 pt-4">
-            <Text className="text-white text-4xl font-bold mb-6">Khám phá</Text>
-            {error && <Text className='text-red-400 mb-4'>{error}</Text>}
-            <FlatList 
-                horizontal
-                data={categories}
-                keyExtractor={(item) => item.id}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item, index }) => (
-                  <CategoryChip
-                    title={item.title}
-                    active={item.type === activeType}
-                    onPress={() => setActiveType(item.type)}
-                  />
-                )}
-            />
-            <View className='mt-6'>
-                {filteredData.length === 0 ? (
-                  <Text className='text-gray-400 text-center mt-8'>Không có dữ liệu</Text>
-                ): (
-                  filteredData.map((item) => (
-                    <ExploreCard key={`${item.type}-${item.id}`} item={item} onPress={() => handlePressItem(item)} />
-                  ))
-                )}
-            </View>
-            </View>   
+          <Text className="text-white text-4xl font-bold mb-6">Khám phá</Text>
+          {error && <Text className='text-red-400 mb-4'>{error}</Text>}
+          <FlatList
+            horizontal
+            data={categories}
+            keyExtractor={(item) => item.id}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item, index }) => (
+              <CategoryChip
+                title={item.title}
+                active={item.type === activeType}
+                onPress={() => setActiveType(item.type)}
+              />
+            )}
+          />
+          <View className='mt-6'>
+            {filteredData.length === 0 ? (
+              <Text className='text-gray-400 text-center mt-8'>Không có dữ liệu</Text>
+            ) : (
+              filteredData.map((item) => (
+                <ExploreCard key={`${item.type}-${item.id}`} item={item} onPress={() => handlePressItem(item)} />
+              ))
+            )}
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   )

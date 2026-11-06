@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function HomeScreen() {
-  const {accessToken,logout} = useAuth();
+  const { accessToken } = useAuth();
   const router = useRouter();
 
   const [destinations, setDestinations] = useState<Destination[]>([]);
@@ -43,11 +43,11 @@ export default function HomeScreen() {
   const fetchTours = async () => {
     setLoadingTours(true);
     setErrorTours(null);
-    try{
+    try {
       const res = await getTours(accessToken, 1, 10);
       console.log(`check res tour`, res);
       setTours(res.data?.items ?? []);
-    }catch (err: any) {
+    } catch (err: any) {
       setErrorTours(err.message || "Failed to fetch tours");
     } finally {
       setLoadingTours(false);
@@ -57,14 +57,9 @@ export default function HomeScreen() {
   useEffect(() => {
     fetchDestinations();
     fetchTours();
-  },[])
+  }, [])
 
-  const handleLogout = async () => {
-    await logout();
-    router.replace("/(auth)/login");
-  }
-
- return (
+  return (
     <SafeAreaView className="flex-1 bg-[#121212]">
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -76,17 +71,20 @@ export default function HomeScreen() {
         <SearchBar />
         {/* Featured Destinations */}
         <View className="px-6 mt-6">
-          <SectionHeader title="Điểm đến nổi bật" />
+          <SectionHeader
+            title="Điểm đến nổi bật"
+            onSeeAll={() => router.push("/all-destinations" as any)}
+          />
           {loadingDestinations ? (
-            <ActivityIndicator color="#8B5CF6"  style={{ marginTop: 16 }} />
+            <ActivityIndicator color="#8B5CF6" style={{ marginTop: 16 }} />
           ) : errorDestinations ? (
             <Text className="text-red-400 mt-2">{errorDestinations}</Text>
           ) : (
-            <FlatList 
+            <FlatList
               horizontal
               data={destinations}
               keyExtractor={(item) => item.id}
-              renderItem={({item}) => <DestinationCard item={item} />}
+              renderItem={({ item }) => <DestinationCard item={item} />}
               showsHorizontalScrollIndicator={false}
               ItemSeparatorComponent={() => <View style={{ width: 16 }} />}
             />
@@ -95,7 +93,15 @@ export default function HomeScreen() {
 
         {/* Popular Tours */}
         <View className="px-6 mt-8">
-            <SectionHeader title="Tour phổ biến" />
+          <SectionHeader
+            title="Tour phổ biến"
+            onSeeAll={() => router.push("/all-tours" as any)}
+          />
+          {loadingTours ? (
+            <ActivityIndicator color="#8B5CF6" style={{ marginTop: 16 }} />
+          ) : errorTours ? (
+            <Text className="text-red-400 mt-2">{errorTours}</Text>
+          ) : (
             <FlatList
               data={tours}
               keyExtractor={(item) => item.id}
@@ -109,7 +115,11 @@ export default function HomeScreen() {
               )}
               scrollEnabled={false}
               ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+              ListEmptyComponent={
+                <Text className="text-neutral-500 mt-2">Chưa có tour nào</Text>
+              }
             />
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

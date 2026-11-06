@@ -1,11 +1,17 @@
 import SafeImage from '@/src/components/detail/SafeImage';
 import { useAuth } from '@/src/context/AuthContext';
 import { getAttractionById } from '@/src/services/attractionService';
+import {
+    getAttractionWishlistStatus,
+    getCachedWishlistStatus,
+    setCachedWishlistStatus,
+    toggleWishList,
+} from '@/src/services/wishlishService';
 import { AttractionDetail } from '@/src/types/attraction';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const AtractionDetailScreen = () => {
@@ -16,7 +22,14 @@ const AtractionDetailScreen = () => {
     const [place, setPlace] = useState<AttractionDetail | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [isFavorite, setIsFavorite] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(
+        () => !!placeId && (getCachedWishlistStatus(accessToken, 'attraction', placeId) ?? false)
+    );
+    const [loadingFavoriteStatus, setLoadingFavoriteStatus] = useState(
+        () => !!placeId && getCachedWishlistStatus(accessToken, 'attraction', placeId) === undefined
+    );
+    const [favoriteStatusError, setFavoriteStatusError] = useState(false);
+    const [togglingFavorite, setTogglingFavorite] = useState(false);
 
     const load = useCallback(async () => {
         if (!placeId) return;
@@ -33,6 +46,74 @@ const AtractionDetailScreen = () => {
     }, [placeId, accessToken]);
 
     useEffect(() => { load(); }, [load]);
+
+    useEffect(() => {
+        if (!placeId) return;
+
+        const cachedStatus = getCachedWishlistStatus(accessToken, 'attraction', placeId);
+        if (cachedStatus !== undefined) {
+            setIsFavorite(cachedStatus);
+            setLoadingFavoriteStatus(false);
+            return;
+        }
+
+        let active = true;
+        setLoadingFavoriteStatus(true);
+        setFavoriteStatusError(false);
+        getAttractionWishlistStatus(accessToken, placeId)
+            .then((status) => {
+                if (active) setIsFavorite(status);
+            })
+            .catch((error: unknown) => {
+                console.error('Failed to load attraction wishlist status', error);
+                if (active) {
+                    setFavoriteStatusError(true);
+                    Alert.alert('Không thể tải wishlist', 'Vui lòng thử lại sau.');
+                }
+            })
+            .finally(() => {
+                if (active) setLoadingFavoriteStatus(false);
+            });
+
+        return () => {
+            active = false;
+        };
+    }, [accessToken, placeId]);
+
+    const handleToggleFavorite = async () => {
+        if (!place || togglingFavorite || loadingFavoriteStatus) return;
+        if (favoriteStatusError) {
+            setLoadingFavoriteStatus(true);
+            setFavoriteStatusError(false);
+            try {
+                const status = await getAttractionWishlistStatus(accessToken, place.id);
+                setIsFavorite(status);
+            } catch (error) {
+                console.error('Failed to retry attraction wishlist status', error);
+                setFavoriteStatusError(true);
+                Alert.alert('Không thể tải wishlist', 'Vui lòng thử lại sau.');
+            } finally {
+                setLoadingFavoriteStatus(false);
+            }
+            return;
+        }
+
+        const previousStatus = isFavorite;
+        setIsFavorite(!previousStatus);
+        setTogglingFavorite(true);
+        try {
+            await toggleWishList(accessToken, 'attraction', place.id);
+            const nextStatus = !previousStatus;
+            setIsFavorite(nextStatus);
+            setCachedWishlistStatus(accessToken, 'attraction', place.id, nextStatus);
+        } catch (error) {
+            console.error('Failed to toggle attraction wishlist', error);
+            setIsFavorite(previousStatus);
+            Alert.alert('Không thể cập nhật wishlist', 'Vui lòng thử lại.');
+        } finally {
+            setTogglingFavorite(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -62,7 +143,11 @@ const AtractionDetailScreen = () => {
                         <TouchableOpacity onPress={() => router.back()} className="w-10 h-10 rounded-full bg-black/40 items-center justify-center">
                             <Ionicons name="chevron-back" size={22} color="#fff" />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => setIsFavorite((f) => !f)} className="w-10 h-10 rounded-full bg-black/40 items-center justify-center">
+                        <TouchableOpacity
+                            onPress={handleToggleFavorite}
+                            disabled={togglingFavorite || loadingFavoriteStatus}
+                            className="w-10 h-10 rounded-full bg-black/40 items-center justify-center"
+                        >
                             <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={20} color={isFavorite ? "#ef4444" : "#fff"} />
                         </TouchableOpacity>
                     </View>
