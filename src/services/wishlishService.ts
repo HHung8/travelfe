@@ -96,6 +96,23 @@ async function getAllWishlistItems<T extends { id: string }>(
     return items;
 }
 
+export async function getMyWishlistCount(token: string | null): Promise<number> {
+    const paths = [
+        "/wishlists/tours",
+        "/wishlists/hotels",
+        "/wishlists/destinations",
+        "/wishlists/attractions",
+    ];
+    const results = await Promise.all(
+        paths.map((path) => getWithAuth<PagedResult<{ id: string }>>(path, token, { page: 1, pageSize: 1 }))
+    );
+    const counts = results.map((result) => {
+        if (!result.data) throw new Error("Không tải được tổng số mục yêu thích");
+        return result.data.totalCount;
+    });
+    return counts.reduce((total, count) => total + count, 0);
+}
+
 export function toggleWishList(
     token: string | null,
     itemType: WishlistItemType,

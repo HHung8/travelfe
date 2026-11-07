@@ -1,12 +1,12 @@
 import { useAuth } from "@/src/context/AuthContext";
-import { deleteNotification, getMyNotifications, markAllNotificationsAsRead, markNotificationAsRead } from "@/src/services/notificationService";
+import { deleteNotification, getAllMyNotifications, getMyNotifications, markAllNotificationsAsRead, markNotificationAsRead } from "@/src/services/notificationService";
 import { NotificationItem } from "@/src/types/notification";
 import { getNotificationIcon } from "@/src/utils/notificationIcon";
 import { parseActionUrl } from "@/src/utils/parseActionUrl";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const fmtTimeAgo = (iso: string): string => {
@@ -29,6 +29,7 @@ export default function NotificationsScreen() {
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [deletingAll, setDeletingAll] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const loadNotifications = useCallback(async (isRefresh = false) => {
@@ -74,14 +75,62 @@ export default function NotificationsScreen() {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        const prev = notifications;
-        setNotifications((list) => list.filter((n) => n.id !== id));
-        try {
-            await deleteNotification(accessToken, id);
-        } catch (err: any) {
-            setNotifications(prev); // revert nếu lỗi
-        }
+    const handleDelete = (notification: NotificationItem) => {
+        Alert.alert("Xoá thông báo?", "Bạn không thể hoàn tác hành động này.", [
+            { text: "Huỷ", style: "cancel" },
+            {
+                text: "Xoá",
+                style: "destructive",
+                onPress: async () => {
+                    try {
+                        await deleteNotification(accessToken, notification.id);
+                        setNotifications((prev) => prev.filter((item) => item.id !== notification.id));
+                        if (!notification.isRead) {
+                            setUnreadCount((count) => Math.max(0, count - 1));
+                        }
+                    } catch (error: any) {
+                        Alert.alert("Lỗi", error?.message || "Không xoá được thông báo");
+                    }
+                },
+            },
+        ]);
+    };
+
+    const handleDeleteAll = () => {
+        Alert.alert("Xoá tất cả thông báo?", "Bạn không thể hoàn tác hành động này.", [
+            { text: "Huỷ", style: "cancel" },
+            {
+                text: "Xoá tất cả",
+                style: "destructive",
+                onPress: async () => {
+                    setDeletingAll(true);
+                    try {
+                        const allNotifications = await getAllMyNotifications(accessToken);
+                        const results = await Promise.allSettled(
+                            allNotifications.map((notification) => deleteNotification(accessToken, notification.id))
+                        );
+                        const deletedIds = new Set(
+                            results.flatMap((result, index) => result.status === "fulfilled" ? [allNotifications[index].id] : [])
+                        );
+                        const deletedUnreadCount = allNotifications.filter(
+                            (notification) => deletedIds.has(notification.id) && !notification.isRead
+                        ).length;
+
+                        setNotifications((prev) => prev.filter((notification) => !deletedIds.has(notification.id)));
+                        setUnreadCount((count) => Math.max(0, count - deletedUnreadCount));
+
+                        const failedCount = allNotifications.length - deletedIds.size;
+                        if (failedCount > 0) {
+                            Alert.alert("Lỗi", `Không xoá được ${failedCount} thông báo. Vui lòng thử lại.`);
+                        }
+                    } catch (error: any) {
+                        Alert.alert("Lỗi", error?.message || "Không xoá được thông báo");
+                    } finally {
+                        setDeletingAll(false);
+                    }
+                },
+            },
+        ]);
     };
 
     if (loading) {
@@ -103,17 +152,37 @@ export default function NotificationsScreen() {
                     </TouchableOpacity>
                     <Text className="text-white text-lg font-semibold ml-2">Thông báo</Text>
                 </View>
-                {unreadCount > 0 && (
-                    <TouchableOpacity onPress={handleMarkAllRead} className="pr-2">
-                        <Text className="text-indigo-400 text-sm font-medium">Đánh dấu đã đọc hết</Text>
-                    </TouchableOpacity>
-                )}
             </View>
+            {(unreadCount > 0 || notifications.length > 0) && (
+                <View className="flex-row justify-end items-center px-6 pt-3">
+                    {unreadCount > 0 && (
+                        <TouchableOpacity
+                            onPress={handleMarkAllRead}
+                            disabled={deletingAll}
+                            className="mr-4"
+                        >
+                            <Text className="text-indigo-400 text-xs font-medium">Đánh dấu đã đọc hết</Text>
+                        </TouchableOpacity>
+                    )}
+                    {notifications.length > 0 && (
+                        <TouchableOpacity
+                            onPress={handleDeleteAll}
+                            disabled={deletingAll}
+                            accessibilityRole="button"
+                            accessibilityLabel="Xoá tất cả thông báo"
+                        >
+                            <Text className={`text-xs font-medium ${deletingAll ? "text-red-400/50" : "text-red-400"}`}>
+                                {deletingAll ? "Đang xoá..." : "Xoá tất cả"}
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+            )}
 
             <ScrollView
                 contentContainerStyle={{ padding: 24 }}
                 showsVerticalScrollIndicator={false}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => loadNotifications(true)} tintColor="#8B5CF6" />}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => loadNotifications(true)} tintColor="#8B5CF6" enabled={!deletingAll} />}
             >
                 {error && <Text className="text-red-400 mb-4">{error}</Text>}
 
@@ -124,24 +193,37 @@ export default function NotificationsScreen() {
                     </View>
                 ) : (
                     notifications.map((n) => (
-                        <TouchableOpacity
+                        <View
                             key={n.id}
-                            onPress={() => handlePressNotification(n)}
-                            onLongPress={() => handleDelete(n.id)}
                             className={`flex-row rounded-2xl p-4 mb-3 items-start ${n.isRead ? "bg-[#242424]" : "bg-[#303030]"}`}
                         >
-                            <View className="w-10 h-10 rounded-full bg-neutral-700 items-center justify-center">
-                                <Ionicons name={getNotificationIcon(n.type) as any} size={18} color="#fff" />
-                            </View>
-                            <View className="flex-1 ml-3">
-                                <Text className={`text-sm ${n.isRead ? "text-neutral-300 font-normal" : "text-white font-semibold"}`}>
-                                    {n.title}
-                                </Text>
-                                <Text className="text-neutral-400 text-sm mt-1">{n.message}</Text>
-                                <Text className="text-neutral-500 text-xs mt-1">{fmtTimeAgo(n.createdAt)}</Text>
-                            </View>
-                            {!n.isRead && <View className="w-2 h-2 rounded-full bg-indigo-500 mt-1" />}
-                        </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => handlePressNotification(n)}
+                                disabled={deletingAll}
+                                className="flex-1 flex-row items-start"
+                            >
+                                <View className="w-10 h-10 rounded-full bg-neutral-700 items-center justify-center">
+                                    <Ionicons name={getNotificationIcon(n.type) as any} size={18} color="#fff" />
+                                </View>
+                                <View className="flex-1 ml-3">
+                                    <Text className={`text-sm ${n.isRead ? "text-neutral-300 font-normal" : "text-white font-semibold"}`}>
+                                        {n.title}
+                                    </Text>
+                                    <Text className="text-neutral-400 text-sm mt-1">{n.message}</Text>
+                                    <Text className="text-neutral-500 text-xs mt-1">{fmtTimeAgo(n.createdAt)}</Text>
+                                </View>
+                                {!n.isRead && <View className="w-2 h-2 rounded-full bg-indigo-500 mt-1" />}
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => handleDelete(n)}
+                                disabled={deletingAll}
+                                className="ml-2 p-2"
+                                accessibilityRole="button"
+                                accessibilityLabel="Xoá thông báo"
+                            >
+                                <Ionicons name="trash-outline" size={18} color="#f87171" />
+                            </TouchableOpacity>
+                        </View>
                     ))
                 )}
             </ScrollView>

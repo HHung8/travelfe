@@ -1,7 +1,13 @@
 import React from 'react'
 import { Text, View } from 'react-native'
 
-const ProfileHeader = () => {
+type ProfileHeaderProps = {
+    tripCount: number | null;
+    reviewCount: number | null;
+    wishlistCount: number | null;
+};
+
+const ProfileHeader = ({ tripCount, reviewCount, wishlistCount }: ProfileHeaderProps) => {
     return (
         <View className="bg-[#353554] rounded-b-[35px] items-center pt-10 pb-10">
 
@@ -22,7 +28,7 @@ const ProfileHeader = () => {
             <View className="flex-row justify-around w-full mt-8">
                 <View className="items-center">
                     <Text className="text-white text-3xl font-bold">
-                        12
+                        {tripCount ?? "—"}
                     </Text>
                     <Text className="text-neutral-300">
                         Chuyến đi
@@ -31,7 +37,7 @@ const ProfileHeader = () => {
 
                 <View className="items-center">
                     <Text className="text-white text-3xl font-bold">
-                        8
+                        {reviewCount ?? "—"}
                     </Text>
                     <Text className="text-neutral-300">
                         Đánh giá
@@ -40,7 +46,7 @@ const ProfileHeader = () => {
 
                 <View className="items-center">
                     <Text className="text-white text-3xl font-bold">
-                        24
+                        {wishlistCount ?? "—"}
                     </Text>
                     <Text className="text-neutral-300">
                         Wishlist

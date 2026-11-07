@@ -7,6 +7,12 @@ export async function getMyReviews(token: string | null): Promise<MyReviewItem[]
     return res.data?.items ?? [];
 }
 
+export async function getMyReviewsCount(token: string | null): Promise<number> {
+    const res = await getWithAuth<PagedResult<MyReviewItem>>("/reviews/mine", token, { page: 1, pageSize: 1 });
+    if (!res.data) throw new Error("Không tải được tổng số đánh giá");
+    return res.data.totalCount;
+}
+
 export async function createReview(token: string | null, payload: CreateReviewRequest): Promise<ReviewDto> {
     const res = await postWithAuth<ReviewDto>("/reviews", token, payload as unknown as Record<string, unknown>);
     if (!res.data) throw new Error("Không tạo được đánh giá");

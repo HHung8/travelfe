@@ -18,6 +18,29 @@ export async function getMyNotifications(token: string | null): Promise<{ items:
   };
 }
 
+export async function getAllMyNotifications(token: string | null): Promise<NotificationItem[]> {
+  const pageSize = 100;
+  const items: NotificationItem[] = [];
+  let page = 1;
+  let totalPages = 1;
+
+  while (page <= totalPages) {
+    const res = await getWithAuth<NotificationListResponse>("/notifications", token, { page, pageSize });
+    if (!res.data) {
+      throw new Error("Không tải được danh sách thông báo");
+    }
+
+    items.push(...res.data.items);
+    const currentPage = res.data.page || page;
+    const currentPageSize = res.data.pageSize || pageSize;
+    totalPages = res.data.totalPages || Math.ceil(res.data.totalCount / currentPageSize) || currentPage;
+    if (res.data.items.length === 0 || currentPage >= totalPages) break;
+    page = currentPage + 1;
+  }
+
+  return items;
+}
+
 export async function markNotificationAsRead(token: string | null, id:string): Promise<void> {
     await putWithAuth(`/notifications/${id}/read`, token, {});
 }
