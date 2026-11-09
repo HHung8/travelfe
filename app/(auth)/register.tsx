@@ -30,7 +30,6 @@ const RegisterScreen = () => {
     setLoading(true);
     try {
       await register(fullName, email, password, phone);
-      alert("Registration successful!");
       router.replace("/(root)/home");
     } catch(err:any) {
       alert(err.message || "Đăng ký thất bại.");
@@ -173,4 +172,3 @@ const RegisterScreen = () => {
 }
 
 export default RegisterScreen
-

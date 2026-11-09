@@ -1,22 +1,25 @@
 import PaymentMethodSelector, { PaymentMethod } from "@/src/components/booking/PaymentMethodSelector";
+import PaymentSimulationPanel from "@/src/components/booking/PaymentSimulationPanel";
 import PricingSummary from "@/src/components/booking/PriceSummary";
 import StepIndicator from "@/src/components/booking/StepIndicator";
 import SafeImage from "@/src/components/detail/SafeImage";
 import { useAuth } from "@/src/context/AuthContext";
 import { createTourBooking } from "@/src/services/bookingService";
-import { confirmPayment, createPayment, failPayment } from "@/src/services/paymentService";
+import { confirmPayment, createPayment, failPayment, PaymentSimulationOutcome, processDevelopmentPayment } from "@/src/services/paymentService";
+import { getPaymentMethods } from "@/src/services/paymentMethodService";
 import { getTourById } from "@/src/services/tourService";
 import { TourDetail } from "@/src/types/tour";
+import type { PaymentMethodItem } from "@/src/types/paymentMethod";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const fmtDate = (iso: string) => { const d = new Date(iso); return `${d.getDate()}/${d.getMonth() + 1}`; };
 
 const PAYMENT_METHOD_LABEL: Record<PaymentMethod, string> = {
-  card: "Số tài khoản",
+  card: "Thẻ ngân hàng",
   apple_pay: "Apple Pay",
   wallet: "Ví điện tử",
 };
@@ -40,13 +43,29 @@ export default function PaymentScreen() {
   const [cvv, setCvv] = useState("");
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
+  const [simulationOutcome, setSimulationOutcome] = useState<PaymentSimulationOutcome>("success");
+  const [simulationNotice, setSimulationNotice] = useState<string | null>(null);
+  const bookingRef = useRef<Awaited<ReturnType<typeof createTourBooking>> | null>(null);
+  const [savedCards, setSavedCards] = useState<PaymentMethodItem[]>([]);
+  const [selectedSavedCardId, setSelectedSavedCardId] = useState<string | null>(null);
+  const [savedCardsError, setSavedCardsError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!tourId) return;
-    fetchTour();
-  }, [tourId]);
+    let active = true;
+    getPaymentMethods(accessToken).then((cards) => {
+      if (!active) return;
+      setSavedCards(cards);
+      setSelectedSavedCardId(cards.find((card) => card.isDefault)?.id ?? null);
+    }).catch((err: unknown) => {
+      if (active) setSavedCardsError(err instanceof Error ? err.message : "Không tải được thẻ đã lưu");
+    });
+    return () => {
+      active = false;
+    };
+  }, [accessToken]);
 
-  const fetchTour = async () => {
+  const fetchTour = useCallback(async () => {
+    if (!tourId) return;
     setLoading(true);
     setError(null);
     try {
@@ -57,7 +76,11 @@ export default function PaymentScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [accessToken, tourId]);
+
+  useEffect(() => {
+    fetchTour();
+  }, [fetchTour]);
 
   if (loading) {
     return (
@@ -80,41 +103,49 @@ export default function PaymentScreen() {
   const serviceFee = Math.round(subtotal * 0.05);
   const tax = Math.round(subtotal * 0.1);
   const total = subtotal + serviceFee + tax;
-  const canPay = method !== "card" || (cardNumber.length >= 16 && expiry.length === 5 && cvv.length >= 3);
+  const canPay = method !== "card" ||
+    (selectedSavedCardId !== null && savedCards.some((card) => card.id === selectedSavedCardId)) ||
+    (cardNumber.length >= 16 && expiry.length === 5 && cvv.length >= 3);
+  const selectedSavedCard = savedCards.find((card) => card.id === selectedSavedCardId);
+  const paymentMethodLabel = method === "card" && selectedSavedCard
+    ? `${selectedSavedCard.brand} •••• ${selectedSavedCard.last4}`
+    : PAYMENT_METHOD_LABEL[method];
 
   const handlePay = async () => {
     if (!canPay || paying) return;
     setPaying(true);
     setPayError(null);
+    setSimulationNotice(null);
 
-    let bookingId: string | null = null;
     let paymentId: string | null = null;
 
     try {
-      // Bước 1: tạo booking
-      const booking = await createTourBooking(accessToken, {
-        tourId: tour.id,
-        scheduleId,
-        numGuests: guestCount,
-        travelDate,
-        specialRequest: specialRequest || undefined,
-      });
-      bookingId = booking.id;
+      const booking = bookingRef.current ?? await createTourBooking(accessToken, {
+          tourId: tour.id,
+          scheduleId,
+          numGuests: guestCount,
+          travelDate,
+          specialRequest: specialRequest || undefined,
+        });
+      bookingRef.current = booking;
 
-      // Bước 2: tạo giao dịch thanh toán (status: pending)
       const payment = await createPayment(accessToken, {
         bookingType: "tour",
         bookingId: booking.id,
         amount: booking.totalPrice,
-        method: PAYMENT_METHOD_LABEL[method],
+        method: paymentMethodLabel,
       });
       paymentId = payment.id;
 
-      // Bước 3: giả lập xử lý thẻ xong -> confirm thanh toán ngay
-      // (Khi tích hợp cổng thật, bước này sẽ không nằm ở đây nữa mà do webhook cổng thanh toán gọi)
-      const confirmed = await confirmPayment(accessToken, payment.id, {
-        transactionRef: `SIM-${Date.now()}`,
-      });
+      const confirmed = __DEV__
+        ? await processDevelopmentPayment(accessToken, payment.id, simulationOutcome, paymentMethodLabel)
+        : { outcome: "success" as const, payment: await confirmPayment(accessToken, payment.id, { transactionRef: `SIM-${Date.now()}` }) };
+      if (confirmed.outcome !== "success") {
+        setSimulationNotice(
+          `Booking ${booking.bookingCode} · giao dịch ${payment.id}: đã gọi API fail với kịch bản ${confirmed.outcome === "failure" ? "thất bại" : "người dùng huỷ"}. Không có tiền thật được xử lý.`
+        );
+        return;
+      }
 
       router.push({
         pathname: "/success",
@@ -125,7 +156,7 @@ export default function PaymentScreen() {
           travelDate: booking.travelDate,
           guests: String(booking.numGuests),
           total: String(booking.totalPrice),
-          paymentStatus: confirmed.status, // giờ sẽ là "success"
+          paymentStatus: confirmed.payment.status,
         },
       });
     } catch (err: any) {
@@ -187,8 +218,23 @@ export default function PaymentScreen() {
             cardNumber={cardNumber} onChangeCardNumber={setCardNumber}
             expiry={expiry} onChangeExpiry={setExpiry}
             cvv={cvv} onChangeCvv={setCvv}
+            savedCards={savedCards}
+            selectedSavedCardId={selectedSavedCardId}
+            onChangeSavedCard={setSelectedSavedCardId}
           />
         </View>
+
+        {!!savedCardsError && <Text className="mt-2 text-xs text-amber-300">{savedCardsError} Bạn vẫn có thể nhập thẻ demo.</Text>}
+
+        {__DEV__ && (
+          <PaymentSimulationPanel outcome={simulationOutcome} onChangeOutcome={setSimulationOutcome} />
+        )}
+
+        {!!simulationNotice && (
+          <View className="mt-4 rounded-xl border border-amber-400/30 bg-amber-400/10 p-3">
+            <Text className="text-amber-200 text-sm leading-5">{simulationNotice}</Text>
+          </View>
+        )}
 
         {!!payError && (
           <Text className="text-red-400 text-sm mt-4 text-center">{payError}</Text>

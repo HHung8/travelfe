@@ -1,15 +1,18 @@
 import PaymentMethodSelector, { PaymentMethod } from "@/src/components/booking/PaymentMethodSelector";
+import PaymentSimulationPanel from "@/src/components/booking/PaymentSimulationPanel";
 import PricingSummary from "@/src/components/booking/PriceSummary";
 import StepIndicator from "@/src/components/booking/StepIndicator";
 import SafeImage from "@/src/components/detail/SafeImage";
 import { useAuth } from "@/src/context/AuthContext";
 import { getAttractionById } from "@/src/services/attractionService";
 import { createAttractionBooking } from "@/src/services/bookingService";
-import { confirmPayment, createPayment, failPayment } from "@/src/services/paymentService";
+import { confirmPayment, createPayment, failPayment, PaymentSimulationOutcome, processDevelopmentPayment } from "@/src/services/paymentService";
+import { getPaymentMethods } from "@/src/services/paymentMethodService";
 import { AttractionDetail } from "@/src/types/attraction";
+import type { PaymentMethodItem } from "@/src/types/paymentMethod";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -19,7 +22,7 @@ const fmtDate = (iso: string) => {
 };
 
 const PAYMENT_METHOD_LABEL: Record<PaymentMethod, string> = {
-    card: "Số tài khoản",
+    card: "Thẻ ngân hàng",
     apple_pay: "Apple Pay",
     wallet: "Ví điện tử",
 };
@@ -43,10 +46,30 @@ export default function AttractionPaymentScreen() {
     const [cvv, setCvv] = useState("");
     const [paying, setPaying] = useState(false);
     const [payError, setPayError] = useState<string | null>(null);
+    const [simulationOutcome, setSimulationOutcome] = useState<PaymentSimulationOutcome>("success");
+    const [simulationNotice, setSimulationNotice] = useState<string | null>(null);
 
     const bookingRef = useRef<AttractionBooking | null>(null);
+    const [savedCards, setSavedCards] = useState<PaymentMethodItem[]>([]);
+    const [selectedSavedCardId, setSelectedSavedCardId] = useState<string | null>(null);
+    const [savedCardsError, setSavedCardsError] = useState<string | null>(null);
+
+    useEffect(() => {
+        let active = true;
+        getPaymentMethods(accessToken).then((cards) => {
+            if (!active) return;
+            setSavedCards(cards);
+            setSelectedSavedCardId(cards.find((card) => card.isDefault)?.id ?? null);
+        }).catch((err: unknown) => {
+            if (active) setSavedCardsError(err instanceof Error ? err.message : "Không tải được thẻ đã lưu");
+        });
+        return () => {
+            active = false;
+        };
+    }, [accessToken]);
  
-    const fetchPlace = async () => {
+    const fetchPlace = useCallback(async () => {
+        if (!placeId) return;
         setLoading(true);
         setError(null);
         try {
@@ -57,12 +80,11 @@ export default function AttractionPaymentScreen() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [accessToken, placeId]);
  
     useEffect(() => {
-        if (!placeId) return;
         fetchPlace();
-    }, [placeId]);
+    }, [fetchPlace]);
  
     if (loading) {
         return (
@@ -89,13 +111,21 @@ export default function AttractionPaymentScreen() {
     const serviceFee = Math.round(subtotal * 0.05);
     const tax = Math.round(subtotal * 0.1);
     const total = subtotal + serviceFee + tax;
-    const canPay = method !== "card" || (cardNumber.length >= 16 && expiry.length === 5 && cvv.length >= 3);
+    const canPay = method !== "card" ||
+        (selectedSavedCardId !== null && savedCards.some((card) => card.id === selectedSavedCardId)) ||
+        (cardNumber.length >= 16 && expiry.length === 5 && cvv.length >= 3);
+    const selectedSavedCard = savedCards.find((card) => card.id === selectedSavedCardId);
+    const paymentMethodLabel = method === "card" && selectedSavedCard
+        ? `${selectedSavedCard.brand} •••• ${selectedSavedCard.last4}`
+        : PAYMENT_METHOD_LABEL[method];
 
     const handlePay = async () => {
         if (!canPay || paying) return;
         setPaying(true);
         setPayError(null);
+        setSimulationNotice(null);
  
+        let paymentId: string | null = null;
         try {
             // 1. Tạo booking (hoặc dùng lại booking của lần bấm trước)
             let booking = bookingRef.current;
@@ -109,26 +139,25 @@ export default function AttractionPaymentScreen() {
                 bookingRef.current = booking;
             }
  
-            // 2. Tạo payment (trạng thái pending)
             const payment = await createPayment(accessToken, {
-                bookingType: "attraction" as any, // nếu type BookingType chỉ có "tour" | "hotel" thì thêm "attraction" rồi bỏ "as any"
+                bookingType: "attraction",
                 bookingId: booking.id,
                 amount: booking.totalPrice,
-                method: PAYMENT_METHOD_LABEL[method],
+                method: paymentMethodLabel,
             });
+            paymentId = payment.id;
  
-            // 3. Xác nhận payment -> SQL tự đổi booking sang "confirmed"
-            let confirmed: Awaited<ReturnType<typeof confirmPayment>>;
-            try {
-                confirmed = await confirmPayment(accessToken, payment.id, {
+            const confirmed = __DEV__
+                ? await processDevelopmentPayment(accessToken, payment.id, simulationOutcome, paymentMethodLabel)
+                : { outcome: "success" as const, payment: await confirmPayment(accessToken, payment.id, {
                     transactionRef: `TXN${Date.now()}`,
                     gatewayResponse: JSON.stringify({ status: "success", method }),
-                });
-            } catch (e) {
-                await failPayment(accessToken, payment.id, {
-                    gatewayResponse: JSON.stringify({ status: "failed" }),
-                }).catch(() => {});
-                throw e;
+                }) };
+            if (confirmed.outcome !== "success") {
+                setSimulationNotice(
+                    `Booking ${booking.bookingCode} · giao dịch ${payment.id}: đã gọi API fail với kịch bản ${confirmed.outcome === "failure" ? "thất bại" : "người dùng huỷ"}. Không có tiền thật được xử lý.`
+                );
+                return;
             }
  
             router.push({
@@ -140,10 +169,15 @@ export default function AttractionPaymentScreen() {
                     visitDate: booking.visitDate,
                     guests: String(booking.numGuests),
                     total: String(booking.totalPrice),
-                    paymentStatus: confirmed.status, // không dùng payment.status (luôn là pending)
+                    paymentStatus: confirmed.payment.status,
                 },
             });
         } catch (err: any) {
+            if (paymentId) {
+                await failPayment(accessToken, paymentId, {
+                    gatewayResponse: JSON.stringify({ status: "failed", environment: __DEV__ ? "development" : "production" }),
+                }).catch(() => {});
+            }
             setPayError(err?.message || "Thanh toán thất bại, vui lòng thử lại.");
         } finally {
             setPaying(false);
@@ -191,10 +225,24 @@ export default function AttractionPaymentScreen() {
                         cardNumber={cardNumber} onChangeCardNumber={setCardNumber}
                         expiry={expiry} onChangeExpiry={setExpiry}
                         cvv={cvv} onChangeCvv={setCvv}
+                        savedCards={savedCards}
+                        selectedSavedCardId={selectedSavedCardId}
+                        onChangeSavedCard={setSelectedSavedCardId}
                     />
                 </View>
+                {!!savedCardsError && <Text className="mt-2 text-xs text-amber-300">{savedCardsError} Bạn vẫn có thể nhập thẻ demo.</Text>}
+                {__DEV__ && (
+                    <PaymentSimulationPanel outcome={simulationOutcome} onChangeOutcome={setSimulationOutcome} />
+                )}
+                {!!simulationNotice && (
+                    <View className="mt-4 rounded-xl border border-amber-400/30 bg-amber-400/10 p-3">
+                        <Text className="text-amber-200 text-sm leading-5">{simulationNotice}</Text>
+                    </View>
+                )}
+                {!!payError && (
+                    <Text className="mt-4 text-center text-sm text-red-400">{payError}</Text>
+                )}
  
-                {!!payError && <Text className="text-red-400 text-sm mt-4 text-center">{payError}</Text>}
             </ScrollView>
  
             <View className="absolute bottom-0 left-0 right-0 px-6 pb-6 pt-4 bg-[#121212] border-t border-neutral-900">

@@ -1,6 +1,12 @@
 import { ConfirmPaymentRequest, CreatePaymentRequest, FailPaymentRequest, PaymentResult } from "../types/payment";
 import { postWithAuth } from "./api";
 
+export type PaymentSimulationOutcome = "success" | "failure" | "cancel";
+
+type SimulatedPaymentResult =
+  | { outcome: "success"; payment: PaymentResult }
+  | { outcome: "failure" | "cancel"; payment: null };
+
 export async function createPayment(
   token: string | null,
   payload: CreatePaymentRequest
@@ -26,4 +32,32 @@ export async function failPayment(
   payload: FailPaymentRequest
 ): Promise<void> {
   await postWithAuth(`/payments/${id}/fail`, token, { ...payload });
+}
+
+export async function processDevelopmentPayment(
+  token: string | null,
+  paymentId: string,
+  outcome: PaymentSimulationOutcome,
+  method: string
+): Promise<SimulatedPaymentResult> {
+  if (!__DEV__) {
+    throw new Error("Mô phỏng thanh toán chỉ dùng trong môi trường development");
+  }
+
+  const gatewayResponse = JSON.stringify({
+    environment: "development",
+    outcome,
+    method,
+  });
+
+  if (outcome === "success") {
+    const payment = await confirmPayment(token, paymentId, {
+      transactionRef: `DEV-${Date.now()}`,
+      gatewayResponse,
+    });
+    return { outcome, payment };
+  }
+
+  await failPayment(token, paymentId, { gatewayResponse });
+  return { outcome, payment: null };
 }

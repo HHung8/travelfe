@@ -27,9 +27,7 @@ export default function ChangePasswordScreen() {
         setSubmitting(true);
         try {
             await changePassword(accessToken, { currentPassword, newPassword });
-            Alert.alert("Thành công", "Đổi mật khẩu thành công", [
-                { text: "OK", onPress: () => router.back() },
-            ]);
+            router.back();
         } catch (err: any) {
             Alert.alert("Lỗi", err?.message || "Không đổi được mật khẩu");
         } finally {

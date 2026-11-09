@@ -15,10 +15,15 @@ type ProfileCounts = {
   wishlist: number;
 };
 
+let cachedProfileCounts: { userId: string; counts: ProfileCounts } | null = null;
+
 const ProfileScreen = () => {
-  const { accessToken, logout } = useAuth();
+  const { accessToken, logout, user } = useAuth();
   const router = useRouter();
-  const [counts, setCounts] = useState<ProfileCounts | null>(null);
+  const [counts, setCounts] = useState<ProfileCounts | null>(() => {
+    const cached = cachedProfileCounts;
+    return cached && cached.userId === user?.id ? cached.counts : null;
+  });
   const [countsError, setCountsError] = useState<string | null>(null);
 
   useFocusEffect(
@@ -36,11 +41,19 @@ const ProfileScreen = () => {
             getMyWishlistCount(accessToken),
           ]);
           if (isActive) {
-            setCounts({
+            const nextCounts = {
               trips: tourBookings.length + hotelBookings.length + attractionBookings.length,
               reviews,
               wishlist,
-            });
+            };
+            cachedProfileCounts = { userId: user?.id ?? "", counts: nextCounts };
+            setCounts((current) =>
+              current?.trips === nextCounts.trips &&
+              current.reviews === nextCounts.reviews &&
+              current.wishlist === nextCounts.wishlist
+                ? current
+                : nextCounts
+            );
           }
         } catch (error) {
           if (isActive) {
@@ -53,7 +66,7 @@ const ProfileScreen = () => {
       return () => {
         isActive = false;
       };
-    }, [accessToken])
+    }, [accessToken, user?.id])
   );
 
   const menus = [

@@ -29,7 +29,7 @@ export default function PaymentMethodsScreen() {
             const data = await getPaymentMethods(accessToken);
             setMethods(data);
         } catch (error: any) {
-            setError(error?.message || "Không tải được danh sách thẻ");
+            setError(error?.message || "Không tải được phương thức thanh toán");
         } finally {
             setLoading(false);
         }
@@ -51,7 +51,7 @@ export default function PaymentMethodsScreen() {
     };
 
     const handleDelete = (id: string) => {
-        Alert.alert("Xoá thẻ?", "Bạn không thẻ hoàn tác hành động này", [
+        Alert.alert("Xoá thẻ?", "Bạn không thể hoàn tác hành động này.", [
             { text: "Huỷ", style: "cancel" },
             {
                 text: "Xoá",
@@ -131,44 +131,139 @@ export default function PaymentMethodsScreen() {
             <ScrollView contentContainerStyle={{ padding: 24 }} showsVerticalScrollIndicator={false}>
                 {error && <Text className="text-red-400 mb-4">{error}</Text>}
 
-                {methods.map((card) => (
-                    <TouchableOpacity
-                        key={card.id}
-                        onPress={() => handleSetDefault(card.id)}
-                        onLongPress={() => handleDelete(card.id)}
-                        className={`flex-row items-center bg-[#303030] rounded-2xl p-4 mb-3 border ${card.isDefault ? "border-indigo-500" : "border-transparent"
-                            }`}
-                    >
-                        <View className="w-12 h-8 rounded-md bg-neutral-700 items-center justify-center">
-                            <Ionicons name="card-outline" size={18} color="#fff" />
+                {__DEV__ && (
+                    <View className="flex-row rounded-2xl border border-amber-400/30 bg-amber-400/5 p-4 mb-5">
+                        <Ionicons name="flask-outline" size={19} color="#fbbf24" />
+                        <Text className="flex-1 text-xs leading-5 text-neutral-300 ml-3">
+                            Môi trường dev: dùng dữ liệu thẻ giả lập, không nhập thẻ thật. Backend chỉ nhận hãng thẻ, 4 số cuối và ngày hết hạn; số thẻ đầy đủ không được lưu.
+                        </Text>
+                    </View>
+                )}
+
+                <View className="rounded-3xl bg-[#23223a] p-5 mb-7 border border-indigo-400/20">
+                    <View className="flex-row items-center justify-between">
+                        <View className="w-12 h-12 rounded-2xl bg-indigo-400/15 items-center justify-center">
+                            <Ionicons name="shield-checkmark-outline" size={24} color="#a5b4fc" />
                         </View>
-                        <View className="flex-1 ml-3">
-                            <Text className="text-white font-semibold">{card.brand} •••• {card.last4}</Text>
-                            <Text className="text-neutral-500 text-xs mt-1">
-                                Hết hạn {String(card.expiryMonth).padStart(2, "0")}/{String(card.expiryYear).slice(-2)}
-                            </Text>
+                        <View className="rounded-full bg-emerald-400/10 px-3 py-1">
+                            <Text className="text-emerald-300 text-xs font-medium">Thanh toán an toàn</Text>
                         </View>
-                        {card.isDefault && (
-                            <View className="bg-indigo-500/20 px-2 py-1 rounded-full">
-                                <Text className="text-indigo-400 text-xs font-semibold">Mặc định</Text>
-                            </View>
-                        )}
-                    </TouchableOpacity>
-                ))}
+                    </View>
+                    <Text className="text-white text-xl font-bold mt-4">Thanh toán theo cách của bạn</Text>
+                    <Text className="text-neutral-400 text-sm mt-2 leading-5">
+                        Quản lý thẻ đã lưu hoặc xem các phương thức thanh toán khác được hỗ trợ.
+                    </Text>
+                </View>
+
+                <View className="flex-row items-center justify-between mb-3">
+                    <Text className="text-white text-base font-semibold">Thẻ đã lưu</Text>
+                    <Text className="text-neutral-500 text-sm">{methods.length} thẻ</Text>
+                </View>
+
+                {methods.length === 0 ? (
+                    <View className="rounded-2xl bg-[#242424] border border-neutral-800 items-center px-5 py-7 mb-3">
+                        <View className="w-12 h-12 rounded-full bg-neutral-800 items-center justify-center">
+                            <Ionicons name="card-outline" size={22} color="#a3a3a3" />
+                        </View>
+                        <Text className="text-white font-medium mt-3">Chưa có thẻ nào</Text>
+                        <Text className="text-neutral-500 text-xs text-center mt-1">
+                            Thêm thẻ để thuận tiện hơn cho lần thanh toán tiếp theo.
+                        </Text>
+                    </View>
+                ) : (
+                    methods.map((card) => (
+                        <View
+                            key={card.id}
+                            className={`flex-row items-center rounded-2xl p-3 mb-3 border ${card.isDefault ? "bg-[#292842] border-indigo-500/70" : "bg-[#242424] border-neutral-800"
+                                }`}
+                        >
+                            <TouchableOpacity
+                                onPress={() => handleSetDefault(card.id)}
+                                accessibilityRole="button"
+                                accessibilityLabel={`Đặt ${card.brand} kết thúc bằng ${card.last4} làm mặc định`}
+                                className="flex-1 flex-row items-center"
+                            >
+                                <View className="w-14 h-14 rounded-xl bg-indigo-500/15 items-center justify-center">
+                                    <Ionicons name="card" size={24} color="#a5b4fc" />
+                                </View>
+                                <View className="flex-1 ml-3">
+                                    <View className="flex-row items-center">
+                                        <Text className="text-white font-semibold">{card.brand}</Text>
+                                        {card.isDefault && (
+                                            <View className="bg-indigo-500/20 px-2 py-1 rounded-full ml-2">
+                                                <Text className="text-indigo-300 text-[10px] font-semibold">MẶC ĐỊNH</Text>
+                                            </View>
+                                        )}
+                                    </View>
+                                    <Text className="text-neutral-300 text-sm mt-1">•••• •••• •••• {card.last4}</Text>
+                                    <Text className="text-neutral-500 text-xs mt-1">
+                                        Hết hạn {String(card.expiryMonth).padStart(2, "0")}/{String(card.expiryYear).slice(-2)}
+                                    </Text>
+                                </View>
+                                {!card.isDefault && (
+                                    <Ionicons name="radio-button-off" size={20} color="#737373" />
+                                )}
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => handleDelete(card.id)}
+                                accessibilityRole="button"
+                                accessibilityLabel={`Xoá thẻ ${card.brand} kết thúc bằng ${card.last4}`}
+                                className="p-3 ml-1"
+                            >
+                                <Ionicons name="trash-outline" size={18} color="#f87171" />
+                            </TouchableOpacity>
+                        </View>
+                    ))
+                )}
 
                 <TouchableOpacity
                     onPress={() => setShowAddModal(true)}
-                    className="flex-row items-center justify-center border border-dashed border-neutral-600 rounded-2xl p-4 mt-2"
+                    className="flex-row items-center justify-center border border-dashed border-indigo-400/50 rounded-2xl p-4 mt-1 mb-8"
                 >
-                    <Ionicons name="add" size={18} color="#a3a3a3" />
-                    <Text className="text-neutral-300 ml-2 font-medium">Thêm thẻ mới</Text>
+                    <Ionicons name="add-circle-outline" size={20} color="#a5b4fc" />
+                    <Text className="text-indigo-300 ml-2 font-semibold">Thêm thẻ mới</Text>
                 </TouchableOpacity>
+
+                <Text className="text-white text-base font-semibold mb-3">Phương thức khác</Text>
+                <View className="rounded-2xl bg-[#242424] border border-neutral-800 p-4 mb-3">
+                    <View className="flex-row items-center">
+                        <View className="w-12 h-12 rounded-xl bg-neutral-800 items-center justify-center">
+                            <Ionicons name="logo-apple" size={23} color="#fff" />
+                        </View>
+                        <View className="flex-1 ml-3">
+                            <Text className="text-white font-semibold">Apple Pay</Text>
+                            <Text className="text-neutral-500 text-xs mt-1">Thanh toán nhanh bằng thiết bị Apple</Text>
+                        </View>
+                        <View className="rounded-full bg-neutral-800 px-2.5 py-1">
+                            <Text className="text-neutral-400 text-[10px] font-medium">Sắp ra mắt</Text>
+                        </View>
+                    </View>
+                </View>
+                <View className="rounded-2xl bg-[#242424] border border-neutral-800 p-4 mb-5">
+                    <View className="flex-row items-center">
+                        <View className="w-12 h-12 rounded-xl bg-neutral-800 items-center justify-center">
+                            <Ionicons name="wallet-outline" size={23} color="#c4b5fd" />
+                        </View>
+                        <View className="flex-1 ml-3">
+                            <Text className="text-white font-semibold">Ví điện tử</Text>
+                            <Text className="text-neutral-500 text-xs mt-1">Kết nối ví điện tử của bạn</Text>
+                        </View>
+                        <View className="rounded-full bg-neutral-800 px-2.5 py-1">
+                            <Text className="text-neutral-400 text-[10px] font-medium">Sắp ra mắt</Text>
+                        </View>
+                    </View>
+                </View>
             </ScrollView>
 
             <Modal visible={showAddModal} animationType="slide" transparent>
                 <View className="flex-1 bg-black/60 justify-end">
                     <View className="bg-[#1a1a1a] rounded-t-3xl p-6">
                         <Text className="text-white text-lg font-bold mb-4">Thêm thẻ mới</Text>
+                        {__DEV__ && (
+                            <Text className="text-amber-200 text-xs leading-5 mb-4">
+                                Chỉ nhập dữ liệu giả lập để thử luồng thêm thẻ. Không sử dụng thông tin thẻ thật.
+                            </Text>
+                        )}
 
                         <Text className="text-neutral-500 text-xs mb-1">Số thẻ</Text>
                         <TextInput

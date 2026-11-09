@@ -1,4 +1,5 @@
 import "@/global.css";
+import ApiSuccessToastHost from "@/src/components/common/ApiSuccessToastHost";
 import { AuthProvider, useAuth } from "@/src/context/AuthContext";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
@@ -28,6 +29,7 @@ export default function RootLayout() {
     <AuthProvider>
       <AuthRedirector />
       <Stack screenOptions={{ headerShown: false }} />
+      <ApiSuccessToastHost />
     </AuthProvider>
   )
 }

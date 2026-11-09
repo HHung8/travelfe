@@ -1,5 +1,6 @@
 import Constants from "expo-constants";
 import { Platform } from "react-native";
+import { showSuccessToast } from "../utils/apiSuccessToast";
 import { AuthData } from "../types/auth";
 
 function resolveBaseUrl() : string {
@@ -41,7 +42,8 @@ function friendlyErrorMessage(raw: string, status: number): string {
 
 async function parseResponse<T>(
   res: Response,
-  handleUnauthorized = true
+  handleUnauthorized = true,
+  notifySuccess = false
 ): Promise<ApiResponse<T>> {
     if (res.status === 401 && handleUnauthorized) {
         unauthorizedHandler?.();
@@ -59,6 +61,9 @@ async function parseResponse<T>(
     if(!res.ok || !json?.success) {  
         throw new Error(friendlyErrorMessage(json?.message || rawText || `Lỗi không xác định (status ${res.status})`, res.status));
     }
+    if (notifySuccess) {
+        showSuccessToast(json.message);
+    }
     return json;
 
 }
@@ -69,7 +74,7 @@ async function request<T>(path: string, body: Record<string, unknown>): Promise<
     headers: { Accept: "*/*", "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  return parseResponse<T>(res, false);
+  return parseResponse<T>(res, false, true);
 }
 
 export async function getWithAuth<T>(
@@ -111,7 +116,7 @@ export async function putWithAuth<T>(
     },
     body: JSON.stringify(body),
   });
-  return parseResponse<T>(res);
+  return parseResponse<T>(res, true, true);
 }
 
 export async function deleteWithAuth<T = unknown>(
@@ -125,7 +130,7 @@ export async function deleteWithAuth<T = unknown>(
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
-  return parseResponse<T>(res);
+  return parseResponse<T>(res, true, true);
 }
 
 export async function postWithAuth<T, B extends object = Record<string, unknown>>(
@@ -142,7 +147,7 @@ export async function postWithAuth<T, B extends object = Record<string, unknown>
     },
     body: JSON.stringify(body),
   });
-  return parseResponse<T>(res);
+  return parseResponse<T>(res, true, true);
 }
 
 export function loginApi(email: string, password: string) {

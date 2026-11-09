@@ -1,7 +1,8 @@
 import { exploreData } from "@/src/data/explore";
+import { showSuccessToast } from "@/src/utils/apiSuccessToast";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -16,6 +17,10 @@ export default function TicketSuccessScreen() {
     () => exploreData.find((i) => i.id === placeId && i.type === "attraction") ?? exploreData.find((i) => i.type === "attraction")!,
     [placeId]
   );
+
+  useEffect(() => {
+    showSuccessToast("Mua vé thành công!");
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 bg-[#121212] px-6">

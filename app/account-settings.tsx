@@ -59,9 +59,8 @@ export default function AccountSettingsScreen() {
     const handleSaveProfile = async () => {
         setSaving(true);
         try {
-        const updated = await updateProfile(accessToken, { fullName: name, phone });
+        await updateProfile(accessToken, { fullName: name, phone });
         await updateUser({ fullName: name, phone });
-        Alert.alert("Thành công", "Đã cập nhật thông tin cá nhân");
         } catch (err: any) {
             Alert.alert("Lỗi", err?.message || "Không lưu được thông tin");
         } finally {
