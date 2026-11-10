@@ -4,7 +4,8 @@ import { getDestinations } from "@/src/services/destinationService";
 import { Destination } from "@/src/types/destination";
 import { resolveImageUrl } from "@/src/utils/image";
 import { useRouter } from "expo-router";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1500835556837-99ac94a94552";
 
@@ -51,18 +52,18 @@ export default function AllDestinationsScreen() {
             resizeMode="cover"
           />
           <View className="ml-4 flex-1 justify-center">
-            <Text className="text-lg font-bold text-white" numberOfLines={1}>
+            <AppText className="text-lg font-bold text-white" numberOfLines={1}>
               {destination.name}
-            </Text>
+            </AppText>
             <View className="mt-2 flex-row items-center">
               <Ionicons name="location-outline" size={15} color="#A3A3A3" />
-              <Text className="ml-1 flex-1 text-sm text-neutral-400" numberOfLines={1}>
+              <AppText className="ml-1 flex-1 text-sm text-neutral-400" numberOfLines={1}>
                 {[destination.city, destination.country].filter(Boolean).join(", ")}
-              </Text>
+              </AppText>
             </View>
-            <Text className="mt-2 text-xs text-violet-400">
+            <AppText className="mt-2 text-xs text-violet-400">
               {destination.tourCount} tour
-            </Text>
+            </AppText>
           </View>
           <Ionicons
             name="chevron-forward"

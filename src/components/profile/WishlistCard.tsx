@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import SafeImage from "../detail/SafeImage";
 
 type Props = {
@@ -23,18 +24,18 @@ const WishlistCard = ({ title, subtitle, thumbnailUrl, price, rating, onPress } 
             </View>
 
             <View className="ml-3 min-w-0 flex-1 justify-center">
-                <Text className="text-base font-bold leading-5 text-white" numberOfLines={2}>{title}</Text>
+                <AppText className="text-base font-bold leading-5 text-white" numberOfLines={2}>{title}</AppText>
                 {!!subtitle && (
-                    <Text className="mt-1 text-xs text-neutral-400" numberOfLines={1}>{subtitle}</Text>
+                    <AppText className="mt-1 text-xs text-neutral-400" numberOfLines={1}>{subtitle}</AppText>
                 )}
                 <View className="mt-1.5 flex-row items-center">
                     {rating != null && (
                         <>
                             <Ionicons name="star" size={12} color="#facc15" />
-                            <Text className="ml-1 mr-2 text-xs text-neutral-400">{rating.toFixed(1)}</Text>
+                            <AppText className="ml-1 mr-2 text-xs text-neutral-400">{rating.toFixed(1)}</AppText>
                         </>
                     )}
-                    <Text className="shrink text-sm font-bold text-violet-400" numberOfLines={1}>{price}</Text>
+                    <AppText className="shrink text-sm font-bold text-violet-400" numberOfLines={1}>{price}</AppText>
                 </View>
             </View>
 

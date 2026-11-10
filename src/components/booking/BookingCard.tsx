@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 import SafeImage from '../detail/SafeImage';
 
 type Props = {
@@ -32,12 +33,12 @@ const BookingCard = ({ item, onPress }: Props) => {
         </View>
 
         <View className="flex-1 ml-4">
-            <Text className="text-white text-xl font-bold" numberOfLines={1}>{item.title}</Text>
-            <Text className="text-neutral-400 mt-1">{item.date}</Text>
+            <AppText className="text-white text-xl font-bold" numberOfLines={1}>{item.title}</AppText>
+            <AppText className="text-neutral-400 mt-1">{item.date}</AppText>
         </View>
 
         <View style={{ backgroundColor: item.badgeColor }} className="px-3 py-2 rounded-full">
-            <Text style={{ color: item.badgeText }} className="font-semibold">{item.badge}</Text>
+            <AppText style={{ color: item.badgeText }} className="font-semibold">{item.badge}</AppText>
         </View>
         </TouchableOpacity>
     )

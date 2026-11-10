@@ -6,7 +6,8 @@ import { getMyReviewsCount } from '@/src/services/reviewService';
 import { getMyWishlistCount } from '@/src/services/wishlishService';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type ProfileCounts = {
@@ -90,9 +91,9 @@ const ProfileScreen = () => {
           wishlistCount={counts?.wishlist ?? null}
         />
         {countsError && (
-          <Text className="mx-5 mt-3 text-center text-sm text-red-400">
+          <AppText className="mx-5 mt-3 text-center text-sm text-red-400">
             {countsError}
-          </Text>
+          </AppText>
         )}
         <View className="px-5 mt-6">
           {menus.map((item) => (

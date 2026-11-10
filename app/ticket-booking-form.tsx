@@ -6,7 +6,8 @@ import { exploreData } from "@/src/data/explore";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const toISO = (d: Date) => d.toISOString().slice(0, 10);
@@ -44,23 +45,23 @@ export default function TicketBookingFormScreen() {
         <TouchableOpacity onPress={() => router.back()} className="p-2">
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text className="text-white text-lg font-semibold ml-2">Chọn ngày tham quan</Text>
+        <AppText className="text-white text-lg font-semibold ml-2">Chọn ngày tham quan</AppText>
       </View>
 
       <StepIndicator currentStep={2} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 140 }} className="px-6">
-        <Text className="text-neutral-400 text-sm mb-4">Chọn ngày bạn muốn tham quan</Text>
+        <AppText className="text-neutral-400 text-sm mb-4">Chọn ngày bạn muốn tham quan</AppText>
 
         <DateRangePicker mode="single" start={visitDate} end={visitDate} onChange={(s) => setVisitDate(s)} />
 
         <View className="flex-row items-center justify-between bg-neutral-900 rounded-2xl p-4 mt-6">
-          <Text className="text-white font-semibold">Số vé</Text>
+          <AppText className="text-white font-semibold">Số vé</AppText>
           <View className="flex-row items-center gap-3">
             <TouchableOpacity onPress={() => setTickets((t) => Math.max(1, t - 1))} className="w-8 h-8 rounded-full bg-neutral-700 items-center justify-center">
               <Ionicons name="remove" size={16} color="#fff" />
             </TouchableOpacity>
-            <Text className="text-white w-6 text-center">{tickets}</Text>
+            <AppText className="text-white w-6 text-center">{tickets}</AppText>
             <TouchableOpacity onPress={() => setTickets((t) => Math.min(10, t + 1))} className="w-8 h-8 rounded-full bg-neutral-700 items-center justify-center">
               <Ionicons name="add" size={16} color="#fff" />
             </TouchableOpacity>
@@ -85,7 +86,7 @@ export default function TicketBookingFormScreen() {
           onPress={handleContinue}
           className={`h-14 rounded-2xl items-center justify-center ${canContinue ? "bg-white" : "bg-neutral-700"}`}
         >
-          <Text className={`font-semibold text-base ${canContinue ? "text-black" : "text-neutral-400"}`}>Tiếp tục thanh toán</Text>
+          <AppText className={`font-semibold text-base ${canContinue ? "text-black" : "text-neutral-400"}`}>Tiếp tục thanh toán</AppText>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

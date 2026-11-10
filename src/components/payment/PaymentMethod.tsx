@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 
 const [selected, setSelected] = useState("card");
 const methods = [
@@ -12,7 +13,7 @@ const methods = [
 const PaymentMethod = () => {
     return (
         <View className='mx-6 mt-6'>
-            <Text className='text-white font-bold mb-4'>Phương thức thanh toán</Text>
+            <AppText className='text-white font-bold mb-4'>Phương thức thanh toán</AppText>
             <View className='flex-row justify-between'>
                 {methods.map(item => (
                     <TouchableOpacity
@@ -25,7 +26,7 @@ const PaymentMethod = () => {
                     }`}
                     >
                         <Ionicons name={item.icon as any} size={22} color="white" />
-                        <Text className='text-white mt-2'>{item.title}</Text>
+                        <AppText className='text-white mt-2'>{item.title}</AppText>
                     </TouchableOpacity>
                 ))}
             </View>

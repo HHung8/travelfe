@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 
 type Props = {
     title: string;
@@ -15,7 +16,7 @@ const CategoryChip = ({ title, active, onPress }: Props) => {
                 active ? "bg-[#37355D] border-[#37355D]" : "border-neutral-600"
             }`}
         >
-            <Text className={`font-semibold ${active ? "text-white" : "text-neutral-300"}`}>{title}</Text>
+            <AppText className={`font-semibold ${active ? "text-white" : "text-neutral-300"}`}>{title}</AppText>
         </TouchableOpacity>
     )
 }

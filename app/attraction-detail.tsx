@@ -2,16 +2,13 @@ import SafeImage from '@/src/components/detail/SafeImage';
 import { useAuth } from '@/src/context/AuthContext';
 import { getAttractionById } from '@/src/services/attractionService';
 import {
-    getAttractionWishlistStatus,
-    getCachedWishlistStatus,
-    setCachedWishlistStatus,
-    toggleWishList,
-} from '@/src/services/wishlishService';
+    getAttractionWishlistStatus, getCachedWishlistStatus, setCachedWishlistStatus, toggleWishList, } from '@/src/services/wishlishService';
 import { AttractionDetail } from '@/src/types/attraction';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const AtractionDetailScreen = () => {
@@ -126,9 +123,9 @@ const AtractionDetailScreen = () => {
     if (error || !place) {
         return (
             <SafeAreaView className="flex-1 bg-[#121212] items-center justify-center px-6">
-                <Text className="text-red-400 text-center mb-4">{error || "Không tìm thấy địa điểm."}</Text>
+                <AppText className="text-red-400 text-center mb-4">{error || "Không tìm thấy địa điểm."}</AppText>
                 <TouchableOpacity onPress={load} className="bg-white rounded-2xl px-6 py-3">
-                    <Text className="text-black font-semibold">Thử lại</Text>
+                    <AppText className="text-black font-semibold">Thử lại</AppText>
                 </TouchableOpacity>
             </SafeAreaView>
         )
@@ -155,39 +152,39 @@ const AtractionDetailScreen = () => {
 
                 <View className="px-6 mt-5">
                     <View className="flex-row items-center bg-neutral-800 self-start px-3 py-1 rounded-full">
-                        <Text className="text-neutral-300 text-xs">{place.category}</Text>
+                        <AppText className="text-neutral-300 text-xs">{place.category}</AppText>
                     </View>
-                    <Text className="text-white text-2xl font-bold mt-3">{place.name}</Text>
+                    <AppText className="text-white text-2xl font-bold mt-3">{place.name}</AppText>
                     <View className="flex-row items-center mt-1">
                         <Ionicons name="location-outline" size={14} color="#a3a3a3" />
-                        <Text className="text-neutral-400 text-sm ml-1">{place.destinationName}</Text>
+                        <AppText className="text-neutral-400 text-sm ml-1">{place.destinationName}</AppText>
                     </View>
 
                     <View className="flex-row gap-2 mt-4 flex-wrap">
                         {!!place.openingHours && (
                             <View className="flex-row items-center bg-neutral-800 px-3 py-1.5 rounded-full">
                                 <Ionicons name="time-outline" size={14} color="#d4d4d4" />
-                                <Text className="text-neutral-300 text-xs ml-1">{place.openingHours}</Text>
+                                <AppText className="text-neutral-300 text-xs ml-1">{place.openingHours}</AppText>
                             </View>
                         )}
                     </View>
 
                     {!!place.description && (
-                        <Text className="text-neutral-300 text-sm leading-6 mt-4">{place.description}</Text>
+                        <AppText className="text-neutral-300 text-sm leading-6 mt-4">{place.description}</AppText>
                     )}
                 </View>
             </ScrollView>
 
             <View className="absolute bottom-0 left-0 right-0 px-6 pb-6 pt-4 bg-[#121212] border-t border-neutral-900 flex-row items-center justify-between">
                 <View>
-                    <Text className="text-neutral-500 text-xs">Vé từ</Text>
-                    <Text className="text-violet-500 text-xl font-bold">${place.entryFee}</Text>
+                    <AppText className="text-neutral-500 text-xs">Vé từ</AppText>
+                    <AppText className="text-violet-500 text-xl font-bold">${place.entryFee}</AppText>
                 </View>
                 <TouchableOpacity
                     onPress={() => router.push({pathname:"/attraction-booking-form", params: { placeId: place.id } })}
                     className="bg-white rounded-2xl px-8 py-4"
                 >
-                    <Text className="text-black font-semibold text-base">Đặt vé</Text>
+                    <AppText className="text-black font-semibold text-base">Đặt vé</AppText>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>

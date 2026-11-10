@@ -2,7 +2,8 @@
 import { Tour } from '@/src/types/tour';
 import { resolveImageUrl } from '@/src/utils/image';
 import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 
 interface Props {
   item: Tour;
@@ -26,27 +27,27 @@ const TourCard = ({ item, onPress }: Props) => {
         resizeMode="cover"
       />
       <View className="flex-1 ml-4">
-        <Text className="text-white font-bold text-lg" numberOfLines={1}>
+        <AppText className="text-white font-bold text-lg" numberOfLines={1}>
           {item.title}
-        </Text>
-        <Text className="text-gray-500 text-xs" numberOfLines={1}>
+        </AppText>
+        <AppText className="text-gray-500 text-xs" numberOfLines={1}>
           {item.destinationName}
-        </Text>
+        </AppText>
         <View className="flex-row items-center mt-1">
-          <Text className="text-gray-400">{item.durationDays} ngày </Text>
-          <Text className="text-yellow-400 ml-2">
+          <AppText className="text-gray-400">{item.durationDays} ngày </AppText>
+          <AppText className="text-yellow-400 ml-2">
               ⭐ {item.averageRating != null ? item.averageRating.toFixed(1) : "Chưa có đánh giá"} 
-          </Text>
+          </AppText>
         </View>
       </View>
       <View className='items-end'>
           {hasDiscount ? (
             <>
-              <Text className='text-gray-500 text-xs line-through'>${item.price}</Text>
-              <Text className='text-violet-500 font-bold text-xl' >${item.discountPrice}</Text>
+              <AppText className='text-gray-500 text-xs line-through'>${item.price}</AppText>
+              <AppText className='text-violet-500 font-bold text-xl' >${item.discountPrice}</AppText>
             </>
           ) : (
-              <Text className='text-violet-500 ' >${item.price}</Text>
+              <AppText className='text-violet-500 ' >${item.price}</AppText>
           )}
       </View>
     </TouchableOpacity>

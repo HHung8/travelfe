@@ -8,7 +8,9 @@ import { Tour } from "@/src/types/tour";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Keyboard, TouchableOpacity, View } from "react-native";
+import AppTextInput from "@/src/components/common/AppTextInput";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type Tab = "tours" | "destinations"
@@ -108,7 +110,7 @@ export default function SearchScreen() {
 
                 <View className="flex-1 flex-row items-center bg-[#2B2B2B] rounded-2xl h-12 px-3">
                     <Ionicons name="search-outline" size={20} color="#9CA3AF" />
-                    <TextInput
+                    <AppTextInput
                         autoFocus
                         value={keyword}
                         onChangeText={setKeyword}
@@ -144,14 +146,14 @@ export default function SearchScreen() {
                     className={`flex-1 py-2 rounded-l-xl items-center ${tab === "tours" ? "bg-violet-600" : "bg-[#2B2B2B]"
                         }`}
                 >
-                    <Text className="text-white font-semibold">Tour</Text>
+                    <AppText className="text-white font-semibold">Tour</AppText>
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => setTab("destinations")}
                     className={`flex-1 py-2 rounded-r-xl items-center ${tab === "destinations" ? "bg-violet-600" : "bg-[#2B2B2B]"
                         }`}
                 >
-                    <Text className="text-white font-semibold">Điểm đến</Text>
+                    <AppText className="text-white font-semibold">Điểm đến</AppText>
                 </TouchableOpacity>
             </View>
 
@@ -160,9 +162,9 @@ export default function SearchScreen() {
                 <View className="mx-4 mb-3 p-4 bg-[#1E1E1E] rounded-2xl">
                     {tab === "tours" ? (
                         <>
-                            <Text className="text-white font-semibold mb-2">Khoảng giá ($)</Text>
+                            <AppText className="text-white font-semibold mb-2">Khoảng giá ($)</AppText>
                             <View className="flex-row mb-3">
-                                <TextInput
+                                <AppTextInput
                                     value={minPrice}
                                     onChangeText={setMinPrice}
                                     placeholder="Từ"
@@ -170,7 +172,7 @@ export default function SearchScreen() {
                                     keyboardType="numeric"
                                     className="flex-1 bg-[#2B2B2B] text-white rounded-xl px-3 py-2 mr-2"
                                 />
-                                <TextInput
+                                <AppTextInput
                                     value={maxPrice}
                                     onChangeText={setMaxPrice}
                                     placeholder="Đến"
@@ -180,9 +182,9 @@ export default function SearchScreen() {
                                 />
                             </View>
 
-                            <Text className="text-white font-semibold mb-2">Số ngày tour</Text>
+                            <AppText className="text-white font-semibold mb-2">Số ngày tour</AppText>
                             <View className="flex-row">
-                                <TextInput
+                                <AppTextInput
                                     value={minDuration}
                                     onChangeText={setMinDuration}
                                     placeholder="Từ"
@@ -190,7 +192,7 @@ export default function SearchScreen() {
                                     keyboardType="numeric"
                                     className="flex-1 bg-[#2B2B2B] text-white rounded-xl px-3 py-2 mr-2"
                                 />
-                                <TextInput
+                                <AppTextInput
                                     value={maxDuration}
                                     onChangeText={setMaxDuration}
                                     placeholder="Đến"
@@ -202,8 +204,8 @@ export default function SearchScreen() {
                         </>
                     ) : (
                         <>
-                            <Text className="text-white font-semibold mb-2">Quốc gia</Text>
-                            <TextInput
+                            <AppText className="text-white font-semibold mb-2">Quốc gia</AppText>
+                            <AppTextInput
                                 value={country}
                                 onChangeText={setCountry}
                                 placeholder="Ví dụ: Viet Nam, Japan..."
@@ -218,13 +220,13 @@ export default function SearchScreen() {
                             onPress={clearFilters}
                             className="px-4 py-2 mr-2"
                         >
-                            <Text className="text-gray-400 font-semibold">Xóa lọc</Text>
+                            <AppText className="text-gray-400 font-semibold">Xóa lọc</AppText>
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={applyFilters}
                             className="bg-violet-600 px-4 py-2 rounded-xl"
                         >
-                            <Text className="text-white font-semibold">Áp dụng</Text>
+                            <AppText className="text-white font-semibold">Áp dụng</AppText>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -236,9 +238,9 @@ export default function SearchScreen() {
                     loadingTours ? (
                         <ActivityIndicator color="#8B5CF6" style={{ marginTop: 24 }} />
                     ) : errorTours ? (
-                        <Text className="text-red-400 mt-4">{errorTours}</Text>
+                        <AppText className="text-red-400 mt-4">{errorTours}</AppText>
                     ) : tours.length === 0 ? (
-                        <Text className="text-gray-500 mt-4 text-center">Không tìm thấy tour phù hợp.</Text>
+                        <AppText className="text-gray-500 mt-4 text-center">Không tìm thấy tour phù hợp.</AppText>
                     ) : (
                         <FlatList
                             key="tours-list"
@@ -259,9 +261,9 @@ export default function SearchScreen() {
                 ) : loadingDestinations ? (
                     <ActivityIndicator color="#8B5CF6" style={{ marginTop: 24 }} />
                 ) : errorDestinations ? (
-                    <Text className="text-red-400 mt-4">{errorDestinations}</Text>
+                    <AppText className="text-red-400 mt-4">{errorDestinations}</AppText>
                 ) : destinations.length === 0 ? (
-                    <Text className="text-gray-500 mt-4 text-center">Không tìm thấy điểm đến phù hợp.</Text>
+                    <AppText className="text-gray-500 mt-4 text-center">Không tìm thấy điểm đến phù hợp.</AppText>
                 ) : (
                     <FlatList
                         key="destinations-list"

@@ -25,6 +25,25 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+## Backend connection
+
+The app connects to the API at port `5167`. By default, it uses the host running
+Expo during development. For a physical device or a different backend host, set
+`EXPO_PUBLIC_API_URL` to the backend origin (for example,
+`http://192.168.1.10:5167`, without `/api`) and restart Expo. The device and
+backend must be reachable on the same network.
+
+Account settings support Vietnamese and English, plus USD and VND display. Prices
+returned by the API are treated as USD; VND display uses the latest USD/VND rate
+from ExchangeRate-API, cached until its published next-update time. A network
+connection is required to fetch a fresh rate. Language and currency preferences
+are stored on the device.
+
+Notification categories (booking updates, trip reminders, and promotions) are
+also stored on the device. They do not filter server-delivered notifications
+until the backend provides category-specific preference support. Push and email
+notification switches continue to use the account API.
+
 ## Get a fresh project
 
 When you're ready, run:

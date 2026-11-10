@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 
 const BookingInfo = () => {
     return (
@@ -7,12 +8,12 @@ const BookingInfo = () => {
 
             <View className="bg-[#444] rounded-xl p-4">
 
-                <Text className="text-neutral-400 text-center">
+                <AppText className="text-neutral-400 text-center">
                     Mã booking
-                </Text>
-                <Text className="text-[#6D5DF6] text-center font-bold text-xl mt-1">
+                </AppText>
+                <AppText className="text-[#6D5DF6] text-center font-bold text-xl mt-1">
                     TRV-20250720-0042
-                </Text>
+                </AppText>
             </View>
 
             <View className="mt-6">
@@ -55,18 +56,18 @@ function Row({
 
         <View className="flex-row justify-between py-3 border-b border-[#555]">
 
-            <Text className="text-neutral-400">
+            <AppText className="text-neutral-400">
                 {left}
-            </Text>
+            </AppText>
 
-            <Text
+            <AppText
                 className={`font-semibold ${success
                         ? "text-[#6DA544]"
                         : "text-white"
                     }`}
             >
                 {right}
-            </Text>
+            </AppText>
 
         </View>
     )

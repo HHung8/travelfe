@@ -6,7 +6,8 @@ import { AttractionBookingItem, HotelBookingItem, TourBookingItem } from '@/src/
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Linking, ScrollView, TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 import QRCode from 'react-native-qrcode-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -18,8 +19,8 @@ type BookingType = "tour" | "hotel" | "attraction";
 
 const InfoRow = ({ label, value }: { label: string, value: string }) => (
     <View className="flex-row justify-between py-2">
-        <Text className="text-neutral-500">{label}</Text>
-        <Text className="text-white font-medium">{value}</Text>
+        <AppText className="text-neutral-500">{label}</AppText>
+        <AppText className="text-white font-medium">{value}</AppText>
     </View>
 )
 const BookingDetailScreen = () => {
@@ -74,7 +75,7 @@ const BookingDetailScreen = () => {
     if (error || !booking) {
         return (
             <SafeAreaView className="flex-1 bg-[#121212] items-center justify-center px-6">
-                <Text className="text-red-400 text-center">{error || "Không tìm thấy đặt chỗ."}</Text>
+                <AppText className="text-red-400 text-center">{error || "Không tìm thấy đặt chỗ."}</AppText>
             </SafeAreaView>
         );
     }
@@ -168,7 +169,7 @@ const BookingDetailScreen = () => {
                 <TouchableOpacity onPress={() => router.back()} className="p-2">
                     <Ionicons name="chevron-back" size={24} color="#fff" />
                 </TouchableOpacity>
-                <Text className="text-white text-lg font-semibold ml-2">Chi tiết đặt chỗ</Text>
+                <AppText className="text-white text-lg font-semibold ml-2">Chi tiết đặt chỗ</AppText>
             </View>
 
             <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 140 }} showsVerticalScrollIndicator={false}>
@@ -180,8 +181,8 @@ const BookingDetailScreen = () => {
                         <SafeImage uri={thumbnailUrl} className="w-full h-full" resizeMode="cover" />
                     </View>
                     <View className="flex-1 ml-3">
-                        <Text className="text-white font-bold text-base" numberOfLines={2}>{title}</Text>
-                        <Text className="text-neutral-500 text-xs mt-1">Mã: {booking.bookingCode}</Text>
+                        <AppText className="text-white font-bold text-base" numberOfLines={2}>{title}</AppText>
+                        <AppText className="text-neutral-500 text-xs mt-1">Mã: {booking.bookingCode}</AppText>
                     </View>
                 </View>
 
@@ -191,13 +192,13 @@ const BookingDetailScreen = () => {
                         <View className="bg-white rounded-2xl p-4">
                             <QRCode value={qrValue} size={140} backgroundColor="white" color="black" />
                         </View>
-                        <Text className="text-neutral-500 text-xs mt-2">Xuất trình mã này khi tham gia</Text>
+                        <AppText className="text-neutral-500 text-xs mt-2">Xuất trình mã này khi tham gia</AppText>
                     </View>
                 )}
 
                 {/* Thông tin chi tiết */}
                 <View className="bg-neutral-900 rounded-2xl p-4 mt-6">
-                    <Text className="text-white font-semibold text-base mb-2">Thông tin đặt chỗ</Text>
+                    <AppText className="text-white font-semibold text-base mb-2">Thông tin đặt chỗ</AppText>
                     {type === "tour" ? (
                         <>
                             <InfoRow label="Ngày khởi hành" value={fmtDate((booking as TourBookingItem).travelDate)} />
@@ -221,32 +222,32 @@ const BookingDetailScreen = () => {
 
                 {/* Thanh toán */}
                 <View className="bg-neutral-900 rounded-2xl p-4 mt-4">
-                    <Text className="text-white font-semibold text-base mb-2">Thanh toán</Text>
+                    <AppText className="text-white font-semibold text-base mb-2">Thanh toán</AppText>
                     <View className="flex-row justify-between pt-2 border-t border-neutral-800">
-                        <Text className="text-white font-semibold">Tổng tiền</Text>
-                        <Text className="text-indigo-400 font-bold text-base">${booking.totalPrice}</Text>
+                        <AppText className="text-white font-semibold">Tổng tiền</AppText>
+                        <AppText className="text-indigo-400 font-bold text-base">${booking.totalPrice}</AppText>
                     </View>
                 </View>
 
                 {/* Chính sách huỷ / Thông tin huỷ */}
                 {isCancelled ? (
                     <View className="bg-neutral-900 rounded-2xl p-4 mt-4">
-                        <Text className="text-white font-semibold text-base mb-2">Thông tin huỷ</Text>
+                        <AppText className="text-white font-semibold text-base mb-2">Thông tin huỷ</AppText>
                         {(booking as any).cancelledAt && (
                             <InfoRow label="Ngày huỷ" value={fmtDate((booking as any).cancelledAt)} />
                         )}
                         {(booking as any).cancelReason && (
-                            <Text className="text-neutral-400 text-sm leading-6 mt-2">
+                            <AppText className="text-neutral-400 text-sm leading-6 mt-2">
                                 Lý do: {(booking as any).cancelReason}
-                            </Text>
+                            </AppText>
                         )}
                     </View>
                 ) : (
                     <View className="bg-neutral-900 rounded-2xl p-4 mt-4">
-                        <Text className="text-white font-semibold text-base mb-2">Chính sách huỷ</Text>
-                        <Text className="text-neutral-400 text-sm leading-6">
+                        <AppText className="text-white font-semibold text-base mb-2">Chính sách huỷ</AppText>
+                        <AppText className="text-neutral-400 text-sm leading-6">
                             Miễn phí huỷ trước 48 giờ so với ngày khởi hành. Huỷ trong vòng 48 giờ sẽ không được hoàn tiền.
-                        </Text>
+                        </AppText>
                     </View>
                 )}
 
@@ -256,7 +257,7 @@ const BookingDetailScreen = () => {
                     className="flex-row items-center justify-center bg-neutral-900 rounded-2xl p-4 mt-4"
                 >
                     <Ionicons name="call-outline" size={18} color="#818cf8" />
-                    <Text className="text-indigo-400 font-semibold ml-2">Liên hệ hỗ trợ</Text>
+                    <AppText className="text-indigo-400 font-semibold ml-2">Liên hệ hỗ trợ</AppText>
                 </TouchableOpacity>
             </ScrollView>
 
@@ -265,7 +266,7 @@ const BookingDetailScreen = () => {
                 <View className="absolute bottom-0 left-0 right-0 px-6 pb-6 pt-4 bg-[#121212] border-t border-neutral-900 gap-3">
                     {isPending && (
                         <TouchableOpacity onPress={handlePayNow} className="h-14 rounded-2xl bg-white items-center justify-center">
-                            <Text className="text-black font-semibold text-base">Thanh toán ngay</Text>
+                            <AppText className="text-black font-semibold text-base">Thanh toán ngay</AppText>
                         </TouchableOpacity>
                     )}
                     {/* {isCompleted && (
@@ -276,7 +277,7 @@ const BookingDetailScreen = () => {
                                 targetTitle: title,
                             }})}
                             className="h-14 rounded-2xl bg-white items-center justify-center">
-                            <Text className="text-black font-semibold text-base">Đánh giá tour</Text>
+                            <AppText className="text-black font-semibold text-base">Đánh giá tour</AppText>
                         </TouchableOpacity>
                     )} */}
                     <TouchableOpacity
@@ -292,7 +293,7 @@ const BookingDetailScreen = () => {
                         })}
                         className="h-14 rounded-2xl bg-white items-center justify-center"
                     >
-                        <Text className="text-black font-semibold text-base">Đánh giá</Text>
+                        <AppText className="text-black font-semibold text-base">Đánh giá</AppText>
                     </TouchableOpacity>
 
                     {(isPending || isConfirmed) && (
@@ -304,7 +305,7 @@ const BookingDetailScreen = () => {
                             {cancelling ? (
                                 <ActivityIndicator color="#f87171" />
                             ) : (
-                                <Text className="text-red-400 font-semibold text-base">Huỷ đặt chỗ</Text>
+                                <AppText className="text-red-400 font-semibold text-base">Huỷ đặt chỗ</AppText>
                             )}
                         </TouchableOpacity>
                     )}

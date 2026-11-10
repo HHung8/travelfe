@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 
 type Props = {
     destinationId: string;
@@ -14,10 +15,10 @@ const DestinationBottomBar = ({destinationId, destinationName, tourCount, hotelC
         <View className="absolute bottom-0 left-0 right-0 bg-[#1A1A1A] px-6 py-5 border-neutral-700">
             <View className="flex-row justify-between items-center ">
                 <View className="flex-1 mr-4">
-                    <Text className="text-neutral-400">Có tại {destinationName}</Text>
-                    <Text className="text-white text-lg font-bold" numberOfLines={1}>
+                    <AppText className="text-neutral-400">Có tại {destinationName}</AppText>
+                    <AppText className="text-white text-lg font-bold" numberOfLines={1}>
                         {tourCount} tour · {hotelCount} khách sạn
-                    </Text>
+                    </AppText>
                 </View>
                 <TouchableOpacity
                     className="bg-violet-600 px-6 py-4 rounded-2xl"
@@ -30,9 +31,9 @@ const DestinationBottomBar = ({destinationId, destinationName, tourCount, hotelC
                         })
                     }
                 >
-                    <Text className="text-white font-bold text-lg">
+                    <AppText className="text-white font-bold text-lg">
                         {tourCount > 0 ? "Xem tour" : "Chưa có tour"}
-                    </Text>
+                    </AppText>
                 </TouchableOpacity>
             </View> 
         </View>

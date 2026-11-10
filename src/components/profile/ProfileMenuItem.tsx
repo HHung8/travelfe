@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 
 
 type Props = {
@@ -23,9 +24,9 @@ const ProfileMenuItem = ({ title, icon, onPress }: Props) => {
                     color="#D1D5DB"
                 />
 
-                <Text className="text-white text-xl font-semibold ml-4">
+                <AppText className="text-white text-xl font-semibold ml-4">
                     {title}
-                </Text>
+                </AppText>
 
             </View>
 

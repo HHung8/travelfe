@@ -9,7 +9,8 @@ import { resolveImageUrl } from '@/src/utils/image';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, RefreshControl, ScrollView, Share, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, Share, TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const toBullets = (text: string): string[] => {
@@ -34,12 +35,12 @@ const BulletSection = ({
     const items = toBullets(text);
     return (
         <View className="mt-6">
-            <Text className="text-white font-semibold text-lg mb-3">{title}</Text>
+            <AppText className="text-white font-semibold text-lg mb-3">{title}</AppText>
             <View className="gap-2">
                 {items.map((item, idx) => (
                     <View key={idx} className="flex-row items-start">
                         <Ionicons name={icon} size={16} color={color} style={{ marginTop: 2 }} />
-                        <Text className="text-neutral-300 text-sm leading-6 ml-2 flex-1">{item}</Text>
+                        <AppText className="text-neutral-300 text-sm leading-6 ml-2 flex-1">{item}</AppText>
                     </View>
                 ))}
             </View>
@@ -60,16 +61,16 @@ const ScheduleSection = ({ schedules }: { schedules: any[] }) => {
     if (!schedules || schedules.length === 0) return null;
     return (
         <View className="mt-6">
-            <Text className="text-white font-semibold text-lg mb-3">Lịch trình</Text>
+            <AppText className="text-white font-semibold text-lg mb-3">Lịch trình</AppText>
             <View className="gap-3">
                 {schedules.map((s, idx) => (
                     <View key={idx} className="bg-neutral-900 rounded-2xl p-4">
-                        <Text className="text-violet-400 font-semibold text-sm mb-1">{getScheduleLabel(s, idx)}</Text>
+                        <AppText className="text-violet-400 font-semibold text-sm mb-1">{getScheduleLabel(s, idx)}</AppText>
                         {!!getScheduleTitle(s) && (
-                            <Text className="text-white font-medium">{getScheduleTitle(s)}</Text>
+                            <AppText className="text-white font-medium">{getScheduleTitle(s)}</AppText>
                         )}
                         {!!getScheduleDescription(s) && (
-                            <Text className="text-neutral-400 text-sm mt-1 leading-6">{getScheduleDescription(s)}</Text>
+                            <AppText className="text-neutral-400 text-sm mt-1 leading-6">{getScheduleDescription(s)}</AppText>
                         )}
                     </View>
                 ))}
@@ -127,13 +128,13 @@ const TourDetailScreen = () => {
         return (
             <SafeAreaView className="flex-1 bg-[#121212] items-center justify-center px-6">
                 <Ionicons name="alert-circle-outline" size={48} color="#525252" />
-                <Text className="text-red-400 text-center mt-4">{error || "Không tìm thấy tour."}</Text>
+                <AppText className="text-red-400 text-center mt-4">{error || "Không tìm thấy tour."}</AppText>
                 <TouchableOpacity
                     onPress={() => fetchTour()}
                     className="mt-6 bg-violet-600 px-6 py-3 rounded-2xl flex-row items-center"
                 >
                     <Ionicons name="refresh" size={16} color="#fff" />
-                    <Text className="text-white font-semibold ml-2">Thử lại</Text>
+                    <AppText className="text-white font-semibold ml-2">Thử lại</AppText>
                 </TouchableOpacity>
             </SafeAreaView>
         );
@@ -168,48 +169,48 @@ const TourDetailScreen = () => {
                 </View>
 
                 <View className="px-6 mt-5">
-                    <Text className="text-white text-2xl font-bold">{tour.title}</Text>
+                    <AppText className="text-white text-2xl font-bold">{tour.title}</AppText>
 
                     <TouchableOpacity
                         onPress={() => router.push({ pathname: "/detail", params: { destinationId: tour.destinationId } })}
                         className="flex-row items-center mt-1"
                     >
                         <Ionicons name="location-outline" size={14} color="#a3a3a3" />
-                        <Text className="text-neutral-400 text-sm ml-1 underline">{tour.destinationName}</Text>
+                        <AppText className="text-neutral-400 text-sm ml-1 underline">{tour.destinationName}</AppText>
                     </TouchableOpacity>
 
                     <View className="flex-row items-center mt-3">
                         {hasDiscount && (
-                            <Text className="text-neutral-500 text-sm line-through mr-2">${tour.price}</Text>
+                            <AppText className="text-neutral-500 text-sm line-through mr-2">${tour.price}</AppText>
                         )}
-                        <Text className="text-violet-500 text-xl font-bold">${finalPrice}</Text>
-                        <Text className="text-neutral-500 text-xs ml-1">/ người</Text>
+                        <AppText className="text-violet-500 text-xl font-bold">${finalPrice}</AppText>
+                        <AppText className="text-neutral-500 text-xs ml-1">/ người</AppText>
                     </View>
 
                     <View className="flex-row gap-2 mt-4 flex-wrap">
                         <View className="flex-row items-center bg-neutral-800 px-3 py-1.5 rounded-full">
                             <Ionicons name="time-outline" size={14} color="#d4d4d4" />
-                            <Text className="text-neutral-300 text-xs ml-1">{tour.durationDays} ngày</Text>
+                            <AppText className="text-neutral-300 text-xs ml-1">{tour.durationDays} ngày</AppText>
                         </View>
                         <View className="flex-row items-center bg-neutral-800 px-3 py-1.5 rounded-full">
                             <Ionicons name="people-outline" size={14} color="#d4d4d4" />
-                            <Text className="text-neutral-300 text-xs ml-1">Tối đa {tour.maxCapacity}</Text>
+                            <AppText className="text-neutral-300 text-xs ml-1">Tối đa {tour.maxCapacity}</AppText>
                         </View>
                         {!!tour.difficulty && (
                             <View className="flex-row items-center bg-neutral-800 px-3 py-1.5 rounded-full">
                                 <Ionicons name="speedometer-outline" size={14} color="#d4d4d4" />
-                                <Text className="text-neutral-300 text-xs ml-1">{tour.difficulty}</Text>
+                                <AppText className="text-neutral-300 text-xs ml-1">{tour.difficulty}</AppText>
                             </View>
                         )}
                     </View>
 
                     {!!tour.description && (
-                        <Text className="text-neutral-300 text-sm leading-6 mt-4">{tour.description}</Text>
+                        <AppText className="text-neutral-300 text-sm leading-6 mt-4">{tour.description}</AppText>
                     )}
 
                     {tour.images && tour.images.length > 0 && (
                         <View className="mt-6">
-                            <Text className="text-white font-semibold text-lg mb-3">Hình ảnh</Text>
+                            <AppText className="text-white font-semibold text-lg mb-3">Hình ảnh</AppText>
                             <FlatList
                                 horizontal
                                 data={tour.images}

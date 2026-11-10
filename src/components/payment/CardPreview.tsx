@@ -1,18 +1,17 @@
 import React from 'react'
-import { Text, View } from 'react-native'
-
-const CardPreview = () => {
+import { View } from 'react-native';
+import AppText from "@/src/components/common/AppText";const CardPreview = () => {
     return (
         <View className="mx-6 mt-6 bg-[#3A3A3A] rounded-2xl p-5">
-            <Text className="text-neutral-400">•••• •••• •••• 4242</Text>
+            <AppText className="text-neutral-400">•••• •••• •••• 4242</AppText>
             <View className="flex-row justify-between mt-6">
                 <View>
-                    <Text className="text-neutral-400 text-xs">Hết hạn</Text>
-                    <Text className="text-white">12/27</Text>
+                    <AppText className="text-neutral-400 text-xs">Hết hạn</AppText>
+                    <AppText className="text-white">12/27</AppText>
                 </View>
                 <View>
-                    <Text className="text-neutral-400 text-xs">CVV</Text>
-                    <Text className="text-white">•••</Text>
+                    <AppText className="text-neutral-400 text-xs">CVV</AppText>
+                    <AppText className="text-white">•••</AppText>
                 </View>
             </View>
         </View>

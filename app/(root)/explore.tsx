@@ -9,8 +9,8 @@ import { ExploreType } from '@/src/types/explore'
 import { ExploreItem, mapAttraction, mapHotel, mapTour } from '@/src/utils/mapExplore'
 import { useRouter } from 'expo-router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ActivityIndicator, FlatList, RefreshControl, ScrollView, Text, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { ActivityIndicator, FlatList, RefreshControl, ScrollView, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";import { SafeAreaView } from 'react-native-safe-area-context'
 
 const explore = () => {
   const router = useRouter();
@@ -86,8 +86,8 @@ const explore = () => {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#fff" />}
       >
         <View className="px-6 pt-4">
-          <Text className="text-white text-4xl font-bold mb-6">Khám phá</Text>
-          {error && <Text className='text-red-400 mb-4'>{error}</Text>}
+          <AppText className="text-white text-4xl font-bold mb-6">Khám phá</AppText>
+          {error && <AppText className='text-red-400 mb-4'>{error}</AppText>}
           <FlatList
             horizontal
             data={categories}
@@ -103,7 +103,7 @@ const explore = () => {
           />
           <View className='mt-6'>
             {filteredData.length === 0 ? (
-              <Text className='text-gray-400 text-center mt-8'>Không có dữ liệu</Text>
+              <AppText className='text-gray-400 text-center mt-8'>Không có dữ liệu</AppText>
             ) : (
               filteredData.map((item) => (
                 <ExploreCard key={`${item.type}-${item.id}`} item={item} onPress={() => handlePressItem(item)} />

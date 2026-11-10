@@ -1,15 +1,11 @@
 import { useAuth } from '@/src/context/AuthContext';
 import {
-  getCachedWishlistStatus,
-  getDestinationWishlistStatus,
-  getTourWishlistStatus,
-  setCachedWishlistStatus,
-  toggleWishList,
-} from '@/src/services/wishlishService';
+  getCachedWishlistStatus, getDestinationWishlistStatus, getTourWishlistStatus, setCachedWishlistStatus, toggleWishList, } from '@/src/services/wishlishService';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 
 type WishlistItemType = "tour" | "hotel" | "destination" | "attraction";
 
@@ -169,11 +165,11 @@ const Hero = ({ image, rating, reviews, itemType, itemId, initialWishlisted = fa
       <View className="px-6 pb-6">
         <View className="self-start bg-white rounded-full px-4 py-2 flex-row items-center">
           <Ionicons name="star" size={16} color="#FBBF24" />
-          <Text className="ml-2 font-semibold text-gray-800">
+          <AppText className="ml-2 font-semibold text-gray-800">
             {rating != null && reviews != null
               ? `${rating} (${reviews} đánh giá)`
               : "Chưa có đánh giá"}
-          </Text>
+          </AppText>
         </View>
       </View>
     </View>

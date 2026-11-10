@@ -4,7 +4,8 @@ import { AttractionDetail } from "@/src/types/attraction";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -50,13 +51,13 @@ export default function AttractionSuccessScreen() {
         <View className="w-20 h-20 rounded-full bg-green-500/15 items-center justify-center mb-6">
           <Ionicons name="checkmark" size={40} color="#22c55e" />
         </View>
-        <Text className="text-white text-xl font-bold">Đặt vé thành công!</Text>
+        <AppText className="text-white text-xl font-bold">Đặt vé thành công!</AppText>
          {(() => {
                   const statusMeta = getPaymentStatusMeta(paymentStatus);
                   return (
                     <View className={`flex-row items-center ${statusMeta.bgColor} px-4 py-1.5 rounded-full mt-3`}>
                       <View className={`w-2 h-2 rounded-full ${statusMeta.dotColor} mr-2`} />
-                      <Text className={`${statusMeta.textColor} text-sm font-medium`}>{statusMeta.label}</Text>
+                      <AppText className={`${statusMeta.textColor} text-sm font-medium`}>{statusMeta.label}</AppText>
                     </View>
                   );
                 })()}
@@ -64,29 +65,29 @@ export default function AttractionSuccessScreen() {
         <View className="bg-white rounded-2xl p-4 mt-6">
           <QRCode value={qrValue} size={140} backgroundColor="white" color="black" />
         </View>
-        <Text className="text-neutral-500 text-xs mt-2">Xuất trình mã này khi tham quan</Text>
+        <AppText className="text-neutral-500 text-xs mt-2">Xuất trình mã này khi tham quan</AppText>
 
         <View className="w-full bg-neutral-900 rounded-2xl p-4 mt-6">
-          <Text className="text-neutral-400 text-xs text-center mb-1">Mã vé</Text>
-          <Text className="text-indigo-400 font-bold text-center text-base mb-4">{bookingCode}</Text>
+          <AppText className="text-neutral-400 text-xs text-center mb-1">Mã vé</AppText>
+          <AppText className="text-indigo-400 font-bold text-center text-base mb-4">{bookingCode}</AppText>
           <View className="gap-2">
             <View className="flex-row justify-between">
-              <Text className="text-neutral-500">Địa điểm</Text>
-              {loading ? <ActivityIndicator size="small" color="#8B5CF6" /> : <Text className="text-white">{place?.name ?? "—"}</Text>}
+              <AppText className="text-neutral-500">Địa điểm</AppText>
+              {loading ? <ActivityIndicator size="small" color="#8B5CF6" /> : <AppText className="text-white">{place?.name ?? "—"}</AppText>}
             </View>
-            <View className="flex-row justify-between"><Text className="text-neutral-500">Ngày tham quan</Text><Text className="text-white">{fmt(visitDate)}</Text></View>
-            <View className="flex-row justify-between"><Text className="text-neutral-500">Số vé</Text><Text className="text-white">{guests}</Text></View>
-            <View className="flex-row justify-between"><Text className="text-neutral-500">Tổng tiền</Text><Text className="text-yellow-400">${total} · Đang xử lý</Text></View>
+            <View className="flex-row justify-between"><AppText className="text-neutral-500">Ngày tham quan</AppText><AppText className="text-white">{fmt(visitDate)}</AppText></View>
+            <View className="flex-row justify-between"><AppText className="text-neutral-500">Số vé</AppText><AppText className="text-white">{guests}</AppText></View>
+            <View className="flex-row justify-between"><AppText className="text-neutral-500">Tổng tiền</AppText><AppText className="text-yellow-400">${total} · Đang xử lý</AppText></View>
           </View>
         </View>
       </View>
 
       <View className="pb-8 gap-3">
         <TouchableOpacity onPress={() => router.push("/booking")} className="h-14 rounded-2xl bg-white items-center justify-center">
-          <Text className="text-black font-semibold">Xem vé của tôi</Text>
+          <AppText className="text-black font-semibold">Xem vé của tôi</AppText>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.replace("/home")} className="h-14 rounded-2xl border border-neutral-700 items-center justify-center">
-          <Text className="text-white font-semibold">Về trang chủ</Text>
+          <AppText className="text-white font-semibold">Về trang chủ</AppText>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

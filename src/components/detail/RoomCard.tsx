@@ -1,6 +1,7 @@
 import { getRoomImages } from "@/src/services/roomService";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Image, TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import ImageViewing from "react-native-image-viewing";
 import { RoomImage } from "../../types/roomImage";
 
@@ -61,16 +62,16 @@ const RoomCard = ({ room, token }: Props) => {
                 />
             ) : (
                 <View className="h-32 items-center justify-center bg-neutral-800">
-                    <Text style={{ fontSize: 32 }}>🛏️</Text>
+                    <AppText style={{ fontSize: 32 }}>🛏️</AppText>
                 </View>
             )}
 
             <View className="p-3 flex-row justify-between items-center">
                 <View className="flex-1 pr-2">
-                    <Text className="text-white font-medium">{room.roomType}</Text>
-                    <Text className="text-neutral-500 text-xs mt-1">{room.capacity} khách</Text>
+                    <AppText className="text-white font-medium">{room.roomType}</AppText>
+                    <AppText className="text-neutral-500 text-xs mt-1">{room.capacity} khách</AppText>
                 </View>
-                <Text className="text-violet-400 font-semibold">${room.pricePerNight}/đêm</Text>
+                <AppText className="text-violet-400 font-semibold">${room.pricePerNight}/đêm</AppText>
             </View>
             <ImageViewing
                 images={images.map((img) => ({ uri: img.imageUrl }))}

@@ -5,7 +5,8 @@ import { MyReviewItem } from "@/src/types/review";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, RefreshControl, ScrollView, TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const fmtDate = (iso: string) => {
@@ -72,7 +73,7 @@ export default function ReviewsScreen() {
                 <TouchableOpacity onPress={() => router.back()} className="p-2">
                     <Ionicons name="chevron-back" size={24} color="#fff" />
                 </TouchableOpacity>
-                <Text className="text-white text-lg font-semibold ml-2">Đánh giá của tôi</Text>
+                <AppText className="text-white text-lg font-semibold ml-2">Đánh giá của tôi</AppText>
             </View>
 
             <ScrollView
@@ -80,12 +81,12 @@ export default function ReviewsScreen() {
                 showsVerticalScrollIndicator={false}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => loadReviews(true)} tintColor="#8B5CF6" />}
             >
-                {error && <Text className="text-red-400 mb-4">{error}</Text>}
+                {error && <AppText className="text-red-400 mb-4">{error}</AppText>}
 
                 {reviews.length === 0 && !error ? (
                     <View className="items-center justify-center mt-20">
                         <Ionicons name="star-outline" size={48} color="#525252" />
-                        <Text className="text-neutral-500 mt-4">Bạn chưa có đánh giá nào</Text>
+                        <AppText className="text-neutral-500 mt-4">Bạn chưa có đánh giá nào</AppText>
                     </View>
                 ) : (
                     reviews.map((r) => (
@@ -95,8 +96,8 @@ export default function ReviewsScreen() {
                                     <SafeImage uri={r.thumbnailUrl} className="w-full h-full" resizeMode="cover" />
                                 </View>
                                 <View className="flex-1 ml-3">
-                                    <Text className="text-white font-bold text-base" numberOfLines={1}>{r.targetTitle}</Text>
-                                    <Text className="text-neutral-500 text-xs">{fmtDate(r.createdAt)}</Text>
+                                    <AppText className="text-white font-bold text-base" numberOfLines={1}>{r.targetTitle}</AppText>
+                                    <AppText className="text-neutral-500 text-xs">{fmtDate(r.createdAt)}</AppText>
                                 </View>
                                 <TouchableOpacity onPress={() => handleDelete(r.id)} className="p-2">
                                     <Ionicons name="trash-outline" size={18} color="#f87171" />
@@ -109,7 +110,7 @@ export default function ReviewsScreen() {
                                 ))}
                             </View>
 
-                            {!!r.comment && <Text className="text-neutral-300 text-sm mt-2">{r.comment}</Text>}
+                            {!!r.comment && <AppText className="text-neutral-300 text-sm mt-2">{r.comment}</AppText>}
                         </View>
                     ))
                 )}

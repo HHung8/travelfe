@@ -10,7 +10,8 @@ import { Destination } from "@/src/types/destination";
 import { Tour } from "@/src/types/tour";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, ScrollView, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 
@@ -78,7 +79,7 @@ export default function HomeScreen() {
           {loadingDestinations ? (
             <ActivityIndicator color="#8B5CF6" style={{ marginTop: 16 }} />
           ) : errorDestinations ? (
-            <Text className="text-red-400 mt-2">{errorDestinations}</Text>
+            <AppText className="text-red-400 mt-2">{errorDestinations}</AppText>
           ) : (
             <FlatList
               horizontal
@@ -100,7 +101,7 @@ export default function HomeScreen() {
           {loadingTours ? (
             <ActivityIndicator color="#8B5CF6" style={{ marginTop: 16 }} />
           ) : errorTours ? (
-            <Text className="text-red-400 mt-2">{errorTours}</Text>
+            <AppText className="text-red-400 mt-2">{errorTours}</AppText>
           ) : (
             <FlatList
               data={tours}
@@ -116,7 +117,7 @@ export default function HomeScreen() {
               scrollEnabled={false}
               ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
               ListEmptyComponent={
-                <Text className="text-neutral-500 mt-2">Chưa có tour nào</Text>
+                <AppText className="text-neutral-500 mt-2">Chưa có tour nào</AppText>
               }
             />
           )}

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 
 interface Props {
   title: string;
@@ -9,14 +10,14 @@ interface Props {
 const SectionHeader = ({title, onSeeAll}: Props) => {
   return (
     <View className="flex-row justify-between items-center mb-4">
-      <Text className="text-white text-xl font-bold">
+      <AppText className="text-white text-xl font-bold">
         {title}
-      </Text>
+      </AppText>
       {onSeeAll && (
         <TouchableOpacity onPress={onSeeAll}>
-          <Text className="text-violet-500 font-semibold">
+          <AppText className="text-violet-500 font-semibold">
             Xem tất cả
-          </Text>
+          </AppText>
         </TouchableOpacity>
       )}
     </View>

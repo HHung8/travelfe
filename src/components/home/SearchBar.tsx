@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 
 const SearchBar = () => {
   const router = useRouter();
@@ -13,7 +14,7 @@ const SearchBar = () => {
         onPress={() => router.push("/search")}
       > 
         <Ionicons name="search-outline" size={22} color="#C9D0E0" />
-        <Text className="flex-1 ml-3 text-[#C9D0E0]">Tìm điểm đến, tour</Text>
+        <AppText className="flex-1 ml-3 text-[#C9D0E0]">Tìm điểm đến, tour</AppText>
       </TouchableOpacity>
     </View>
   );

@@ -4,7 +4,9 @@ import { ReviewTargetType } from "@/src/types/review";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
+import AppTextInput from "@/src/components/common/AppTextInput";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ReviewFormScreen() {
@@ -46,13 +48,13 @@ export default function ReviewFormScreen() {
                 <TouchableOpacity onPress={() => router.back()} className="p-2">
                     <Ionicons name="chevron-back" size={24} color="#fff" />
                 </TouchableOpacity>
-                <Text className="text-white text-lg font-semibold ml-2">Viết đánh giá</Text>
+                <AppText className="text-white text-lg font-semibold ml-2">Viết đánh giá</AppText>
             </View>
 
             <View className="px-6 mt-6">
-                <Text className="text-white text-xl font-bold" numberOfLines={2}>{targetTitle}</Text>
+                <AppText className="text-white text-xl font-bold" numberOfLines={2}>{targetTitle}</AppText>
 
-                <Text className="text-neutral-400 text-sm mt-6 mb-3">Bạn đánh giá thế nào?</Text>
+                <AppText className="text-neutral-400 text-sm mt-6 mb-3">Bạn đánh giá thế nào?</AppText>
                 <View className="flex-row justify-center gap-2">
                     {[1, 2, 3, 4, 5].map((star) => (
                         <TouchableOpacity key={star} onPress={() => setRating(star)}>
@@ -65,8 +67,8 @@ export default function ReviewFormScreen() {
                     ))}
                 </View>
 
-                <Text className="text-neutral-400 text-sm mt-8 mb-2">Nhận xét (không bắt buộc)</Text>
-                <TextInput
+                <AppText className="text-neutral-400 text-sm mt-8 mb-2">Nhận xét (không bắt buộc)</AppText>
+                <AppTextInput
                     value={comment}
                     onChangeText={setComment}
                     placeholder="Chia sẻ trải nghiệm của bạn..."
@@ -84,9 +86,9 @@ export default function ReviewFormScreen() {
                     onPress={handleSubmit}
                     className={`h-14 rounded-2xl items-center justify-center ${submitting ? "bg-neutral-700" : "bg-white"}`}
                 >
-                    <Text className={`font-semibold text-base ${submitting ? "text-neutral-400" : "text-black"}`}>
+                    <AppText className={`font-semibold text-base ${submitting ? "text-neutral-400" : "text-black"}`}>
                         {submitting ? "Đang gửi..." : "Gửi đánh giá"}
-                    </Text>
+                    </AppText>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>

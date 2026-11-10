@@ -1,5 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
+import AppTextInput from "@/src/components/common/AppTextInput";
+import AppText from "@/src/components/common/AppText";
 import type { PaymentMethodItem } from "@/src/types/paymentMethod";
 
 export type PaymentMethod = "card" | "apple_pay" | "wallet";
@@ -36,7 +38,7 @@ export default function PaymentMethodSelector({
 }: Props) {
   return (
     <View>
-      <Text className="text-white text-base font-semibold mb-3">Chọn phương thức thanh toán</Text>
+      <AppText className="text-white text-base font-semibold mb-3">Chọn phương thức thanh toán</AppText>
       <View className="gap-3">
         {METHODS.map((m) => (
           <TouchableOpacity
@@ -54,8 +56,8 @@ export default function PaymentMethodSelector({
               <Ionicons name={m.icon} size={21} color={method === m.key ? "#a5b4fc" : "#a3a3a3"} />
             </View>
             <View className="flex-1 ml-3">
-              <Text className={`font-semibold ${method === m.key ? "text-indigo-200" : "text-white"}`}>{m.label}</Text>
-              <Text className="text-neutral-500 text-xs mt-1">{METHOD_DESCRIPTIONS[m.key]}</Text>
+              <AppText className={`font-semibold ${method === m.key ? "text-indigo-200" : "text-white"}`}>{m.label}</AppText>
+              <AppText className="text-neutral-500 text-xs mt-1">{METHOD_DESCRIPTIONS[m.key]}</AppText>
             </View>
             <Ionicons
               name={method === m.key ? "radio-button-on" : "radio-button-off"}
@@ -70,7 +72,7 @@ export default function PaymentMethodSelector({
         <View className="mt-4">
           {!!savedCards?.length && onChangeSavedCard && (
             <View className="mb-3 gap-2">
-              <Text className="text-neutral-400 text-xs font-medium">Thẻ đã lưu</Text>
+              <AppText className="text-neutral-400 text-xs font-medium">Thẻ đã lưu</AppText>
               {savedCards.map((card) => {
                 const selected = selectedSavedCardId === card.id;
                 return (
@@ -85,11 +87,11 @@ export default function PaymentMethodSelector({
                   >
                     <Ionicons name="card-outline" size={20} color={selected ? "#a5b4fc" : "#a3a3a3"} />
                     <View className="ml-3 flex-1">
-                      <Text className="text-white text-sm font-medium">{card.brand} ···· {card.last4}</Text>
-                      <Text className="mt-0.5 text-neutral-500 text-xs">
+                      <AppText className="text-white text-sm font-medium">{card.brand} ···· {card.last4}</AppText>
+                      <AppText className="mt-0.5 text-neutral-500 text-xs">
                         Hết hạn {String(card.expiryMonth).padStart(2, "0")}/{String(card.expiryYear).slice(-2)}
                         {card.isDefault ? " · Mặc định" : ""}
-                      </Text>
+                      </AppText>
                     </View>
                     <Ionicons
                       name={selected ? "radio-button-on" : "radio-button-off"}
@@ -108,7 +110,7 @@ export default function PaymentMethodSelector({
                 }`}
               >
                 <Ionicons name="add-circle-outline" size={20} color="#a5b4fc" />
-                <Text className="ml-3 flex-1 text-white text-sm font-medium">Dùng thẻ demo khác</Text>
+                <AppText className="ml-3 flex-1 text-white text-sm font-medium">Dùng thẻ demo khác</AppText>
                 <Ionicons
                   name={selectedSavedCardId === null ? "radio-button-on" : "radio-button-off"}
                   size={18}
@@ -120,18 +122,18 @@ export default function PaymentMethodSelector({
           {(!savedCards?.length || selectedSavedCardId == null) && (
             <View className="rounded-2xl border border-neutral-800 bg-neutral-900 p-4">
               <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-white font-medium">Thông tin thẻ demo</Text>
+                <AppText className="text-white font-medium">Thông tin thẻ demo</AppText>
                 <View className="flex-row items-center">
                   <Ionicons name="flask-outline" size={13} color="#fbbf24" />
-                  <Text className="text-amber-200 text-[10px] ml-1">Không dùng thẻ thật</Text>
+                  <AppText className="text-amber-200 text-[10px] ml-1">Không dùng thẻ thật</AppText>
                 </View>
               </View>
-              <Text className="text-neutral-500 text-xs leading-5 mb-3">
+              <AppText className="text-neutral-500 text-xs leading-5 mb-3">
                 Ví dụ demo: 4242 4242 4242 4242 · 12/30 · CVV 123. Chỉ kiểm tra giao diện, không gửi số thẻ/CVV lên backend.
-              </Text>
+              </AppText>
               <View>
-                <Text className="text-neutral-400 text-xs mb-1.5">Số thẻ giả lập</Text>
-                <TextInput
+                <AppText className="text-neutral-400 text-xs mb-1.5">Số thẻ giả lập</AppText>
+                <AppTextInput
                   value={cardNumber}
                   onChangeText={(v) => onChangeCardNumber(v.replace(/[^0-9]/g, "").slice(0, 16))}
                   placeholder="•••• •••• •••• ••••"
@@ -142,8 +144,8 @@ export default function PaymentMethodSelector({
               </View>
               <View className="flex-row gap-3 mt-3">
                 <View className="flex-1">
-                  <Text className="text-neutral-400 text-xs mb-1.5">Ngày hết hạn</Text>
-                  <TextInput
+                  <AppText className="text-neutral-400 text-xs mb-1.5">Ngày hết hạn</AppText>
+                  <AppTextInput
                     value={expiry}
                     onChangeText={(v) => {
                       const c = v.replace(/[^0-9]/g, "").slice(0, 4);
@@ -156,8 +158,8 @@ export default function PaymentMethodSelector({
                   />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-neutral-400 text-xs mb-1.5">CVV demo</Text>
-                  <TextInput
+                  <AppText className="text-neutral-400 text-xs mb-1.5">CVV demo</AppText>
+                  <AppTextInput
                     value={cvv}
                     onChangeText={(v) => onChangeCvv(v.replace(/[^0-9]/g, "").slice(0, 4))}
                     placeholder="•••"
@@ -175,9 +177,9 @@ export default function PaymentMethodSelector({
       {method !== "card" && (
         <View className="mt-4 flex-row items-center rounded-2xl bg-neutral-900 px-4 py-3.5">
           <Ionicons name="information-circle-outline" size={19} color="#a5b4fc" />
-          <Text className="flex-1 text-neutral-400 text-xs ml-2 leading-5">
+          <AppText className="flex-1 text-neutral-400 text-xs ml-2 leading-5">
             Bạn sẽ tiếp tục với {METHODS.find((item) => item.key === method)?.label}. Thông tin thẻ không cần thiết cho lựa chọn này.
-          </Text>
+          </AppText>
         </View>
       )}
     </View>

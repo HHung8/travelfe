@@ -6,7 +6,8 @@ import { parseActionUrl } from "@/src/utils/parseActionUrl";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, RefreshControl, ScrollView, TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const fmtTimeAgo = (iso: string): string => {
@@ -150,7 +151,7 @@ export default function NotificationsScreen() {
                     <TouchableOpacity onPress={() => router.back()} className="p-2">
                         <Ionicons name="chevron-back" size={24} color="#fff" />
                     </TouchableOpacity>
-                    <Text className="text-white text-lg font-semibold ml-2">Thông báo</Text>
+                    <AppText className="text-white text-lg font-semibold ml-2">Thông báo</AppText>
                 </View>
             </View>
             {(unreadCount > 0 || notifications.length > 0) && (
@@ -161,7 +162,7 @@ export default function NotificationsScreen() {
                             disabled={deletingAll}
                             className="mr-4"
                         >
-                            <Text className="text-indigo-400 text-xs font-medium">Đánh dấu đã đọc hết</Text>
+                            <AppText className="text-indigo-400 text-xs font-medium">Đánh dấu đã đọc hết</AppText>
                         </TouchableOpacity>
                     )}
                     {notifications.length > 0 && (
@@ -171,9 +172,9 @@ export default function NotificationsScreen() {
                             accessibilityRole="button"
                             accessibilityLabel="Xoá tất cả thông báo"
                         >
-                            <Text className={`text-xs font-medium ${deletingAll ? "text-red-400/50" : "text-red-400"}`}>
+                            <AppText className={`text-xs font-medium ${deletingAll ? "text-red-400/50" : "text-red-400"}`}>
                                 {deletingAll ? "Đang xoá..." : "Xoá tất cả"}
-                            </Text>
+                            </AppText>
                         </TouchableOpacity>
                     )}
                 </View>
@@ -184,12 +185,12 @@ export default function NotificationsScreen() {
                 showsVerticalScrollIndicator={false}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => loadNotifications(true)} tintColor="#8B5CF6" enabled={!deletingAll} />}
             >
-                {error && <Text className="text-red-400 mb-4">{error}</Text>}
+                {error && <AppText className="text-red-400 mb-4">{error}</AppText>}
 
                 {notifications.length === 0 && !error ? (
                     <View className="items-center justify-center mt-20">
                         <Ionicons name="notifications-outline" size={48} color="#525252" />
-                        <Text className="text-neutral-500 mt-4">Bạn chưa có thông báo nào</Text>
+                        <AppText className="text-neutral-500 mt-4">Bạn chưa có thông báo nào</AppText>
                     </View>
                 ) : (
                     notifications.map((n) => (
@@ -206,11 +207,11 @@ export default function NotificationsScreen() {
                                     <Ionicons name={getNotificationIcon(n.type) as any} size={18} color="#fff" />
                                 </View>
                                 <View className="flex-1 ml-3">
-                                    <Text className={`text-sm ${n.isRead ? "text-neutral-300 font-normal" : "text-white font-semibold"}`}>
+                                    <AppText className={`text-sm ${n.isRead ? "text-neutral-300 font-normal" : "text-white font-semibold"}`}>
                                         {n.title}
-                                    </Text>
-                                    <Text className="text-neutral-400 text-sm mt-1">{n.message}</Text>
-                                    <Text className="text-neutral-500 text-xs mt-1">{fmtTimeAgo(n.createdAt)}</Text>
+                                    </AppText>
+                                    <AppText className="text-neutral-400 text-sm mt-1">{n.message}</AppText>
+                                    <AppText className="text-neutral-500 text-xs mt-1">{fmtTimeAgo(n.createdAt)}</AppText>
                                 </View>
                                 {!n.isRead && <View className="w-2 h-2 rounded-full bg-indigo-500 mt-1" />}
                             </TouchableOpacity>

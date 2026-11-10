@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 
 type TourInfoProps = {
     title: string;
@@ -15,7 +16,7 @@ const TourInfo = ({ title, location, duration, maxGuest, level, description }: T
     return (
         <View className="px-6 mt-6">
             {/* Title */}
-            <Text className="text-white text-3xl font-bold">{title}</Text>
+            <AppText className="text-white text-3xl font-bold">{title}</AppText>
             {/* Location */}
             <View className="flex-row items-center mt-3">
                 <Ionicons
@@ -23,7 +24,7 @@ const TourInfo = ({ title, location, duration, maxGuest, level, description }: T
                     size={18}
                     color="#9CA3AF"
                 />
-                <Text className="text-gray-400 ml-2">{location}</Text>
+                <AppText className="text-gray-400 ml-2">{location}</AppText>
             </View>
             {/* Info */}
             <View className="flex-row justify-between mt-8">
@@ -35,7 +36,7 @@ const TourInfo = ({ title, location, duration, maxGuest, level, description }: T
                             color="white"
                         />
                     </View>
-                    <Text className="text-gray-400 mt-3">{duration}</Text>
+                    <AppText className="text-gray-400 mt-3">{duration}</AppText>
                 </View>
                 <View className="items-center flex-1">
                     <View className="w-14 h-14 rounded-full bg-[#2B2B2B] items-center justify-center">
@@ -45,7 +46,7 @@ const TourInfo = ({ title, location, duration, maxGuest, level, description }: T
                             color="white"
                         />
                     </View>
-                    <Text className="text-gray-400 mt-3">{maxGuest} người</Text>
+                    <AppText className="text-gray-400 mt-3">{maxGuest} người</AppText>
                 </View>
                 <View className="items-center flex-1">
                     <View className="w-14 h-14 rounded-full bg-[#2B2B2B] items-center justify-center">
@@ -55,9 +56,9 @@ const TourInfo = ({ title, location, duration, maxGuest, level, description }: T
                             color="white"
                         />
                     </View>
-                    <Text className="text-gray-400 mt-3">
+                    <AppText className="text-gray-400 mt-3">
                         {level}
-                    </Text>
+                    </AppText>
                 </View>
             </View>
 
@@ -65,13 +66,13 @@ const TourInfo = ({ title, location, duration, maxGuest, level, description }: T
 
             <View className="mt-8">
 
-                <Text className="text-white text-xl font-bold mb-3">
+                <AppText className="text-white text-xl font-bold mb-3">
                     Giới thiệu
-                </Text>
+                </AppText>
 
-                <Text className="text-gray-400 leading-7">
+                <AppText className="text-gray-400 leading-7">
                     {description}
-                </Text>
+                </AppText>
 
             </View>
 

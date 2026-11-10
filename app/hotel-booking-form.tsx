@@ -7,7 +7,8 @@ import { HotelDetail } from "@/src/types/hotel";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const toISO = (d: Date) => d.toISOString().slice(0, 10);
@@ -56,9 +57,9 @@ export default function HotelBookingFormScreen() {
   if (error || !hotel) {
     return (
       <SafeAreaView className="flex-1 bg-[#121212] items-center justify-center px-6">
-        <Text className="text-red-400 text-center mb-4">{error ?? "Không tìm thấy khách sạn"}</Text>
+        <AppText className="text-red-400 text-center mb-4">{error ?? "Không tìm thấy khách sạn"}</AppText>
         <TouchableOpacity onPress={loadHotel} className="bg-white rounded-2xl px-6 py-3">
-          <Text className="text-black font-semibold">Thử lại</Text>
+          <AppText className="text-black font-semibold">Thử lại</AppText>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -93,13 +94,13 @@ export default function HotelBookingFormScreen() {
         <TouchableOpacity onPress={() => router.back()} className="p-2">
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text className="text-white text-lg font-semibold ml-2">Chọn phòng &amp; ngày</Text>
+        <AppText className="text-white text-lg font-semibold ml-2">Chọn phòng &amp; ngày</AppText>
       </View>
 
       <StepIndicator currentStep={2} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 140 }} className="px-6">
-        <Text className="text-white font-semibold mb-2">Loại phòng</Text>
+        <AppText className="text-white font-semibold mb-2">Loại phòng</AppText>
         <View className="gap-2 mb-6">
           {hotel.rooms?.map((room) => {
             const active = room.id === selectedRoomId;
@@ -112,31 +113,31 @@ export default function HotelBookingFormScreen() {
               >
                 <View className="flex-row justify-between items-center">
                   <View className="flex-1 pr-2">
-                    <Text className="text-white font-medium">{room.roomType}</Text>
-                    <Text className="text-neutral-500 text-xs mt-1">
+                    <AppText className="text-white font-medium">{room.roomType}</AppText>
+                    <AppText className="text-neutral-500 text-xs mt-1">
                       {room.capacity} khách{!room.isAvailable ? " · Hết phòng" : ""}
-                    </Text>
+                    </AppText>
                   </View>
-                  <Text className="text-violet-400 font-semibold">${room.pricePerNight}/đêm</Text>
+                  <AppText className="text-violet-400 font-semibold">${room.pricePerNight}/đêm</AppText>
                 </View>
               </TouchableOpacity>
             );
           })}
         </View>
 
-        <Text className="text-neutral-400 text-sm mb-4">Chọn ngày check-in và check-out</Text>
+        <AppText className="text-neutral-400 text-sm mb-4">Chọn ngày check-in và check-out</AppText>
         <DateRangePicker mode="range" start={start} end={end} onChange={(s, e) => { setStart(s); setEnd(e); }} />
 
         <View className="flex-row items-center justify-between bg-neutral-900 rounded-2xl p-4 mt-6">
           <View>
-            <Text className="text-white font-semibold">Số phòng</Text>
-            <Text className="text-neutral-500 text-xs mt-1">{nights > 0 ? `${nights} đêm` : "Chọn ngày trước"}</Text>
+            <AppText className="text-white font-semibold">Số phòng</AppText>
+            <AppText className="text-neutral-500 text-xs mt-1">{nights > 0 ? `${nights} đêm` : "Chọn ngày trước"}</AppText>
           </View>
           <View className="flex-row items-center gap-3">
             <TouchableOpacity onPress={() => setRooms((r) => Math.max(1, r - 1))} className="w-8 h-8 rounded-full bg-neutral-700 items-center justify-center">
               <Ionicons name="remove" size={16} color="#fff" />
             </TouchableOpacity>
-            <Text className="text-white w-6 text-center">{rooms}</Text>
+            <AppText className="text-white w-6 text-center">{rooms}</AppText>
             <TouchableOpacity onPress={() => setRooms((r) => Math.min(5, r + 1))} className="w-8 h-8 rounded-full bg-neutral-700 items-center justify-center">
               <Ionicons name="add" size={16} color="#fff" />
             </TouchableOpacity>
@@ -163,7 +164,7 @@ export default function HotelBookingFormScreen() {
           onPress={handleContinue}
           className={`h-14 rounded-2xl items-center justify-center ${canContinue ? "bg-white" : "bg-neutral-700"}`}
         >
-          <Text className={`font-semibold text-base ${canContinue ? "text-black" : "text-neutral-400"}`}>Tiếp tục thanh toán</Text>
+          <AppText className={`font-semibold text-base ${canContinue ? "text-black" : "text-neutral-400"}`}>Tiếp tục thanh toán</AppText>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

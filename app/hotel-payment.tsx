@@ -12,7 +12,8 @@ import type { PaymentMethodItem } from "@/src/types/paymentMethod";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const fmt = (iso: string) => { const d = new Date(iso); return `${d.getDate()}/${d.getMonth() + 1}`};
@@ -105,9 +106,9 @@ export default function HotelPaymentScreen() {
   if (error || !hotel || !room) {
     return (
       <SafeAreaView className="flex-1 bg-[#121212] items-center justify-center px-6">
-        <Text className="text-red-400 text-center mb-4">{error ?? "Không tìm thấy thông tin phòng"}</Text>
+        <AppText className="text-red-400 text-center mb-4">{error ?? "Không tìm thấy thông tin phòng"}</AppText>
         <TouchableOpacity onPress={loadHotel} className="bg-white rounded-2xl px-6 py-3">
-          <Text className="text-black font-semibold">Thử lại</Text>
+          <AppText className="text-black font-semibold">Thử lại</AppText>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -179,17 +180,17 @@ export default function HotelPaymentScreen() {
         <TouchableOpacity onPress={() => router.back()} className="p-2">
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text className="text-white text-lg font-semibold ml-2">Thanh toán</Text>
+        <AppText className="text-white text-lg font-semibold ml-2">Thanh toán</AppText>
       </View>
       <StepIndicator currentStep={3} />
       <ScrollView contentContainerStyle={{ paddingBottom: 140 }} className="px-6">
         <View className="flex-row bg-neutral-900 rounded-2xl p-3 items-center gap-3">
           <View className="w-14 h-14 rounded-xl items-center justify-center bg-neutral-800">
-            <Text style={{ fontSize: 24 }}>🏨</Text>
+            <AppText style={{ fontSize: 24 }}>🏨</AppText>
           </View>
           <View>
-            <Text className="text-white font-semibold">{hotel.name}</Text>
-            <Text className="text-neutral-400 text-xs mt-1">{room.roomType} · {fmt(checkIn)} - {fmt(checkOut)} · {roomCount} phòng</Text>
+            <AppText className="text-white font-semibold">{hotel.name}</AppText>
+            <AppText className="text-neutral-400 text-xs mt-1">{room.roomType} · {fmt(checkIn)} - {fmt(checkOut)} · {roomCount} phòng</AppText>
           </View>
         </View>
 
@@ -215,17 +216,17 @@ export default function HotelPaymentScreen() {
             onChangeSavedCard={setSelectedSavedCardId}
           />
         </View>
-        {!!savedCardsError && <Text className="mt-2 text-xs text-amber-300">{savedCardsError} Bạn vẫn có thể nhập thẻ demo.</Text>}
+        {!!savedCardsError && <AppText className="mt-2 text-xs text-amber-300">{savedCardsError} Bạn vẫn có thể nhập thẻ demo.</AppText>}
         {__DEV__ && (
           <PaymentSimulationPanel outcome={simulationOutcome} onChangeOutcome={setSimulationOutcome} />
         )}
         {!!simulationNotice && (
           <View className="mt-4 rounded-xl border border-amber-400/30 bg-amber-400/10 p-3">
-            <Text className="text-amber-200 text-sm leading-5">{simulationNotice}</Text>
+            <AppText className="text-amber-200 text-sm leading-5">{simulationNotice}</AppText>
           </View>
         )}
         {!!payError && (
-          <Text className="mt-4 text-center text-sm text-red-400">{payError}</Text>
+          <AppText className="mt-4 text-center text-sm text-red-400">{payError}</AppText>
         )}
 
       </ScrollView>
@@ -239,7 +240,7 @@ export default function HotelPaymentScreen() {
           {paying ? <ActivityIndicator color="#000" /> : (
             <>
               <Ionicons name="lock-closed" size={16} color={canPay ? "#000" : "#a3a3a3"} />
-              <Text className={`font-semibold text-base ${canPay ? "text-black" : "text-neutral-400"}`}>Đặt phòng ngay</Text>
+              <AppText className={`font-semibold text-base ${canPay ? "text-black" : "text-neutral-400"}`}>Đặt phòng ngay</AppText>
             </>
           )}
         </TouchableOpacity>

@@ -5,7 +5,9 @@ import { detectCardBrand } from "@/src/utils/cardBrand";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Modal, ScrollView, TouchableOpacity, View } from "react-native";
+import AppTextInput from "@/src/components/common/AppTextInput";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 
@@ -125,18 +127,18 @@ export default function PaymentMethodsScreen() {
                 <TouchableOpacity onPress={() => router.back()} className="p-2">
                     <Ionicons name="chevron-back" size={24} color="#fff" />
                 </TouchableOpacity>
-                <Text className="text-white text-lg font-semibold ml-2">Phương thức thanh toán</Text>
+                <AppText className="text-white text-lg font-semibold ml-2">Phương thức thanh toán</AppText>
             </View>
 
             <ScrollView contentContainerStyle={{ padding: 24 }} showsVerticalScrollIndicator={false}>
-                {error && <Text className="text-red-400 mb-4">{error}</Text>}
+                {error && <AppText className="text-red-400 mb-4">{error}</AppText>}
 
                 {__DEV__ && (
                     <View className="flex-row rounded-2xl border border-amber-400/30 bg-amber-400/5 p-4 mb-5">
                         <Ionicons name="flask-outline" size={19} color="#fbbf24" />
-                        <Text className="flex-1 text-xs leading-5 text-neutral-300 ml-3">
+                        <AppText className="flex-1 text-xs leading-5 text-neutral-300 ml-3">
                             Môi trường dev: dùng dữ liệu thẻ giả lập, không nhập thẻ thật. Backend chỉ nhận hãng thẻ, 4 số cuối và ngày hết hạn; số thẻ đầy đủ không được lưu.
-                        </Text>
+                        </AppText>
                     </View>
                 )}
 
@@ -146,18 +148,18 @@ export default function PaymentMethodsScreen() {
                             <Ionicons name="shield-checkmark-outline" size={24} color="#a5b4fc" />
                         </View>
                         <View className="rounded-full bg-emerald-400/10 px-3 py-1">
-                            <Text className="text-emerald-300 text-xs font-medium">Thanh toán an toàn</Text>
+                            <AppText className="text-emerald-300 text-xs font-medium">Thanh toán an toàn</AppText>
                         </View>
                     </View>
-                    <Text className="text-white text-xl font-bold mt-4">Thanh toán theo cách của bạn</Text>
-                    <Text className="text-neutral-400 text-sm mt-2 leading-5">
+                    <AppText className="text-white text-xl font-bold mt-4">Thanh toán theo cách của bạn</AppText>
+                    <AppText className="text-neutral-400 text-sm mt-2 leading-5">
                         Quản lý thẻ đã lưu hoặc xem các phương thức thanh toán khác được hỗ trợ.
-                    </Text>
+                    </AppText>
                 </View>
 
                 <View className="flex-row items-center justify-between mb-3">
-                    <Text className="text-white text-base font-semibold">Thẻ đã lưu</Text>
-                    <Text className="text-neutral-500 text-sm">{methods.length} thẻ</Text>
+                    <AppText className="text-white text-base font-semibold">Thẻ đã lưu</AppText>
+                    <AppText className="text-neutral-500 text-sm">{methods.length} thẻ</AppText>
                 </View>
 
                 {methods.length === 0 ? (
@@ -165,10 +167,10 @@ export default function PaymentMethodsScreen() {
                         <View className="w-12 h-12 rounded-full bg-neutral-800 items-center justify-center">
                             <Ionicons name="card-outline" size={22} color="#a3a3a3" />
                         </View>
-                        <Text className="text-white font-medium mt-3">Chưa có thẻ nào</Text>
-                        <Text className="text-neutral-500 text-xs text-center mt-1">
+                        <AppText className="text-white font-medium mt-3">Chưa có thẻ nào</AppText>
+                        <AppText className="text-neutral-500 text-xs text-center mt-1">
                             Thêm thẻ để thuận tiện hơn cho lần thanh toán tiếp theo.
-                        </Text>
+                        </AppText>
                     </View>
                 ) : (
                     methods.map((card) => (
@@ -188,17 +190,17 @@ export default function PaymentMethodsScreen() {
                                 </View>
                                 <View className="flex-1 ml-3">
                                     <View className="flex-row items-center">
-                                        <Text className="text-white font-semibold">{card.brand}</Text>
+                                        <AppText className="text-white font-semibold">{card.brand}</AppText>
                                         {card.isDefault && (
                                             <View className="bg-indigo-500/20 px-2 py-1 rounded-full ml-2">
-                                                <Text className="text-indigo-300 text-[10px] font-semibold">MẶC ĐỊNH</Text>
+                                                <AppText className="text-indigo-300 text-[10px] font-semibold">MẶC ĐỊNH</AppText>
                                             </View>
                                         )}
                                     </View>
-                                    <Text className="text-neutral-300 text-sm mt-1">•••• •••• •••• {card.last4}</Text>
-                                    <Text className="text-neutral-500 text-xs mt-1">
+                                    <AppText className="text-neutral-300 text-sm mt-1">•••• •••• •••• {card.last4}</AppText>
+                                    <AppText className="text-neutral-500 text-xs mt-1">
                                         Hết hạn {String(card.expiryMonth).padStart(2, "0")}/{String(card.expiryYear).slice(-2)}
-                                    </Text>
+                                    </AppText>
                                 </View>
                                 {!card.isDefault && (
                                     <Ionicons name="radio-button-off" size={20} color="#737373" />
@@ -221,21 +223,21 @@ export default function PaymentMethodsScreen() {
                     className="flex-row items-center justify-center border border-dashed border-indigo-400/50 rounded-2xl p-4 mt-1 mb-8"
                 >
                     <Ionicons name="add-circle-outline" size={20} color="#a5b4fc" />
-                    <Text className="text-indigo-300 ml-2 font-semibold">Thêm thẻ mới</Text>
+                    <AppText className="text-indigo-300 ml-2 font-semibold">Thêm thẻ mới</AppText>
                 </TouchableOpacity>
 
-                <Text className="text-white text-base font-semibold mb-3">Phương thức khác</Text>
+                <AppText className="text-white text-base font-semibold mb-3">Phương thức khác</AppText>
                 <View className="rounded-2xl bg-[#242424] border border-neutral-800 p-4 mb-3">
                     <View className="flex-row items-center">
                         <View className="w-12 h-12 rounded-xl bg-neutral-800 items-center justify-center">
                             <Ionicons name="logo-apple" size={23} color="#fff" />
                         </View>
                         <View className="flex-1 ml-3">
-                            <Text className="text-white font-semibold">Apple Pay</Text>
-                            <Text className="text-neutral-500 text-xs mt-1">Thanh toán nhanh bằng thiết bị Apple</Text>
+                            <AppText className="text-white font-semibold">Apple Pay</AppText>
+                            <AppText className="text-neutral-500 text-xs mt-1">Thanh toán nhanh bằng thiết bị Apple</AppText>
                         </View>
                         <View className="rounded-full bg-neutral-800 px-2.5 py-1">
-                            <Text className="text-neutral-400 text-[10px] font-medium">Sắp ra mắt</Text>
+                            <AppText className="text-neutral-400 text-[10px] font-medium">Sắp ra mắt</AppText>
                         </View>
                     </View>
                 </View>
@@ -245,11 +247,11 @@ export default function PaymentMethodsScreen() {
                             <Ionicons name="wallet-outline" size={23} color="#c4b5fd" />
                         </View>
                         <View className="flex-1 ml-3">
-                            <Text className="text-white font-semibold">Ví điện tử</Text>
-                            <Text className="text-neutral-500 text-xs mt-1">Kết nối ví điện tử của bạn</Text>
+                            <AppText className="text-white font-semibold">Ví điện tử</AppText>
+                            <AppText className="text-neutral-500 text-xs mt-1">Kết nối ví điện tử của bạn</AppText>
                         </View>
                         <View className="rounded-full bg-neutral-800 px-2.5 py-1">
-                            <Text className="text-neutral-400 text-[10px] font-medium">Sắp ra mắt</Text>
+                            <AppText className="text-neutral-400 text-[10px] font-medium">Sắp ra mắt</AppText>
                         </View>
                     </View>
                 </View>
@@ -258,15 +260,15 @@ export default function PaymentMethodsScreen() {
             <Modal visible={showAddModal} animationType="slide" transparent>
                 <View className="flex-1 bg-black/60 justify-end">
                     <View className="bg-[#1a1a1a] rounded-t-3xl p-6">
-                        <Text className="text-white text-lg font-bold mb-4">Thêm thẻ mới</Text>
+                        <AppText className="text-white text-lg font-bold mb-4">Thêm thẻ mới</AppText>
                         {__DEV__ && (
-                            <Text className="text-amber-200 text-xs leading-5 mb-4">
+                            <AppText className="text-amber-200 text-xs leading-5 mb-4">
                                 Chỉ nhập dữ liệu giả lập để thử luồng thêm thẻ. Không sử dụng thông tin thẻ thật.
-                            </Text>
+                            </AppText>
                         )}
 
-                        <Text className="text-neutral-500 text-xs mb-1">Số thẻ</Text>
-                        <TextInput
+                        <AppText className="text-neutral-500 text-xs mb-1">Số thẻ</AppText>
+                        <AppTextInput
                             value={cardNumber}
                             onChangeText={(v) => setCardNumber(v.replace(/[^0-9]/g, "").slice(0, 16))}
                             placeholder="•••• •••• •••• ••••"
@@ -275,8 +277,8 @@ export default function PaymentMethodsScreen() {
                             className="bg-neutral-900 text-white rounded-xl px-4 py-3 mb-3"
                         />
 
-                        <Text className="text-neutral-500 text-xs mb-1">Hết hạn (MM/YY)</Text>
-                        <TextInput
+                        <AppText className="text-neutral-500 text-xs mb-1">Hết hạn (MM/YY)</AppText>
+                        <AppTextInput
                             value={expiry}
                             onChangeText={(v) => {
                                 const c = v.replace(/[^0-9]/g, "").slice(0, 4);
@@ -293,14 +295,14 @@ export default function PaymentMethodsScreen() {
                                 onPress={() => setShowAddModal(false)}
                                 className="flex-1 h-12 rounded-2xl border border-neutral-700 items-center justify-center"
                             >
-                                <Text className="text-white font-medium">Huỷ</Text>
+                                <AppText className="text-white font-medium">Huỷ</AppText>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={handleAddCard}
                                 disabled={submitting}
                                 className="flex-1 h-12 rounded-2xl bg-white items-center justify-center"
                             >
-                                {submitting ? <ActivityIndicator color="#000" /> : <Text className="text-black font-semibold">Thêm thẻ</Text>}
+                                {submitting ? <ActivityIndicator color="#000" /> : <AppText className="text-black font-semibold">Thêm thẻ</AppText>}
                             </TouchableOpacity>
                         </View>
                     </View>

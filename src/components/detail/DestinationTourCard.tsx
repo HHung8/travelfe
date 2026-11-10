@@ -2,7 +2,8 @@ import { TourSimple } from '@/src/types/tour';
 import { resolveImageUrl } from '@/src/utils/image';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 
 type Props = {
   item: TourSimple;
@@ -26,27 +27,27 @@ const DestinationTourCard = ({ item, onPress }: Props) => {
       />
       
       <View className="p-4">
-        <Text className="text-white font-bold text-base" numberOfLines={1}>
+        <AppText className="text-white font-bold text-base" numberOfLines={1}>
           {item.title}
-        </Text>
+        </AppText>
 
         <View className="flex-row items-center mt-2">
           <Ionicons name="time-outline" size={13} color="#a3a3a3" />
-          <Text className="text-neutral-400 text-xs ml-1">{item.durationDays} ngày</Text>
+          <AppText className="text-neutral-400 text-xs ml-1">{item.durationDays} ngày</AppText>
           {item.averageRating != null && (
             <>
-              <Text className="text-neutral-600 mx-2">·</Text>
+              <AppText className="text-neutral-600 mx-2">·</AppText>
               <Ionicons name="star" size={13} color="#facc15" />
-              <Text className="text-neutral-400 text-xs ml-1">{item.averageRating}</Text>
+              <AppText className="text-neutral-400 text-xs ml-1">{item.averageRating}</AppText>
             </>
           )}
         </View>
 
         <View className="flex-row items-center mt-2">
           {hasDiscount && (
-            <Text className="text-neutral-500 text-xs line-through mr-2">${item.price}</Text>
+            <AppText className="text-neutral-500 text-xs line-through mr-2">${item.price}</AppText>
           )}
-          <Text className="text-violet-500 font-bold text-base">${finalPrice}</Text>
+          <AppText className="text-violet-500 font-bold text-base">${finalPrice}</AppText>
         </View>
       </View>
     </TouchableOpacity>

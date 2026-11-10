@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 import BookingCard from './BookingCard';
 
 type Props = {
@@ -12,7 +13,7 @@ const BookingSection = ({ title, data, onPressItem }: Props) => {
     if(data.length === 0) return null;
     return (
         <View className="mb-8">
-            <Text className="text-neutral-400 text-xl font-bold mb-4">{title}</Text>
+            <AppText className="text-neutral-400 text-xl font-bold mb-4">{title}</AppText>
             {data.map((item) => (
                 <BookingCard key={item.id} item={item} onPress={() => onPressItem?.(item)} />
             ))}

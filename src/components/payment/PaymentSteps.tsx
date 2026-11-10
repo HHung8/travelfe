@@ -1,7 +1,6 @@
 import React from 'react'
-import { Text, View } from 'react-native'
-
-const PaymentSteps = () => {
+import { View } from 'react-native';
+import AppText from "@/src/components/common/AppText";const PaymentSteps = () => {
     return (
         <View className="flex-row justify-between items-center px-8 mt-8 mb-6">
 
@@ -18,9 +17,9 @@ const PaymentSteps = () => {
                                 : "bg-[#444]"
                             }`}
                     >
-                        <Text className="text-white font-bold">
+                        <AppText className="text-white font-bold">
                             {item}
-                        </Text>
+                        </AppText>
                     </View>
 
                     {index !== 3 && (

@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import { AttractionSchedule } from "../../types/attractionSchedule.ts";
 
 const fmtDate= (iso:string) => {
@@ -29,15 +30,15 @@ const AttractionScheduleCard = ({schedule, basePrice, selected, onPress}: Props)
             <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
                 <Ionicons name="calendar-outline" size={16} color={selected ? "#818cf8" : "#a3a3a3"} />
-                <Text className={`ml-2 font-semibold ${selected ? "text-indigo-400" : "text-white"}`}>
+                <AppText className={`ml-2 font-semibold ${selected ? "text-indigo-400" : "text-white"}`}>
                     {fmtDate(schedule.visitDate)}
-                </Text>
+                </AppText>
                 </View>
-                <Text className="text-violet-500 font-bold">${price}</Text>
+                <AppText className="text-violet-500 font-bold">${price}</AppText>
             </View>
-            <Text className={`text-xs mt-2 ${isFull ? "text-red-400" : "text-neutral-500"}`}>
+            <AppText className={`text-xs mt-2 ${isFull ? "text-red-400" : "text-neutral-500"}`}>
                 {isFull ? "Đã hết vé" : `Còn ${schedule.availableSlots} vé`}
-            </Text>
+            </AppText>
         </TouchableOpacity>
     )
 };

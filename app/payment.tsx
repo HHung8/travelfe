@@ -13,7 +13,8 @@ import type { PaymentMethodItem } from "@/src/types/paymentMethod";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const fmtDate = (iso: string) => { const d = new Date(iso); return `${d.getDate()}/${d.getMonth() + 1}`; };
@@ -93,7 +94,7 @@ export default function PaymentScreen() {
   if (error || !tour) {
     return (
       <SafeAreaView className="flex-1 bg-[#121212] items-center justify-center px-6">
-        <Text className="text-red-400 text-center">{error || "Không tìm thấy tour."}</Text>
+        <AppText className="text-red-400 text-center">{error || "Không tìm thấy tour."}</AppText>
       </SafeAreaView>
     );
   }
@@ -183,7 +184,7 @@ export default function PaymentScreen() {
         <TouchableOpacity onPress={() => router.back()} className="p-2">
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text className="text-white text-lg font-semibold ml-2">Thanh toán</Text>
+        <AppText className="text-white text-lg font-semibold ml-2">Thanh toán</AppText>
       </View>
 
       <StepIndicator currentStep={3} />
@@ -194,10 +195,10 @@ export default function PaymentScreen() {
             <SafeImage uri={tour.thumbnailUrl} className="w-full h-full" resizeMode="cover" />
           </View>
           <View className="flex-1">
-            <Text className="text-white font-semibold">{tour.title}</Text>
-            <Text className="text-neutral-400 text-xs mt-1">
+            <AppText className="text-white font-semibold">{tour.title}</AppText>
+            <AppText className="text-neutral-400 text-xs mt-1">
               Khởi hành {fmtDate(travelDate)} · {guestCount} khách
-            </Text>
+            </AppText>
           </View>
         </View>
 
@@ -224,7 +225,7 @@ export default function PaymentScreen() {
           />
         </View>
 
-        {!!savedCardsError && <Text className="mt-2 text-xs text-amber-300">{savedCardsError} Bạn vẫn có thể nhập thẻ demo.</Text>}
+        {!!savedCardsError && <AppText className="mt-2 text-xs text-amber-300">{savedCardsError} Bạn vẫn có thể nhập thẻ demo.</AppText>}
 
         {__DEV__ && (
           <PaymentSimulationPanel outcome={simulationOutcome} onChangeOutcome={setSimulationOutcome} />
@@ -232,12 +233,12 @@ export default function PaymentScreen() {
 
         {!!simulationNotice && (
           <View className="mt-4 rounded-xl border border-amber-400/30 bg-amber-400/10 p-3">
-            <Text className="text-amber-200 text-sm leading-5">{simulationNotice}</Text>
+            <AppText className="text-amber-200 text-sm leading-5">{simulationNotice}</AppText>
           </View>
         )}
 
         {!!payError && (
-          <Text className="text-red-400 text-sm mt-4 text-center">{payError}</Text>
+          <AppText className="text-red-400 text-sm mt-4 text-center">{payError}</AppText>
         )}
       </ScrollView>
 
@@ -250,7 +251,7 @@ export default function PaymentScreen() {
           {paying ? <ActivityIndicator color="#000" /> : (
             <>
               <Ionicons name="lock-closed" size={16} color={canPay ? "#000" : "#a3a3a3"} />
-              <Text className={`font-semibold text-base ${canPay ? "text-black" : "text-neutral-400"}`}>Thanh toán ngay</Text>
+              <AppText className={`font-semibold text-base ${canPay ? "text-black" : "text-neutral-400"}`}>Thanh toán ngay</AppText>
             </>
           )}
         </TouchableOpacity>

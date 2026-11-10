@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 
 interface Row {
   label: string;
@@ -16,13 +17,13 @@ export default function PricingSummary({ rows, totalLabel = "Tổng cộng", tot
     <View className="gap-2">
       {rows.map((r, idx) => (
         <View key={idx} className="flex-row justify-between">
-          <Text className="text-neutral-400">{r.label}</Text>
-          <Text className="text-neutral-300">{r.value}</Text>
+          <AppText className="text-neutral-400">{r.label}</AppText>
+          <AppText className="text-neutral-300">{r.value}</AppText>
         </View>
       ))}
       <View className="flex-row justify-between border-t border-neutral-800 pt-2 mt-1">
-        <Text className="text-white font-semibold">{totalLabel}</Text>
-        <Text className="text-indigo-400 font-bold">{total}</Text>
+        <AppText className="text-white font-semibold">{totalLabel}</AppText>
+        <AppText className="text-indigo-400 font-bold">{total}</AppText>
       </View>
     </View>
   );

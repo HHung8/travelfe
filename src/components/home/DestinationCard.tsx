@@ -2,7 +2,8 @@
 import { Destination } from '@/src/types/destination';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 
 interface Props {
   item: Destination;
@@ -26,12 +27,12 @@ const DestinationCard = ({item}:Props) => {
         className = "absolute bottom-0 left-0 right-0 px-2 py-2"
         style={{ backgroundColor:"rgba(0,0,0,0.45)" }}
       >
-        <Text className="text-white font-bold text-center" numberOfLines={1}>
+        <AppText className="text-white font-bold text-center" numberOfLines={1}>
           {item.name}
-        </Text>
-        <Text className="text-neutral-300 text-xs text-center" numberOfLines={1}>
+        </AppText>
+        <AppText className="text-neutral-300 text-xs text-center" numberOfLines={1}>
           {item.city}
-        </Text>
+        </AppText>
       </View>
     </TouchableOpacity>
   )

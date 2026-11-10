@@ -2,16 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "expo-router";
 import { ReactElement, useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  ListRenderItem,
-  RefreshControl,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, ListRenderItem, RefreshControl, TouchableOpacity, View } from "react-native";
+import AppTextInput from "@/src/components/common/AppTextInput";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type PageResult<T> = {
@@ -153,11 +146,11 @@ export default function AllItemsScreen<T extends { id: string }>({
             >
               <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
             </TouchableOpacity>
-            <Text className="text-3xl font-bold text-white">{title}</Text>
-            <Text className="mt-2 text-sm text-neutral-400">{subtitle}</Text>
+            <AppText className="text-3xl font-bold text-white">{title}</AppText>
+            <AppText className="mt-2 text-sm text-neutral-400">{subtitle}</AppText>
             <View className="mt-5 h-14 flex-row items-center rounded-2xl bg-[#242424] px-4">
               <Ionicons name="search-outline" size={20} color="#A3A3A3" />
-              <TextInput
+              <AppTextInput
                 accessibilityLabel={`Tìm ${title.toLowerCase()}`}
                 value={searchText}
                 onChangeText={setSearchText}
@@ -202,13 +195,13 @@ export default function AllItemsScreen<T extends { id: string }>({
             <ActivityIndicator color="#8B5CF6" size="large" style={{ marginTop: 36 }} />
           ) : error ? (
             <View className="items-center px-4 py-10">
-              <Text className="text-center text-red-400">{error}</Text>
+              <AppText className="text-center text-red-400">{error}</AppText>
               <TouchableOpacity onPress={handleRetry} className="mt-4 rounded-xl bg-violet-600 px-5 py-3">
-                <Text className="font-semibold text-white">Thử lại</Text>
+                <AppText className="font-semibold text-white">Thử lại</AppText>
               </TouchableOpacity>
             </View>
           ) : (
-            <Text className="py-10 text-center text-neutral-400">{emptyText}</Text>
+            <AppText className="py-10 text-center text-neutral-400">{emptyText}</AppText>
           )
         }
         ListFooterComponent={
@@ -216,8 +209,8 @@ export default function AllItemsScreen<T extends { id: string }>({
             <ActivityIndicator color="#8B5CF6" style={{ paddingVertical: 20 }} />
           ) : error && items.length > 0 ? (
             <TouchableOpacity onPress={handleRetry} className="items-center py-5">
-              <Text className="text-red-400">{error}</Text>
-              <Text className="mt-2 font-semibold text-violet-400">Tải lại trang</Text>
+              <AppText className="text-red-400">{error}</AppText>
+              <AppText className="mt-2 font-semibold text-violet-400">Tải lại trang</AppText>
             </TouchableOpacity>
           ) : null
         }

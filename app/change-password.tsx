@@ -3,7 +3,9 @@ import { changePassword } from "@/src/services/accountService";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
+import AppTextInput from "@/src/components/common/AppTextInput";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ChangePasswordScreen() {
@@ -41,14 +43,14 @@ export default function ChangePasswordScreen() {
                 <TouchableOpacity onPress={() => router.back()} className="p-2">
                     <Ionicons name="chevron-back" size={24} color="#fff" />
                 </TouchableOpacity>
-                <Text className="text-white text-lg font-semibold ml-2">Đổi mật khẩu</Text>
+                <AppText className="text-white text-lg font-semibold ml-2">Đổi mật khẩu</AppText>
             </View>
 
             <ScrollView contentContainerStyle={{ padding: 24 }} showsVerticalScrollIndicator={false}>
                 <View className="gap-3">
                     <View>
-                        <Text className="text-neutral-500 text-xs mb-1">Mật khẩu hiện tại</Text>
-                        <TextInput
+                        <AppText className="text-neutral-500 text-xs mb-1">Mật khẩu hiện tại</AppText>
+                        <AppTextInput
                             value={currentPassword}
                             onChangeText={setCurrentPassword}
                             secureTextEntry
@@ -57,8 +59,8 @@ export default function ChangePasswordScreen() {
                         />
                     </View>
                     <View>
-                        <Text className="text-neutral-500 text-xs mb-1">Mật khẩu mới</Text>
-                        <TextInput
+                        <AppText className="text-neutral-500 text-xs mb-1">Mật khẩu mới</AppText>
+                        <AppTextInput
                             value={newPassword}
                             onChangeText={setNewPassword}
                             secureTextEntry
@@ -67,8 +69,8 @@ export default function ChangePasswordScreen() {
                         />
                     </View>
                     <View>
-                        <Text className="text-neutral-500 text-xs mb-1">Xác nhận mật khẩu mới</Text>
-                        <TextInput
+                        <AppText className="text-neutral-500 text-xs mb-1">Xác nhận mật khẩu mới</AppText>
+                        <AppTextInput
                             value={confirmPassword}
                             onChangeText={setConfirmPassword}
                             secureTextEntry
@@ -83,9 +85,9 @@ export default function ChangePasswordScreen() {
                     onPress={handleSubmit}
                     className={`rounded-2xl py-4 items-center mt-6 ${canSubmit ? "bg-white" : "bg-neutral-700"}`}
                 >
-                    <Text className={`font-semibold ${canSubmit ? "text-black" : "text-neutral-400"}`}>
+                    <AppText className={`font-semibold ${canSubmit ? "text-black" : "text-neutral-400"}`}>
                         {submitting ? "Đang lưu..." : "Đổi mật khẩu"}
-                    </Text>
+                    </AppText>
                 </TouchableOpacity>
             </ScrollView>
         </SafeAreaView>

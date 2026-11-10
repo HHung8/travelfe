@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 
 const SuccessActions = () => {
     const router = useRouter();
@@ -11,15 +12,15 @@ const SuccessActions = () => {
                 className='border border-[#666] rounded-2xl mb-4'
                 onPress={() => router.replace("/booking")}
             >
-                <Text className='text-white text-center text-xl font-bold'>Xem booking của tôi</Text>
+                <AppText className='text-white text-center text-xl font-bold'>Xem booking của tôi</AppText>
             </TouchableOpacity>
             <TouchableOpacity
                 className='border border-[#666] rounded-2xl py-5'
                 onPress={() => router.replace("/(root)/home")}
             >
-                <Text className='text-white text-center text-xl font-bold'>
+                <AppText className='text-white text-center text-xl font-bold'>
                     Về trang chủ
-                </Text>
+                </AppText>
             </TouchableOpacity>
         </View>
     )

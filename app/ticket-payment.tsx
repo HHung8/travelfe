@@ -6,7 +6,8 @@ import { exploreData } from "@/src/data/explore";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const fmt = (iso: string) => { const d = new Date(iso); return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`; };
@@ -50,7 +51,7 @@ export default function TicketPaymentScreen() {
         <TouchableOpacity onPress={() => router.back()} className="p-2">
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text className="text-white text-lg font-semibold ml-2">Thanh toán</Text>
+        <AppText className="text-white text-lg font-semibold ml-2">Thanh toán</AppText>
       </View>
 
       <StepIndicator currentStep={3} />
@@ -58,11 +59,11 @@ export default function TicketPaymentScreen() {
       <ScrollView contentContainerStyle={{ paddingBottom: 140 }} className="px-6">
         <View className="flex-row bg-neutral-900 rounded-2xl p-3 items-center gap-3">
           <View className="w-14 h-14 rounded-xl items-center justify-center" style={{ backgroundColor: place.color }}>
-            <Text style={{ fontSize: 24 }}>{place.emoji}</Text>
+            <AppText style={{ fontSize: 24 }}>{place.emoji}</AppText>
           </View>
           <View>
-            <Text className="text-white font-semibold">{place.title}</Text>
-            <Text className="text-neutral-400 text-xs mt-1">{fmt(visitDate)} · {ticketCount} vé</Text>
+            <AppText className="text-white font-semibold">{place.title}</AppText>
+            <AppText className="text-neutral-400 text-xs mt-1">{fmt(visitDate)} · {ticketCount} vé</AppText>
           </View>
         </View>
 
@@ -96,7 +97,7 @@ export default function TicketPaymentScreen() {
           {loading ? <ActivityIndicator color="#000" /> : (
             <>
               <Ionicons name="lock-closed" size={16} color={canPay ? "#000" : "#a3a3a3"} />
-              <Text className={`font-semibold text-base ${canPay ? "text-black" : "text-neutral-400"}`}>Mua vé ngay</Text>
+              <AppText className={`font-semibold text-base ${canPay ? "text-black" : "text-neutral-400"}`}>Mua vé ngay</AppText>
             </>
           )}
         </TouchableOpacity>

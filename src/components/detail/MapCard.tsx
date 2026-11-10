@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Linking, Text, TouchableOpacity, View } from 'react-native';
+import { Linking, TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 import MapView, { Marker } from 'react-native-maps';
 type Props = {
     locationLabel: string;
@@ -17,7 +18,7 @@ const MapCard = ({ locationLabel, latitude, longitude }: Props) => {
     
     return (
         <View className="mt-8 px-6">
-            <Text className="text-white text-xl font-bold mb-4">Địa điểm</Text>
+            <AppText className="text-white text-xl font-bold mb-4">Địa điểm</AppText>
 
             <View className="bg-[#252525] rounded-3xl h-48 overflow-hidden">
                 {hasCoords ? (
@@ -38,7 +39,7 @@ const MapCard = ({ locationLabel, latitude, longitude }: Props) => {
                 ) : (
                     <View className="flex-1 items-center justify-center">
                         <Ionicons name="map" size={60} color="#8B5CF6" />
-                        <Text className="text-neutral-400 mt-2">Chưa có tọa độ</Text>
+                        <AppText className="text-neutral-400 mt-2">Chưa có tọa độ</AppText>
                     </View>
                 )}
 
@@ -47,11 +48,11 @@ const MapCard = ({ locationLabel, latitude, longitude }: Props) => {
                     onPress={openInMapsApp}
                     disabled={!hasCoords}
                 >
-                    <Text className="text-white font-semibold">Xem bản đồ</Text>
+                    <AppText className="text-white font-semibold">Xem bản đồ</AppText>
                 </TouchableOpacity>
             </View>
 
-            <Text className="text-neutral-400 mt-2 text-center">{locationLabel}</Text>
+            <AppText className="text-neutral-400 mt-2 text-center">{locationLabel}</AppText>
         </View>
     );
 };

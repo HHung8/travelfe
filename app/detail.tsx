@@ -15,8 +15,8 @@ import { getDistanceKm } from '@/src/utils/distance'
 import { resolveImageUrl } from '@/src/utils/image'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, FlatList, ScrollView, Text, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { ActivityIndicator, FlatList, ScrollView, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";import { SafeAreaView } from 'react-native-safe-area-context'
 
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1500835556837-99ac94a94552";
 
@@ -94,9 +94,9 @@ const DetailScreen = () => {
     if (errorDestination || !destination) {
         return (
             <SafeAreaView className='flex-1 bg-[#121212] items-center justify-center px-6'>
-                <Text className='text-red-400 text-center'>
+                <AppText className='text-red-400 text-center'>
                     {errorDestination || "Không tìm thấy điểm đến."}
-                </Text>
+                </AppText>
             </SafeAreaView>
         )
     }
@@ -124,11 +124,11 @@ const DetailScreen = () => {
                 />
 
                 <View className="mt-8 px-6">
-                    <Text className="text-white text-xl font-bold mb-5">Tour tại đây</Text>
+                    <AppText className="text-white text-xl font-bold mb-5">Tour tại đây</AppText>
                     {loadingTours ? (
                         <ActivityIndicator color="#8B5CF6" />
                     ) : tours.length === 0 ? (
-                        <Text className='text-neutral-500'>Chưa có tour nào tại điểm đến này</Text>
+                        <AppText className='text-neutral-500'>Chưa có tour nào tại điểm đến này</AppText>
                     ) : (
                         <FlatList
                             horizontal
@@ -146,11 +146,11 @@ const DetailScreen = () => {
                 </View>
 
                 <View className="mt-8 px-6">
-                    <Text className="text-white text-xl font-bold mb-5">Địa điểm gần đó</Text>
+                    <AppText className="text-white text-xl font-bold mb-5">Địa điểm gần đó</AppText>
                     {loadingAttractions ? (
                         <ActivityIndicator color="#8B5CF6" />
                     ) : attractions.length === 0 ? (
-                        <Text className='text-neutral-500'>Chưa có địa điểm thăm quan nào gần đây</Text>
+                        <AppText className='text-neutral-500'>Chưa có địa điểm thăm quan nào gần đây</AppText>
                     ) : (
                         <FlatList
                             horizontal

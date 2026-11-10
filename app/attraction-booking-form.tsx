@@ -9,7 +9,9 @@ import { AttractionSchedule } from "@/src/types/attractionSchedule";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
+import AppTextInput from "@/src/components/common/AppTextInput";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AttractionBookingFormScreen() {
@@ -59,7 +61,7 @@ export default function AttractionBookingFormScreen() {
   if (error || !place) {
     return (
       <SafeAreaView className="flex-1 bg-[#121212] items-center justify-center px-6">
-        <Text className="text-red-400 text-center">{error || "Không tìm thấy địa điểm."}</Text>
+        <AppText className="text-red-400 text-center">{error || "Không tìm thấy địa điểm."}</AppText>
       </SafeAreaView>
     );
   }
@@ -94,16 +96,16 @@ export default function AttractionBookingFormScreen() {
         <TouchableOpacity onPress={() => router.back()} className="p-2">
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text className="text-white text-lg font-semibold ml-2">Chọn ngày tham quan</Text>
+        <AppText className="text-white text-lg font-semibold ml-2">Chọn ngày tham quan</AppText>
       </View>
 
       <StepIndicator currentStep={2} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 140 }} className="px-6">
-        <Text className="text-neutral-400 text-sm mb-4">Chọn ngày phù hợp</Text>
+        <AppText className="text-neutral-400 text-sm mb-4">Chọn ngày phù hợp</AppText>
 
         {schedules.length === 0 ? (
-          <Text className="text-neutral-500">Chưa có lịch tham quan nào</Text>
+          <AppText className="text-neutral-500">Chưa có lịch tham quan nào</AppText>
         ) : (
           schedules.map((s) => (
             <AttractionScheduleCard
@@ -123,14 +125,14 @@ export default function AttractionBookingFormScreen() {
           <>
             <View className="flex-row items-center justify-between bg-neutral-900 rounded-2xl p-4 mt-2">
               <View>
-                <Text className="text-white font-semibold">Số vé</Text>
-                <Text className="text-neutral-500 text-xs mt-1">Còn {selectedSchedule.availableSlots} vé</Text>
+                <AppText className="text-white font-semibold">Số vé</AppText>
+                <AppText className="text-neutral-500 text-xs mt-1">Còn {selectedSchedule.availableSlots} vé</AppText>
               </View>
               <View className="flex-row items-center gap-3">
                 <TouchableOpacity onPress={() => setGuests((g) => Math.max(1, g - 1))} className="w-8 h-8 rounded-full bg-neutral-700 items-center justify-center">
                   <Ionicons name="remove" size={16} color="#fff" />
                 </TouchableOpacity>
-                <Text className="text-white w-6 text-center">{guests}</Text>
+                <AppText className="text-white w-6 text-center">{guests}</AppText>
                 <TouchableOpacity onPress={() => setGuests((g) => Math.min(maxGuests, g + 1))} className="w-8 h-8 rounded-full bg-neutral-700 items-center justify-center">
                   <Ionicons name="add" size={16} color="#fff" />
                 </TouchableOpacity>
@@ -138,8 +140,8 @@ export default function AttractionBookingFormScreen() {
             </View>
 
             <View className="mt-4">
-              <Text className="text-neutral-500 text-xs mb-1">Yêu cầu đặc biệt (không bắt buộc)</Text>
-              <TextInput
+              <AppText className="text-neutral-500 text-xs mb-1">Yêu cầu đặc biệt (không bắt buộc)</AppText>
+              <AppTextInput
                 value={specialRequest}
                 onChangeText={setSpecialRequest}
                 placeholder="Ví dụ: cần thuê xe đạp..."
@@ -169,7 +171,7 @@ export default function AttractionBookingFormScreen() {
           onPress={handleContinue}
           className={`h-14 rounded-2xl items-center justify-center ${canContinue ? "bg-white" : "bg-neutral-700"}`}
         >
-          <Text className={`font-semibold text-base ${canContinue ? "text-black" : "text-neutral-400"}`}>Tiếp tục thanh toán</Text>
+          <AppText className={`font-semibold text-base ${canContinue ? "text-black" : "text-neutral-400"}`}>Tiếp tục thanh toán</AppText>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

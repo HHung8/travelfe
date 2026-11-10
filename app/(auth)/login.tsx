@@ -3,7 +3,9 @@ import { useAuth } from "@/src/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, TouchableOpacity, View } from "react-native";
+import AppTextInput from "@/src/components/common/AppTextInput";
+import AppText from "@/src/components/common/AppText";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -40,12 +42,12 @@ export default function LoginScreen() {
         />
       </View>
       <View className="rounded-3xl p-6">
-        <Text className="text-white text-lg font-semibold mb-2">Email</Text>
+        <AppText className="text-white text-lg font-semibold mb-2">Email</AppText>
         <View className="bg-[#2B2B2B] rounded-xl flex-row items-center px-4 mb-4">
           <Ionicons name="mail-outline" size={20} color="#9CA3AF" />
-          <TextInput
+          <AppTextInput
             className="flex-1 py-4 px-3 text-white"
-            placeholder="Enter your email"
+            placeholder="Nhập email"
             placeholderTextColor="#888"
             keyboardType="email-address"
             autoCapitalize="none"
@@ -54,12 +56,12 @@ export default function LoginScreen() {
           />
         </View>
 
-        <Text className="text-white text-lg font-semibold mb-2">Password</Text>
+        <AppText className="text-white text-lg font-semibold mb-2">Mật khẩu</AppText>
         <View className="bg-[#2B2B2B] rounded-xl flex-row items-center px-4 mb-4">
           <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
-          <TextInput
+          <AppTextInput
             className="flex-1 py-4 px-3 text-white"
-            placeholder="Enter your password"
+            placeholder="Nhập mật khẩu"
             placeholderTextColor="#888"
             secureTextEntry={!showPassword}
             value={password}
@@ -82,14 +84,14 @@ export default function LoginScreen() {
           {loading ? (
             <ActivityIndicator color="white" />
           ) : (
-            <Text className="text-white text-center font-semibold">Login</Text>
+            <AppText className="text-white text-center font-semibold">Đăng nhập</AppText>
           )}
         </TouchableOpacity>
 
         <View className="flex-row justify-center mt-6">
-          <Text className="text-gray-400">Don't have an account?</Text>
+          <AppText className="text-gray-400">Bạn chưa có tài khoản?</AppText>
           <Link href="/(auth)/register">
-            <Text className="text-violet-500 font-bold">Sign Up</Text>
+            <AppText className="text-violet-500 font-bold">Đăng ký</AppText>
           </Link>
         </View>
       </View>

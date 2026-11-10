@@ -1,13 +1,12 @@
 import React from 'react'
-import { Text, View } from 'react-native'
-
-const Header = () => {
+import { View } from 'react-native';
+import AppText from "@/src/components/common/AppText";const Header = () => {
   return (
     <View className="px-6 pt-6 pb-8 rounded-b-[30px]" >
         <View className="flex-row justify-between items-center">
             <View>
-                <Text className="text-gray-300 text-base">Xin chào, Hưng 👋</Text>
-                <Text className="text-white text-3xl font-bold mt-2">Bạn muốn đi đâu hôm nay?</Text>
+                <AppText className="text-gray-300 text-base">Xin chào, Hưng 👋</AppText>
+                <AppText className="text-white text-3xl font-bold mt-2">Bạn muốn đi đâu hôm nay?</AppText>
             </View>
             {/* <TouchableOpacity className="bg-white/10 rounded-full p-3">
                 <Ionicons

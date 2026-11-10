@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import { subscribeToSuccessToasts } from "@/src/utils/apiSuccessToast";
 
 type Toast = {
@@ -61,9 +62,9 @@ export default function ApiSuccessToastHost() {
         <View className="h-9 w-9 items-center justify-center rounded-full bg-emerald-400/15">
           <Ionicons name="checkmark" size={20} color="#34d399" />
         </View>
-        <Text className="ml-3 flex-1 text-sm font-medium leading-5 text-white">
+        <AppText className="ml-3 flex-1 text-sm font-medium leading-5 text-white">
           {toast.message}
-        </Text>
+        </AppText>
         <Ionicons name="close" size={18} color="#a3a3a3" />
       </TouchableOpacity>
     </View>

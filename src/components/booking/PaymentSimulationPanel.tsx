@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import type { PaymentSimulationOutcome } from "@/src/services/paymentService";
 
 type Props = {
@@ -42,11 +43,11 @@ export default function PaymentSimulationPanel({ outcome, onChangeOutcome }: Pro
     <View className="mt-5 rounded-2xl border border-amber-400/30 bg-amber-400/5 p-4">
       <View className="flex-row items-center">
         <Ionicons name="flask-outline" size={18} color="#fbbf24" />
-        <Text className="ml-2 text-amber-200 font-semibold">Mô phỏng thanh toán · Dev</Text>
+        <AppText className="ml-2 text-amber-200 font-semibold">Mô phỏng thanh toán · Dev</AppText>
       </View>
-      <Text className="mt-1 text-xs leading-5 text-neutral-400">
+      <AppText className="mt-1 text-xs leading-5 text-neutral-400">
         Không kết nối cổng tiền thật. Luồng: tạo booking → tạo giao dịch pending → gọi API confirm hoặc fail.
-      </Text>
+      </AppText>
       <View className="mt-3 gap-2">
         {OUTCOMES.map((item) => {
           const selected = outcome === item.key;
@@ -62,8 +63,8 @@ export default function PaymentSimulationPanel({ outcome, onChangeOutcome }: Pro
             >
               <Ionicons name={item.icon} size={20} color={item.color} />
               <View className="ml-3 flex-1">
-                <Text className="text-sm font-medium text-white">{item.label}</Text>
-                <Text className="mt-0.5 text-xs text-neutral-500">{item.description}</Text>
+                <AppText className="text-sm font-medium text-white">{item.label}</AppText>
+                <AppText className="mt-0.5 text-xs text-neutral-500">{item.description}</AppText>
               </View>
               <Ionicons
                 name={selected ? "radio-button-on" : "radio-button-off"}

@@ -7,8 +7,8 @@ import { resolveImageUrl } from '@/src/utils/image'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { ActivityIndicator, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { ActivityIndicator, FlatList, Image, RefreshControl, TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";import { SafeAreaView } from 'react-native-safe-area-context'
 
 const fmtDate = (iso: string) => {
     const d = new Date(iso);
@@ -61,16 +61,16 @@ function BookingCard({ item, onPress }: { item: CardData; onPress: () => void })
                         onError={(e) => console.log("BOOKING IMG ERR", item.thumbnailUrl, e.nativeEvent)} 
                     />
                 ) : (
-                    <Text style={{ fontSize: 28 }}>{typeEmoji[item.type]}</Text>
+                    <AppText style={{ fontSize: 28 }}>{typeEmoji[item.type]}</AppText>
                 )}
             </View>
 
             <View className="flex-1">
-                <Text className="text-white font-semibold" numberOfLines={1}>{item.title}</Text>
-                <Text className="text-neutral-400 text-xs mt-1">{item.date}</Text>
+                <AppText className="text-white font-semibold" numberOfLines={1}>{item.title}</AppText>
+                <AppText className="text-neutral-400 text-xs mt-1">{item.date}</AppText>
                 <View className="flex-row items-center justify-between mt-2">
-                    <Text className="text-neutral-500 text-xs">{item.bookingCode}</Text>
-                    <Text className="text-violet-400 font-semibold text-sm">${item.totalPrice}</Text>
+                    <AppText className="text-neutral-500 text-xs">{item.bookingCode}</AppText>
+                    <AppText className="text-violet-400 font-semibold text-sm">${item.totalPrice}</AppText>
                 </View>
             </View>
 
@@ -78,9 +78,9 @@ function BookingCard({ item, onPress }: { item: CardData; onPress: () => void })
                 className="px-2 py-1 rounded-full self-start"
                 style={{ backgroundColor: item.badgeColor }}
             >
-                <Text className="text-xs font-medium" style={{ color: item.badgeText }}>
+                <AppText className="text-xs font-medium" style={{ color: item.badgeText }}>
                     {item.badgeLabel}
-                </Text>
+                </AppText>
             </View>
 
             <Ionicons name="chevron-forward" size={18} color="#737373" />
@@ -225,7 +225,7 @@ const BookingScreen = () => {
     return (
         <SafeAreaView className="flex-1 bg-[#121212]">
             <View className="px-6">
-                <Text className="text-white text-4xl font-bold mt-4 mb-6">Booking của tôi</Text>
+                <AppText className="text-white text-4xl font-bold mt-4 mb-6">Booking của tôi</AppText>
 
                 <FlatList
                     horizontal
@@ -243,11 +243,11 @@ const BookingScreen = () => {
                 />
             </View>
 
-            {error && <Text className="text-red-400 px-6 mb-2">{error}</Text>}
+            {error && <AppText className="text-red-400 px-6 mb-2">{error}</AppText>}
 
             {filteredItems.length === 0 && !error ? (
                 <View className="flex-1 items-center justify-center px-6">
-                    <Text className="text-neutral-500 text-center">Chưa có booking nào ở mục này</Text>
+                    <AppText className="text-neutral-500 text-center">Chưa có booking nào ở mục này</AppText>
                 </View>
             ) : (
                 <FlatList
@@ -260,7 +260,7 @@ const BookingScreen = () => {
                     }
                     renderItem={({ item: row }) =>
                         row.rowType === "header" ? (
-                            <Text className="text-white font-semibold text-base mt-4 mb-2">{row.title}</Text>
+                            <AppText className="text-white font-semibold text-base mt-4 mb-2">{row.title}</AppText>
                         ) : (
                             <BookingCard item={row.data} onPress={() => {
                                 const original = items.find((i) => i.id === row.data.id && i.type === row.data.type);

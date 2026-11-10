@@ -1,7 +1,8 @@
 import { ExploreItem } from '@/src/types/explore';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
+import AppText from "@/src/components/common/AppText";
 
 type Props = {
   // Define any props if needed
@@ -22,20 +23,20 @@ const ExploreCard = ({ item, onPress }: Props) => {
         />
         {item.rating != null && (
           <View className="absolute top-4 right-4 bg-white rounded-full px-3 py-1">
-            <Text className="font-semibold text-[#555]">⭐ {item.rating.toFixed(1)}</Text>
+            <AppText className="font-semibold text-[#555]">⭐ {item.rating.toFixed(1)}</AppText>
           </View>
         )}
       </View>
       <View className="p-4">
-        <Text className="text-white text-xl font-bold">{item.title}</Text>
+        <AppText className="text-white text-xl font-bold">{item.title}</AppText>
         <View className="flex-row justify-between mt-2">
           <View className="flex-row items-center">
             <Ionicons name="location-outline" color="#aaa" size={15} />
-            <Text className="text-neutral-400 ml-1">{item.subtitle}</Text>
+            <AppText className="text-neutral-400 ml-1">{item.subtitle}</AppText>
           </View>
-          <Text className="text-violet-500 font-bold">
+          <AppText className="text-violet-500 font-bold">
             {item.price != null ? `$${item.price.toLocaleString()}` : "Liên hệ"}
-          </Text>
+          </AppText>
         </View>
       </View>
     </TouchableOpacity>

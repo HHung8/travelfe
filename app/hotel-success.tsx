@@ -4,7 +4,8 @@ import { HotelDetail } from "@/src/types/hotel";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const fmt = (iso: string) => { const d = new Date(iso); return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}` };
@@ -53,34 +54,34 @@ export default function HotelSuccessScreen() {
         <View className="w-20 h-20 rounded-full bg-green-500/15 items-center justify-center mb-6">
           <Ionicons name="checkmark" size={40} color="#22c55e" />
         </View>
-        <Text className="text-white text-xl font-bold">Đặt phòng thành công!</Text>
+        <AppText className="text-white text-xl font-bold">Đặt phòng thành công!</AppText>
         {(() => {
           const statusMeta = getPaymentStatusMeta(paymentStatus);
           return (
             <View className={`flex-row items-center ${statusMeta.bgColor} px-4 py-1.5 rounded-full mt-3`}>
               <View className={`w-2 h-2 rounded-full ${statusMeta.dotColor} mr-2`} />
-              <Text className={`${statusMeta.textColor} text-sm font-medium`}>{statusMeta.label}</Text>
+              <AppText className={`${statusMeta.textColor} text-sm font-medium`}>{statusMeta.label}</AppText>
             </View>
           );
         })()}
         <View className="w-full bg-neutral-900 rounded-2xl p-4 mt-6">
-          <Text className="text-neutral-400 text-xs text-center mb-1">Mã đặt phòng</Text>
-          <Text className="text-indigo-400 font-bold text-center text-base mb-4">{bookingCode}</Text>
+          <AppText className="text-neutral-400 text-xs text-center mb-1">Mã đặt phòng</AppText>
+          <AppText className="text-indigo-400 font-bold text-center text-base mb-4">{bookingCode}</AppText>
           <View className="gap-2">
-            <View className="flex-row justify-between"><Text className="text-neutral-500">Khách sạn</Text><Text className="text-white">{hotel?.name ?? "-"}</Text></View>
-            <View className="flex-row justify-between"><Text className="text-neutral-500">Loại phòng</Text><Text className="text-white">{roomType}</Text></View>
-            <View className="flex-row justify-between"><Text className="text-neutral-500">Nhận/trả phòng</Text><Text className="text-white">{fmt(checkIn)} - {fmt(checkOut)}</Text></View>
-            <View className="flex-row justify-between"><Text className="text-neutral-500">Số phòng</Text><Text className="text-white">{rooms}</Text></View>
-            <View className="flex-row justify-between"><Text className="text-neutral-500">Thanh toán</Text><Text className="text-yellow-400">${total} · Đang xử lý</Text></View>
+            <View className="flex-row justify-between"><AppText className="text-neutral-500">Khách sạn</AppText><AppText className="text-white">{hotel?.name ?? "-"}</AppText></View>
+            <View className="flex-row justify-between"><AppText className="text-neutral-500">Loại phòng</AppText><AppText className="text-white">{roomType}</AppText></View>
+            <View className="flex-row justify-between"><AppText className="text-neutral-500">Nhận/trả phòng</AppText><AppText className="text-white">{fmt(checkIn)} - {fmt(checkOut)}</AppText></View>
+            <View className="flex-row justify-between"><AppText className="text-neutral-500">Số phòng</AppText><AppText className="text-white">{rooms}</AppText></View>
+            <View className="flex-row justify-between"><AppText className="text-neutral-500">Thanh toán</AppText><AppText className="text-yellow-400">${total} · Đang xử lý</AppText></View>
           </View>
         </View>
       </View>
       <View className="pb-8 gap-3">
         <TouchableOpacity onPress={() => router.push("/booking")} className="h-14 rounded-2xl bg-white items-center justify-center">
-          <Text className="text-black font-semibold">Xem đặt phòng của tôi</Text>
+          <AppText className="text-black font-semibold">Xem đặt phòng của tôi</AppText>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.replace("/home")} className="h-14 rounded-2xl border border-neutral-700 items-center justify-center">
-          <Text className="text-white font-semibold">Về trang chủ</Text>
+          <AppText className="text-white font-semibold">Về trang chủ</AppText>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

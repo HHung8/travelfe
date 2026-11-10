@@ -2,21 +2,14 @@
 import WishlistCard from "@/src/components/profile/WishlistCard";
 import { useAuth } from "@/src/context/AuthContext";
 import {
-    getWishlistAttractions,
-    getWishlistDestinations,
-    getWishlistHotels,
-    getWishlistTours,
-} from "@/src/services/wishlishService";
+    getWishlistAttractions, getWishlistDestinations, getWishlistHotels, getWishlistTours, } from "@/src/services/wishlishService";
 import {
-    WishlistAttractionItem,
-    WishlistDestinationItem,
-    WishlistHotelItem,
-    WishlistTourItem,
-} from "@/src/types/wishlist";
+    WishlistAttractionItem, WishlistDestinationItem, WishlistHotelItem, WishlistTourItem, } from "@/src/types/wishlist";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useRef, useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView, TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type FilterType = "tour" | "hotel" | "destination" | "attraction"
@@ -101,10 +94,10 @@ export default function FavoritesScreen() {
                         <Ionicons name="chevron-back" size={24} color="#fff" />
                     </TouchableOpacity>
                     <View className="flex-1">
-                        <Text className="text-2xl font-bold text-white">Danh sách yêu thích</Text>
-                        <Text className="mt-1 text-sm text-neutral-400">
+                        <AppText className="text-2xl font-bold text-white">Danh sách yêu thích</AppText>
+                        <AppText className="mt-1 text-sm text-neutral-400">
                             {totalCount} mục đã lưu
-                        </Text>
+                        </AppText>
                     </View>
                 </View>
 
@@ -129,12 +122,12 @@ export default function FavoritesScreen() {
                                             : "border-neutral-700 bg-[#1D1D1D]"
                                     }`}
                                 >
-                                    <Text className={selected ? "text-violet-300 font-semibold" : "text-neutral-300"}>
+                                    <AppText className={selected ? "text-violet-300 font-semibold" : "text-neutral-300"}>
                                         {item.label}
-                                    </Text>
-                                    <Text className={`ml-1.5 text-xs ${selected ? "text-violet-300" : "text-neutral-500"}`}>
+                                    </AppText>
+                                    <AppText className={`ml-1.5 text-xs ${selected ? "text-violet-300" : "text-neutral-500"}`}>
                                         {item.count}
-                                    </Text>
+                                    </AppText>
                                 </TouchableOpacity>
                             );
                         })}
@@ -144,12 +137,12 @@ export default function FavoritesScreen() {
                 {error ? (
                     <View className="items-center rounded-2xl bg-[#1D1D1D] px-5 py-8">
                         <Ionicons name="cloud-offline-outline" size={36} color="#F87171" />
-                        <Text className="mt-3 text-center text-red-400">{error}</Text>
+                        <AppText className="mt-3 text-center text-red-400">{error}</AppText>
                         <TouchableOpacity
                             onPress={() => loadWishlist()}
                             className="mt-4 rounded-xl bg-violet-600 px-5 py-3"
                         >
-                            <Text className="font-semibold text-white">Thử lại</Text>
+                            <AppText className="font-semibold text-white">Thử lại</AppText>
                         </TouchableOpacity>
                     </View>
                 ) : totalCount === 0 ? (
@@ -157,12 +150,12 @@ export default function FavoritesScreen() {
                         <View className="h-20 w-20 items-center justify-center rounded-full bg-[#242424]">
                             <Ionicons name="heart-outline" size={40} color="#8B5CF6" />
                         </View>
-                        <Text className="mt-5 text-lg font-semibold text-white">
+                        <AppText className="mt-5 text-lg font-semibold text-white">
                             Chưa có mục yêu thích
-                        </Text>
-                        <Text className="mt-2 text-center text-neutral-400">
+                        </AppText>
+                        <AppText className="mt-2 text-center text-neutral-400">
                             Những tour, khách sạn và địa điểm bạn lưu sẽ xuất hiện ở đây.
-                        </Text>
+                        </AppText>
                     </View>
                 ) : (
                     <>
@@ -234,9 +227,9 @@ export default function FavoritesScreen() {
                             (filter === "attraction" && attractions.length === 0)) && (
                                 <View className="items-center py-12">
                                     <Ionicons name="heart-outline" size={36} color="#737373" />
-                                    <Text className="mt-3 text-neutral-400">
+                                    <AppText className="mt-3 text-neutral-400">
                                         Chưa có mục nào trong danh mục này
-                                    </Text>
+                                    </AppText>
                                 </View>
                             )}
                     </>

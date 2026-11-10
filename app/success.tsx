@@ -6,7 +6,8 @@ import * as MediaLibrary from "expo-media-library";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as Sharing from "expo-sharing";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Animated, BackHandler, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Animated, BackHandler, ScrollView, TouchableOpacity, View } from "react-native";
+import AppText from "@/src/components/common/AppText";
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ViewShot from "react-native-view-shot";
@@ -128,14 +129,14 @@ export default function SuccessScreen() {
           <Ionicons name="checkmark" size={56} color="#22c55e" />
         </Animated.View>
 
-        <Text className="text-white text-3xl font-bold">Đặt tour thành công!</Text>
+        <AppText className="text-white text-3xl font-bold">Đặt tour thành công!</AppText>
 
         {(() => {
           const statusMeta = getPaymentStatusMeta(paymentStatus);
           return (
             <View className={`flex-row items-center ${statusMeta.bgColor} px-4 py-1.5 rounded-full mt-3`}>
               <View className={`w-2 h-2 rounded-full ${statusMeta.dotColor} mr-2`} />
-              <Text className={`${statusMeta.textColor} text-sm font-medium`}>{statusMeta.label}</Text>
+              <AppText className={`${statusMeta.textColor} text-sm font-medium`}>{statusMeta.label}</AppText>
             </View>
           );
         })()}
@@ -146,9 +147,9 @@ export default function SuccessScreen() {
             <QRCode value={qrValue} size={220} backgroundColor="white" color="black" />
           </View>
         </ViewShot>
-        <Text className="text-neutral-500 text-sm mt-4 text-center">
+        <AppText className="text-neutral-500 text-sm mt-4 text-center">
           Xuất trình mã khi tham gia tour
-        </Text>
+        </AppText>
 
         {/* Nút chia sẻ / lưu QR */}
         <View className="flex-row gap-3 mt-4">
@@ -157,7 +158,7 @@ export default function SuccessScreen() {
             className="flex-row items-center bg-neutral-900 px-4 py-2.5 rounded-xl"
           >
             <Ionicons name="share-outline" size={18} color="white" />
-            <Text className="text-white text-sm ml-2">Chia sẻ</Text>
+            <AppText className="text-white text-sm ml-2">Chia sẻ</AppText>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleSaveQr}
@@ -169,7 +170,7 @@ export default function SuccessScreen() {
             ) : (
               <>
                 <Ionicons name="download-outline" size={18} color="white" />
-                <Text className="text-white text-sm ml-2">Lưu ảnh</Text>
+                <AppText className="text-white text-sm ml-2">Lưu ảnh</AppText>
               </>
             )}
           </TouchableOpacity>
@@ -177,28 +178,28 @@ export default function SuccessScreen() {
 
 
         <View className="w-full bg-neutral-900 rounded-3xl p-6 mt-8">
-          <Text className="text-neutral-400 text-sm text-center mb-2">Mã booking</Text>
-          <Text className="text-indigo-400 font-bold text-center text-xl mb-6">{bookingCode}</Text>
+          <AppText className="text-neutral-400 text-sm text-center mb-2">Mã booking</AppText>
+          <AppText className="text-indigo-400 font-bold text-center text-xl mb-6">{bookingCode}</AppText>
           <View className="gap-4">
             <View className="flex-row justify-between">
-              <Text className="text-neutral-500 text-base">Tour</Text>
+              <AppText className="text-neutral-500 text-base">Tour</AppText>
               {loading ? (
                 <ActivityIndicator size="small" color="#8B5CF6" />
               ) : (
-                <Text className="text-white text-base">{tour?.title ?? "—"}</Text>
+                <AppText className="text-white text-base">{tour?.title ?? "—"}</AppText>
               )}
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-neutral-500 text-base">Ngày khởi hành</Text>
-              <Text className="text-white text-base">{fmt(travelDate)}</Text>
+              <AppText className="text-neutral-500 text-base">Ngày khởi hành</AppText>
+              <AppText className="text-white text-base">{fmt(travelDate)}</AppText>
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-neutral-500 text-base">Số khách</Text>
-              <Text className="text-white text-base">{guests} người</Text>
+              <AppText className="text-neutral-500 text-base">Số khách</AppText>
+              <AppText className="text-white text-base">{guests} người</AppText>
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-neutral-500 text-base">Tổng tiền</Text>
-              <Text className="text-white text-base font-semibold">${total}</Text>
+              <AppText className="text-neutral-500 text-base">Tổng tiền</AppText>
+              <AppText className="text-white text-base font-semibold">${total}</AppText>
             </View>
           </View>
         </View>
@@ -206,16 +207,16 @@ export default function SuccessScreen() {
         {/* Thông tin hỗ trợ */}
         <TouchableOpacity className="flex-row items-center mt-6">
           <Ionicons name="help-circle-outline" size={18} color="#737373" />
-          <Text className="text-neutral-500 text-sm ml-1.5">Cần hỗ trợ? Liên hệ với chúng tôi</Text>
+          <AppText className="text-neutral-500 text-sm ml-1.5">Cần hỗ trợ? Liên hệ với chúng tôi</AppText>
         </TouchableOpacity>
       </ScrollView>
 
       <View className="pb-8 gap-3">
         <TouchableOpacity onPress={() => router.push("/booking")} className="h-16 rounded-2xl bg-white items-center justify-center">
-          <Text className="text-black font-semibold text-base">Xem booking của tôi</Text>
+          <AppText className="text-black font-semibold text-base">Xem booking của tôi</AppText>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.replace("/home")} className="h-16 rounded-2xl border border-neutral-700 items-center justify-center">
-          <Text className="text-white font-semibold text-base">Về trang chủ</Text>
+          <AppText className="text-white font-semibold text-base">Về trang chủ</AppText>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

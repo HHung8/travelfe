@@ -2,7 +2,9 @@ import { useAuth } from "@/src/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import AppTextInput from "@/src/components/common/AppTextInput";
+import AppText from "@/src/components/common/AppText";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const RegisterScreen = () => {
@@ -58,12 +60,12 @@ const RegisterScreen = () => {
           {/* Register Card */}
           <View className="rounded-3xl p-6">
             {/* Full Name */}
-            <Text className="text-white text-lg font-semibold mb-2">Full Name</Text>
+            <AppText className="text-white text-lg font-semibold mb-2">Họ tên</AppText>
             <View className="bg-[#2B2B2B] rounded-xl flex-row items-center px-4 mb-4">
               <Ionicons name="person-outline" size={20} color="#9CA3AF" />
-              <TextInput
+              <AppTextInput
                 className="flex-1 py-4 px-3 text-white"
-                placeholder="Enter your full name"
+                placeholder="Nhập họ tên"
                 placeholderTextColor="#888"
                 value={fullName}
                 onChangeText={setFullName}
@@ -71,10 +73,10 @@ const RegisterScreen = () => {
             </View>
 
             {/* Email */}
-            <Text className="text-white text-lg font-semibold mb-2"> Email </Text>
+            <AppText className="text-white text-lg font-semibold mb-2"> Email </AppText>
             <View className="bg-[#2B2B2B] rounded-xl flex-row items-center px-4 mb-4">
               <Ionicons name="mail-outline" size={20} color="#9CA3AF" />
-              <TextInput
+              <AppTextInput
                 className="flex-1 py-4 px-3 text-white"
                 placeholder="Enter your email"
                 placeholderTextColor="#888"
@@ -86,12 +88,12 @@ const RegisterScreen = () => {
             </View>
 
             {/* Phone */}
-            <Text className="text-white text-lg font-semibold mb-2">Phone</Text>
+            <AppText className="text-white text-lg font-semibold mb-2">Số điện thoại</AppText>
             <View className="bg-[#2B2B2B] rounded-xl flex-row items-center px-4 mb-4">
               <Ionicons name="call-outline" size={20} color="#9CA3AF" />
-              <TextInput
+              <AppTextInput
                 className="flex-1 py-4 px-3 text-white"
-                placeholder="Enter your phone number"
+                placeholder="Nhập số điện thoại"
                 placeholderTextColor="#888"
                 keyboardType="phone-pad"
                 value={phone}
@@ -100,12 +102,12 @@ const RegisterScreen = () => {
             </View>
 
             {/* Password */}
-            <Text className="text-white text-lg font-semibold mb-2">Password</Text>
+            <AppText className="text-white text-lg font-semibold mb-2">Mật khẩu</AppText>
             <View className="bg-[#2B2B2B] rounded-xl flex-row items-center px-4 mb-4">
               <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
-              <TextInput
+              <AppTextInput
                 className="flex-1 py-4 px-3 text-white"
-                placeholder="Enter your password"
+                placeholder="Nhập mật khẩu"
                 placeholderTextColor="#888"
                 secureTextEntry={!showPassword}
                 value={password}
@@ -121,12 +123,12 @@ const RegisterScreen = () => {
             </View>
 
             {/* Confirm Password */}
-            <Text className="text-white text-lg font-semibold mb-2"> Confirm Password </Text>
+            <AppText className="text-white text-lg font-semibold mb-2"> Xác nhận mật khẩu </AppText>
             <View className="bg-[#2B2B2B] rounded-xl flex-row items-center px-4">
               <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF"/>
-              <TextInput
+              <AppTextInput
                 className="flex-1 py-4 px-3 text-white"
-                placeholder="Confirm your password"
+                placeholder="Nhập lại mật khẩu"
                 placeholderTextColor="#888"
                 secureTextEntry={!showConfirmPassword}
                 value={confirmPassword}
@@ -152,15 +154,15 @@ const RegisterScreen = () => {
               {loading ? (
                 <ActivityIndicator color="white" />
               ) : (
-                <Text className="text-white font-bold text-lg"> Create Account </Text>
+                <AppText className="text-white font-bold text-lg"> Tạo tài khoản </AppText>
               )}
             </TouchableOpacity>
             <View className="flex-row justify-center mt-8">
-              <Text className="text-neutral-400">Already have an account?</Text>
+              <AppText className="text-neutral-400">Bạn đã có tài khoản?</AppText>
               <Link href="/(auth)/login">
-                <Text className="text-violet-400 font-bold">
-                  {" "}Sign In
-                </Text>
+                <AppText className="text-violet-400 font-bold">
+                  {" "}Đăng nhập
+                </AppText>
               </Link>
             </View>
           </View>
