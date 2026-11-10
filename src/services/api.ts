@@ -4,6 +4,11 @@ import { showSuccessToast } from "../utils/apiSuccessToast";
 import { AuthData } from "../types/auth";
 
 function resolveBaseUrl() : string {
+  const configuredBaseUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/+$/, "");
+  if (configuredBaseUrl) {
+    return `${configuredBaseUrl}/api`;
+  }
+
   const PORT = 5167;
   const hostUri = Constants.expoConfig?.hostUri ?? 
   (Constants.manifest2 as any)?.extra?.expoGo?.debuggerHost;
