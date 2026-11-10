@@ -1,13 +1,13 @@
+import AppText from "@/src/components/common/AppText";
+import AppTextInput from "@/src/components/common/AppTextInput";
+import { NotificationCategories, useAppSettings } from "@/src/context/AppSettingsContext";
 import { useAuth } from "@/src/context/AuthContext";
 import { deleteAccount, getNotificationPreferences, setNotificationPreferences, updateProfile } from "@/src/services/accountService";
-import { NotificationCategories, useAppSettings } from "@/src/context/AppSettingsContext";
+import { translateText } from "@/src/utils/translations";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Switch, TouchableOpacity, View } from "react-native";
-import AppTextInput from "@/src/components/common/AppTextInput";
-import AppText from "@/src/components/common/AppText";
-import { translateText } from "@/src/utils/translations";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AccountSettingsScreen() {
